@@ -12,9 +12,7 @@ import com.example.myapplication33.R;
 
 import java.util.List;
 
-/**
- * Created by xiao on 2017/2/3.
- */
+
 
 public class ContactsAdapter extends BaseAdapter{
 

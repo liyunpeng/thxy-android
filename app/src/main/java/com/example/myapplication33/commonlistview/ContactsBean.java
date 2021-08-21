@@ -1,9 +1,5 @@
 package com.example.myapplication33.commonlistview;
 
-/**
- * Created by xiao on 2017/2/3.
- */
-
 public class ContactsBean {
     private String name;
     private String phoneNumber;

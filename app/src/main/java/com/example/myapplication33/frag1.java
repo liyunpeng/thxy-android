@@ -36,6 +36,12 @@ public class frag1 extends Fragment {
         });
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     class MyBaseAdapter extends BaseAdapter{
         @Override
         public int getCount(){return  name.length;}

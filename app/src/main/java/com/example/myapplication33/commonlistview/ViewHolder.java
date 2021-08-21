@@ -12,9 +12,6 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by xiao on 2017/2/3.
- */
 
 public class ViewHolder {
     private View mConvertView;

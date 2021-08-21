@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -24,6 +25,7 @@ public class MusicService extends Service {
     public void onCreate(){
         super.onCreate();
         player=new MediaPlayer();//创建音乐播放器对象
+
     }
     public void addTimer(){ //添加计时器用于设置音乐播放器中的播放进度条
         if(timer==null){
@@ -50,12 +52,40 @@ public class MusicService extends Service {
     }
     class MusicControl extends Binder{ //Binder是一种跨进程的通信方式
         public void play(int i){//String path
-                Uri uri=Uri.parse("android.resource://"+getPackageName()+"/raw/"+"music"+i);
+//                Uri uri=Uri.parse("android.resource://"+getPackageName()+"/raw/"+"music"+i);
                 try{
+/*
                     player.reset(); //重置音乐播放器
                     //加载多媒体文件
                     player=MediaPlayer.create(getApplicationContext(),uri);
                     player.start(); //播放音乐
+*/
+
+                    player.reset();
+                    try {
+                        player.setDataSource("http://47.102.146.8:8082/api/fileDownload?fileName=%E4%B8%80%E5%A3%B0%E4%BD%9B%E5%8F%B7%E4%B8%80%E5%A3%B0%E5%BF%83.mp3");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    player.prepareAsync();
+
+
+                    new Thread(new Runnable() {
+                        public void run() {
+                            //sleep设置的是时长
+                            try {
+                                Thread.sleep(1000);
+                                player.start(); //播放音乐
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+//                            handler.sendMessage();
+                        }
+                    }).start();
+
+
+
+
                     addTimer();//添加计时器
                 }catch(Exception e){
                 e.printStackTrace();

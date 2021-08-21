@@ -7,10 +7,6 @@ import android.widget.BaseAdapter;
 
 import java.util.List;
 
-/**
- * Created by xiao on 2017/2/3.
- */
-
 public abstract class CommonAdapter<T> extends BaseAdapter {
 
     protected Context mContext;
