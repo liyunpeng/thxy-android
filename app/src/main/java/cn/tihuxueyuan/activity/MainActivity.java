@@ -1,8 +1,8 @@
-package com.example.tihuxueyuan.activity;
+package cn.tihuxueyuan.activity;
 
 import android.os.Bundle;
 
-import com.example.tihuxueyuan.R;
+import cn.tihuxueyuan.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +11,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.tihuxueyuan.databinding.ActivityMainBinding;
+import cn.tihuxueyuan.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 

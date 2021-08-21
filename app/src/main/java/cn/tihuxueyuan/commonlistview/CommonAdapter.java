@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan.commonlistview;
+package cn.tihuxueyuan.commonlistview;
 
 import android.content.Context;
 import android.view.View;

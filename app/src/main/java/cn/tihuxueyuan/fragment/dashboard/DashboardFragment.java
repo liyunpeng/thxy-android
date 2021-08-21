@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan.fragment.dashboard;
+package cn.tihuxueyuan.fragment.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,13 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.tihuxueyuan.activity.MusicMainActivity;
-import com.example.tihuxueyuan.activity.OkActivity;
-import com.example.tihuxueyuan.R;
-import com.example.tihuxueyuan.commonlistview.CommonAdapter;
-import com.example.tihuxueyuan.commonlistview.ContactsBean;
-import com.example.tihuxueyuan.commonlistview.ViewHolder;
-import com.example.tihuxueyuan.databinding.FragmentDashboardBinding;
+import cn.tihuxueyuan.activity.MusicMainActivity;
+import cn.tihuxueyuan.activity.OkActivity;
+import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.commonlistview.CommonAdapter;
+import cn.tihuxueyuan.commonlistview.ContactsBean;
+import cn.tihuxueyuan.commonlistview.ViewHolder;
+import cn.tihuxueyuan.databinding.FragmentDashboardBinding;
 
 import java.util.ArrayList;
 import java.util.List;

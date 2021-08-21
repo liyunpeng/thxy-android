@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.tihuxueyuan">
+    package="cn.tihuxueyuan">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,7 +14,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.MyApplication33">
         <activity
-            android:name="com.example.tihuxueyuan.activity.MainActivity"
+            android:name="cn.tihuxueyuan.activity.MainActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
@@ -26,12 +26,12 @@
 
 
 
-        <activity android:name="com.example.tihuxueyuan.activity.Music_Activity" />
-        <activity android:name="com.example.tihuxueyuan.activity.MusicMainActivity" />
-        <activity android:name="com.example.tihuxueyuan.activity.OkActivity" />
+        <activity android:name="cn.tihuxueyuan.activity.Music_Activity" />
+        <activity android:name="cn.tihuxueyuan.activity.MusicMainActivity" />
+        <activity android:name="cn.tihuxueyuan.activity.OkActivity" />
 
         <service
-            android:name="com.example.tihuxueyuan.service.MusicService"
+            android:name="cn.tihuxueyuan.service.MusicService"
             android:enabled="true"
             android:exported="true"></service>
     </application>

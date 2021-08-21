@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan.service;
+package cn.tihuxueyuan.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,15 +7,15 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
-import com.example.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.activity.Music_Activity;
 
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MusicService extends Service {
-    private MediaPlayer player;
-    private Timer timer;
+    public MediaPlayer player;
+    public Timer timer;
     public MusicService() {}
     @Override
     public  IBinder onBind(Intent intent){

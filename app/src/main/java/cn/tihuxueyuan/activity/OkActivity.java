@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan.activity;
+package cn.tihuxueyuan.activity;
 //
 import android.os.Bundle;
 ////import android.support.v7.app.AppCompatActivity;
@@ -15,7 +15,7 @@ import okhttp3.FormBody;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tihuxueyuan.R;
+import cn.tihuxueyuan.R;
 
 import java.io.IOException;
 

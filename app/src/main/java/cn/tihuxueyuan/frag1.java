@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan;
+package cn.tihuxueyuan;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import com.example.tihuxueyuan.activity.Music_Activity;
+
+import cn.tihuxueyuan.R;
+
+import cn.tihuxueyuan.activity.Music_Activity;
 
 public class frag1 extends Fragment {
     private View view;

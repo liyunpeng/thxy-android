@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan;
+package cn.tihuxueyuan;
 
 import org.junit.Test;
 

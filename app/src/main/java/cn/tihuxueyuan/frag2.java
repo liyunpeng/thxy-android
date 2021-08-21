@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan;
+package cn.tihuxueyuan;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
+
+import cn.tihuxueyuan.R;
 
 public class frag2 extends Fragment {
     private View zj;

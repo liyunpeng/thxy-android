@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan.commonlistview;
+package cn.tihuxueyuan.commonlistview;
 
 public class ContactsBean {
     private String name;

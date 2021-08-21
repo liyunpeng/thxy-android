@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan.commonlistview;
+package cn.tihuxueyuan.commonlistview;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.example.tihuxueyuan.R;
+import cn.tihuxueyuan.R;
 //import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 public class ContactsAdapter extends BaseAdapter{
 
     private Context mContext;
-    private List<ContactsBean> mList;
+    public List<ContactsBean> mList;
 
     public ContactsAdapter(Context context, List<ContactsBean> list) {
         mContext = context;

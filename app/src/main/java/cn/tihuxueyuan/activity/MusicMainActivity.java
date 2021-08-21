@@ -1,4 +1,4 @@
-package com.example.tihuxueyuan.activity;
+package cn.tihuxueyuan.activity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,9 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.tihuxueyuan.R;
-import com.example.tihuxueyuan.frag1;
-import com.example.tihuxueyuan.frag2;
+import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.frag1;
+import cn.tihuxueyuan.frag2;
 //import com
 
 public class MusicMainActivity extends AppCompatActivity implements View.OnClickListener {
