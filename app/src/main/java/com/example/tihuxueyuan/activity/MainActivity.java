@@ -1,7 +1,8 @@
-package com.example.myapplication33;
+package com.example.tihuxueyuan.activity;
 
 import android.os.Bundle;
 
+import com.example.tihuxueyuan.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,11 +11,11 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.myapplication33.databinding.ActivityMainBinding;
+import com.example.tihuxueyuan.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    public ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

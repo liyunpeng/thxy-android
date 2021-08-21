@@ -1,4 +1,4 @@
-package com.example.myapplication33;
+package com.example.tihuxueyuan.activity;
 //
 import android.os.Bundle;
 ////import android.support.v7.app.AppCompatActivity;
@@ -12,8 +12,10 @@ import android.widget.Button;
 import android.view.View;
 import okhttp3.OkHttpClient;
 import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.tihuxueyuan.R;
 
 import java.io.IOException;
 

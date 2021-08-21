@@ -1,4 +1,4 @@
-package com.example.myapplication33;
+package com.example.tihuxueyuan.activity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -8,13 +8,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.example.tihuxueyuan.R;
+import com.example.tihuxueyuan.frag1;
+import com.example.tihuxueyuan.frag2;
 //import com
 
 public class MusicMainActivity extends AppCompatActivity implements View.OnClickListener {
     private FrameLayout content;
     private TextView tv1, tv2;
-    private FragmentManager fm;
-    private FragmentTransaction ft;
+    public FragmentManager fm;
+    public FragmentTransaction ft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

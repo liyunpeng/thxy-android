@@ -1,4 +1,4 @@
-package com.example.myapplication33;
+package com.example.tihuxueyuan;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

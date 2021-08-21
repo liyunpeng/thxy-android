@@ -1,4 +1,4 @@
-package com.example.myapplication33.ui.notifications;
+package com.example.tihuxueyuan.fragment.notifications;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

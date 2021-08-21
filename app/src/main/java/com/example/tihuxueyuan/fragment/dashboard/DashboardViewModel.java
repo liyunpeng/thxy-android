@@ -1,4 +1,4 @@
-package com.example.myapplication33.ui.dashboard;
+package com.example.tihuxueyuan.fragment.dashboard;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

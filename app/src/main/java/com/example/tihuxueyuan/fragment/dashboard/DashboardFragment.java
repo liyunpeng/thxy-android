@@ -1,39 +1,27 @@
-package com.example.myapplication33.ui.dashboard;
+package com.example.tihuxueyuan.fragment.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapplication33.Music_Activity;
-import com.example.myapplication33.MusicMainActivity;
-import com.example.myapplication33.OkActivity;
-import com.example.myapplication33.R;
-import com.example.myapplication33.commonlistview.CommonAdapter;
-import com.example.myapplication33.commonlistview.ContactsBean;
-import com.example.myapplication33.commonlistview.ViewHolder;
-import com.example.myapplication33.databinding.FragmentDashboardBinding;
-import com.example.myapplication33.frag1;
+import com.example.tihuxueyuan.activity.MusicMainActivity;
+import com.example.tihuxueyuan.activity.OkActivity;
+import com.example.tihuxueyuan.R;
+import com.example.tihuxueyuan.commonlistview.CommonAdapter;
+import com.example.tihuxueyuan.commonlistview.ContactsBean;
+import com.example.tihuxueyuan.commonlistview.ViewHolder;
+import com.example.tihuxueyuan.databinding.FragmentDashboardBinding;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.FormBody;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class DashboardFragment extends Fragment {
     private List<ContactsBean> mList = new ArrayList<>();

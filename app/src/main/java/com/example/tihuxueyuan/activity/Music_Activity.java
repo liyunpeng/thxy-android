@@ -1,4 +1,4 @@
-package com.example.myapplication33;
+package com.example.tihuxueyuan.activity;
 
 import static java.lang.Integer.parseInt;
 
@@ -20,11 +20,14 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tihuxueyuan.R;
+import com.example.tihuxueyuan.service.MusicService;
+
 public class Music_Activity extends AppCompatActivity implements View.OnClickListener{
     private static SeekBar sb;
     private static TextView tv_progress,tv_total,name_song;
     private ObjectAnimator animator;
-    private com.example.myapplication33.MusicService.MusicControl musicControl;
+    public MusicService.MusicControl musicControl;
     String name;
     Intent intent1,intent2;
     MyServiceConn conn;
@@ -49,7 +52,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 
         name=intent1.getStringExtra("name");
         name_song.setText(name);
-        intent2=new Intent(this, com.example.myapplication33.MusicService.class);//创建意图对象
+        intent2=new Intent(this, MusicService.class);//创建意图对象
         conn=new MyServiceConn();//创建服务连接对象
         bindService(intent2,conn,BIND_AUTO_CREATE);//绑定服务
         //为滑动条添加事件监听
@@ -75,7 +78,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
         ImageView iv_music=(ImageView)findViewById(R.id.iv_music);
         String position= intent1.getStringExtra("position");
         int i=parseInt(position);
-        iv_music.setImageResource(com.example.myapplication33.frag1.icons[i]);
+        iv_music.setImageResource(com.example.tihuxueyuan.frag1.icons[i]);
 
 
         animator=ObjectAnimator.ofFloat(iv_music,"rotation",0f,360.0f);
@@ -129,7 +132,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     class MyServiceConn implements ServiceConnection{//用于实现连接服务
         @Override
         public void onServiceConnected(ComponentName name, IBinder service){
-            musicControl=(com.example.myapplication33.MusicService.MusicControl) service;
+            musicControl=(MusicService.MusicControl) service;
         }
         @Override
         public void onServiceDisconnected(ComponentName name){

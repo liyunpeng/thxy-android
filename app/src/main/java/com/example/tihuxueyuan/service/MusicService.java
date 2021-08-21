@@ -1,13 +1,13 @@
-package com.example.myapplication33;
+package com.example.tihuxueyuan.service;
 
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
+import com.example.tihuxueyuan.activity.Music_Activity;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -50,7 +50,7 @@ public class MusicService extends Service {
             timer.schedule(task,5,500);
         }
     }
-    class MusicControl extends Binder{ //Binder是一种跨进程的通信方式
+    public class MusicControl extends Binder{ //Binder是一种跨进程的通信方式
         public void play(int i){//String path
 //                Uri uri=Uri.parse("android.resource://"+getPackageName()+"/raw/"+"music"+i);
                 try{
