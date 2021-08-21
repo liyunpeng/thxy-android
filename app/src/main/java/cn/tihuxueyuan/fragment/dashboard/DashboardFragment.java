@@ -26,6 +26,7 @@ import java.util.List;
 import  cn.tihuxueyuan.http.HttpClient;
 import  cn.tihuxueyuan.http.HttpCallback;
 import  cn.tihuxueyuan.model.SearchMusic;
+import  cn.tihuxueyuan.model.CourseTypeList;
 
 public class DashboardFragment extends Fragment {
     private List<ContactsBean> mList = new ArrayList<>();
@@ -91,7 +92,8 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        f1();
+//        f1();
+        initCourseType();
     }
 
     @Override
@@ -109,12 +111,31 @@ public class DashboardFragment extends Fragment {
                     return;
                 }
                 List<SearchMusic.Song> s =  response.getSong();
-
-//                Log.d("tag2", "onSuccess: 111111  obj: song:" + s.get(0));
-//                downloadLrc(response.getSong().get(0).getSongid());
-
                 for (int i = 0; i < 1; i++) {
                     Log.d("tag2", "onSuccess:  " +  s.get(i).getSongname());
+                }
+            }
+
+            @Override
+            public void onFail(Exception e) {
+
+//                onExecuteFail(e);
+            }
+        });
+    }
+
+    public void initCourseType() {
+        HttpClient.getCourseTypes("", new HttpCallback<CourseTypeList>() {
+            @Override
+            public void onSuccess(CourseTypeList response) {
+                if (response == null || response.getCourseType() == null || response.getCourseType().isEmpty()) {
+                    onFail(null);
+                    return;
+                }
+                List<CourseTypeList.CourseType> s =  response.getCourseType();
+
+                for (int i = 0; i < 5; i++) {
+                    Log.d("tag2", "onSuccess:  123： " +  s.get(i).getName());
                 }
             }
 

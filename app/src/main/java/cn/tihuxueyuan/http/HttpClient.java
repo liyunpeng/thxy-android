@@ -16,11 +16,13 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 
 import cn.tihuxueyuan.model.SearchMusic;
+import cn.tihuxueyuan.model.CourseTypeList;
 
 public class HttpClient {
     private static final String SPLASH_URL = "http://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1";
     //    http://tingapi.ting.baidu.com/v1/restserver/ting
-    private static final String BASE_URL = "http://tingapi.ting.baidu.com/v1/restserver/ting";
+//    private static final String BASE_URL = "http://tingapi.ting.baidu.com/v1/restserver/ting";
+    private static final String BASE_URL = "http://10.0.2.2:8082/api/";
     //    private static final String BASE_URL = "http://10.0.2.2:8082/api/findCourseFileByCourseIdOk";
     private static final String METHOD_GET_MUSIC_LIST = "baidu.ting.billboard.billList";
     private static final String METHOD_DOWNLOAD_MUSIC = "baidu.ting.song.play";
@@ -54,6 +56,27 @@ public class HttpClient {
                 .execute(new JsonCallback<SearchMusic>(SearchMusic.class) {
                     @Override
                     public void onResponse(SearchMusic response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+    public static void getCourseTypes(String keyword, final HttpCallback<CourseTypeList> callback) {
+        OkHttpUtils.post().url(BASE_URL + "getCourseTypesOk")
+                .build()
+                .execute(new JsonCallback<CourseTypeList>(CourseTypeList.class) {
+                    @Override
+                    public void onResponse(CourseTypeList response, int id) {
                         callback.onSuccess(response);
                     }
 
