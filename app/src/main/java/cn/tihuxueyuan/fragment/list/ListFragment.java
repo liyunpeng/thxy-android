@@ -1,4 +1,4 @@
-package cn.tihuxueyuan;
+package cn.tihuxueyuan.fragment.list;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import cn.tihuxueyuan.R;
 
 import cn.tihuxueyuan.activity.Music_Activity;
 
-public class frag1 extends Fragment {
+public class ListFragment extends Fragment {
     private View view;
     public String[] name={"邓紫棋——光年之外","蔡健雅——红色高跟鞋","Taylor Swift——Love Story"};
     public static int[] icons={R.drawable.music0,R.drawable.music1,R.drawable.music2};
@@ -30,7 +30,7 @@ public class frag1 extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(frag1.this.getContext(),Music_Activity.class);//创建Intent对象，启动check
+                Intent intent=new Intent(ListFragment.this.getContext(),Music_Activity.class);//创建Intent对象，启动check
                 //将数据存入Intent对象
                 intent.putExtra("name",name[position]);
                 intent.putExtra("position",String.valueOf(position));
@@ -56,7 +56,7 @@ public class frag1 extends Fragment {
 
         @Override
         public View getView(int i ,View convertView, ViewGroup parent) {
-            View view=View.inflate(frag1.this.getContext(),R.layout.item_layout,null);
+            View view=View.inflate(ListFragment.this.getContext(),R.layout.item_layout,null);
             TextView tv_name=view.findViewById(R.id.item_name);
             ImageView iv=view.findViewById(R.id.iv);
 

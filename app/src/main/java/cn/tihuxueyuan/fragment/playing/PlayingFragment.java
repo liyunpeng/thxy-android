@@ -1,4 +1,4 @@
-package cn.tihuxueyuan;
+package cn.tihuxueyuan.fragment.playing;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment;
 
 import cn.tihuxueyuan.R;
 
-public class frag2 extends Fragment {
+public class PlayingFragment extends Fragment {
     private View zj;
 
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

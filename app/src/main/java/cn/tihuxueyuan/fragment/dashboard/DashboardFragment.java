@@ -2,6 +2,7 @@ package cn.tihuxueyuan.fragment.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,9 @@ import cn.tihuxueyuan.databinding.FragmentDashboardBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import  cn.tihuxueyuan.http.HttpClient;
+import  cn.tihuxueyuan.http.HttpCallback;
+import  cn.tihuxueyuan.model.SearchMusic;
 
 public class DashboardFragment extends Fragment {
     private List<ContactsBean> mList = new ArrayList<>();
@@ -31,7 +35,6 @@ public class DashboardFragment extends Fragment {
     private CommonAdapter mAdapter;
     private android.widget.ListView lv;
     private android.widget.RelativeLayout activitymain;
-
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -77,17 +80,18 @@ public class DashboardFragment extends Fragment {
                     Intent intent=new Intent(DashboardFragment.this.getContext(), OkActivity.class);//创建Intent对象，启动check
                     startActivity(intent);
                 }
-
-
-
             }
         });
 
 
-
-
         initData();
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        f1();
     }
 
     @Override
@@ -96,6 +100,31 @@ public class DashboardFragment extends Fragment {
         binding = null;
     }
 
+    public void f1() {
+        HttpClient.searchMusic("", new HttpCallback<SearchMusic>() {
+            @Override
+            public void onSuccess(SearchMusic response) {
+                if (response == null || response.getSong() == null || response.getSong().isEmpty()) {
+                    onFail(null);
+                    return;
+                }
+                List<SearchMusic.Song> s =  response.getSong();
+
+//                Log.d("tag2", "onSuccess: 111111  obj: song:" + s.get(0));
+//                downloadLrc(response.getSong().get(0).getSongid());
+
+                for (int i = 0; i < 1; i++) {
+                    Log.d("tag2", "onSuccess:  " +  s.get(i).getSongname());
+                }
+            }
+
+            @Override
+            public void onFail(Exception e) {
+
+//                onExecuteFail(e);
+            }
+        });
+    }
     public void initData() {
         for (int i = 0; i < 20; i++) {
             ContactsBean bean = new ContactsBean();

@@ -10,8 +10,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import cn.tihuxueyuan.R;
-import cn.tihuxueyuan.frag1;
-import cn.tihuxueyuan.frag2;
+import cn.tihuxueyuan.fragment.list.ListFragment;
+import cn.tihuxueyuan.fragment.playing.PlayingFragment;
 //import com
 
 public class MusicMainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -34,7 +34,7 @@ public class MusicMainActivity extends AppCompatActivity implements View.OnClick
 
         fm = getSupportFragmentManager();//若是继承FragmentActivity，fm=getFragmentManger();
         ft = fm.beginTransaction();
-        ft.replace(R.id.content, new frag1());//默认情况下Fragment1
+        ft.replace(R.id.content, new ListFragment());//默认情况下Fragment1
         ft.commit();
     }
 
@@ -43,10 +43,10 @@ public class MusicMainActivity extends AppCompatActivity implements View.OnClick
         ft = fm.beginTransaction();
         switch (v.getId()) {
             case R.id.menu1:
-                ft.replace(R.id.content, new frag1());
+                ft.replace(R.id.content, new ListFragment());
                 break;
             case R.id.menu2:
-                ft.replace(R.id.content, new frag2());
+                ft.replace(R.id.content, new PlayingFragment());
                 break;
             default:
                 break;

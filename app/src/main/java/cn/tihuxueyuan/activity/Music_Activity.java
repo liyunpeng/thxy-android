@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import cn.tihuxueyuan.R;
 
-import cn.tihuxueyuan.frag1;
+import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.service.MusicService;
 
 public class Music_Activity extends AppCompatActivity implements View.OnClickListener{
@@ -80,7 +80,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
         ImageView iv_music=(ImageView)findViewById(R.id.iv_music);
         String position= intent1.getStringExtra("position");
         int i=parseInt(position);
-        iv_music.setImageResource(frag1.icons[i]);
+        iv_music.setImageResource(ListFragment.icons[i]);
 
 
         animator=ObjectAnimator.ofFloat(iv_music,"rotation",0f,360.0f);
