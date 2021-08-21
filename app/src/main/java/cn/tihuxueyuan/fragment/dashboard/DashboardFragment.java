@@ -17,19 +17,21 @@ import cn.tihuxueyuan.activity.MusicMainActivity;
 import cn.tihuxueyuan.activity.OkActivity;
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
-import cn.tihuxueyuan.commonlistview.ContactsBean;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.databinding.FragmentDashboardBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import  cn.tihuxueyuan.http.HttpClient;
-import  cn.tihuxueyuan.http.HttpCallback;
-import  cn.tihuxueyuan.model.SearchMusic;
-import  cn.tihuxueyuan.model.CourseTypeList;
+
+import cn.tihuxueyuan.http.HttpClient;
+import cn.tihuxueyuan.http.HttpCallback;
+import cn.tihuxueyuan.model.SearchMusic;
+import cn.tihuxueyuan.model.CourseTypeList;
+import cn.tihuxueyuan.model.CourseTypeList.CourseType;
 
 public class DashboardFragment extends Fragment {
-    private List<ContactsBean> mList = new ArrayList<>();
+    //    private List<ContactsBean> mList = new ArrayList<>();
+    private List<CourseType> mList = new ArrayList<>();
     private DashboardViewModel dashboardViewModel;
     private FragmentDashboardBinding binding;
 
@@ -46,53 +48,41 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        /*
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-*/
 
         this.lv = (ListView) root.findViewById(R.id.lv);
 //        lv.setAdapter(mAdapter=new ContactsAdapter(this,mList));
-        lv.setAdapter(mAdapter = new CommonAdapter<ContactsBean>(this.getContext(), mList, R.layout.dashboard_item_layout) {
-            @Override
-            public void convertView(ViewHolder holder, ContactsBean contactsBean) {
-                holder.set(R.id.name, contactsBean.getName())
-                        .set(R.id.phone_number, contactsBean.getPhoneNumber())
-                        .set(R.id.head_img, contactsBean.getHead_img());
-            }
-        });
+//        lv.setAdapter(mAdapter = new CommonAdapter<CourseType>(this.getContext(), mList, R.layout.dashboard_item_layout) {
+//            @Override
+//            public void convertView(ViewHolder holder, CourseType contactsBean) {
+////                holder.set(R.id.name, contactsBean.getName())
+////                        .set(R.id.phone_number, contactsBean.getPhoneNumber())
+////                        .set(R.id.head_img, contactsBean.getHead_img());
+//                holder.set(R.id.name, contactsBean.getName());
+//            }
+//        });
 
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if ( id == 1 ) {
-                    Intent intent=new Intent(DashboardFragment.this.getContext(), MusicMainActivity.class);//创建Intent对象，启动check
+                if (id == 1) {
+                    Intent intent = new Intent(DashboardFragment.this.getContext(), MusicMainActivity.class);//创建Intent对象，启动check
 //                intent.putExtra("name",name[position]);
 //                intent.putExtra("position",String.valueOf(position));
-                    // ，
                     startActivity(intent);
-                }else if (id == 2) {
-                    Intent intent=new Intent(DashboardFragment.this.getContext(), OkActivity.class);//创建Intent对象，启动check
+                } else if (id == 2) {
+                    Intent intent = new Intent(DashboardFragment.this.getContext(), OkActivity.class);//创建Intent对象，启动check
                     startActivity(intent);
                 }
             }
         });
 
-
-        initData();
         return root;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        f1();
         initCourseType();
     }
 
@@ -110,18 +100,28 @@ public class DashboardFragment extends Fragment {
                     onFail(null);
                     return;
                 }
-                List<SearchMusic.Song> s =  response.getSong();
+                List<SearchMusic.Song> s = response.getSong();
                 for (int i = 0; i < 1; i++) {
-                    Log.d("tag2", "onSuccess:  " +  s.get(i).getSongname());
+                    Log.d("tag2", "onSuccess:  " + s.get(i).getSongname());
                 }
             }
 
             @Override
             public void onFail(Exception e) {
 
-//                onExecuteFail(e);
             }
         });
+    }
+
+    public void refreshListView() {
+        lv.setAdapter(mAdapter = new CommonAdapter<CourseType>(this.getContext(), mList, R.layout.dashboard_item_layout) {
+            @Override
+            public void convertView(ViewHolder holder, CourseType contactsBean) {
+                holder.set(R.id.name, contactsBean.getName());
+            }
+        });
+
+//        mAdapter.notifyDataSetChanged();
     }
 
     public void initCourseType() {
@@ -132,28 +132,18 @@ public class DashboardFragment extends Fragment {
                     onFail(null);
                     return;
                 }
-                List<CourseTypeList.CourseType> s =  response.getCourseType();
+                mList = response.getCourseType();
+//                for (int i = 0; i < 5; i++) {
+//                    Log.d("tag2", "item： " +  mList.get(i).getName());
+//                }
 
-                for (int i = 0; i < 5; i++) {
-                    Log.d("tag2", "onSuccess:  123： " +  s.get(i).getName());
-                }
+                refreshListView();
             }
 
             @Override
             public void onFail(Exception e) {
 
-//                onExecuteFail(e);
             }
         });
-    }
-    public void initData() {
-        for (int i = 0; i < 20; i++) {
-            ContactsBean bean = new ContactsBean();
-            bean.setName("小明");
-            bean.setPhoneNumber("110");
-            bean.setHead_img("http://img.qqai.net/uploads/i_2_1826721258x2403292640_21.jpg");
-            mList.add(bean);
-        }
-        mAdapter.notifyDataSetChanged();
     }
 }

@@ -46,8 +46,8 @@ public class ContactsAdapter extends BaseAdapter{
             convertView= LayoutInflater.from(mContext).inflate(R.layout.dashboard_item_layout,parent,false);
             holder=new ViewHolder();
             holder.name= (TextView) convertView.findViewById(R.id.name);
-            holder.phoneNumber= (TextView) convertView.findViewById(R.id.phone_number);
-            holder.headImg= (ImageView) convertView.findViewById(R.id.head_img);
+//            holder.phoneNumber= (TextView) convertView.findViewById(R.id.phone_number);
+//            holder.headImg= (ImageView) convertView.findViewById(R.id.head_img);
             convertView.setTag(holder);
         }else {
             holder= (ViewHolder) convertView.getTag();
