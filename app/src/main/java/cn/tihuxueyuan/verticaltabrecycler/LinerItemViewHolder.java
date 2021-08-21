@@ -8,10 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import cn.tihuxueyuan.R;
-/**
- * Create by hsw
- * on 2018/12/3.
- */
+
 public class LinerItemViewHolder extends RecyclerView.ViewHolder {
     public TextView tvName;
     public RecyclerView recyclerView;

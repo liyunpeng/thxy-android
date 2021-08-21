@@ -13,10 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
-/**
- * Create by hsw
- * on 2018/12/3.
- */
+
 public class LinerRecycleAdapter extends RecyclerView.Adapter {
     Context mContext;
     List<TestData> mList;

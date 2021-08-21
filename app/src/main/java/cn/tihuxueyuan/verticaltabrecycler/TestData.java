@@ -3,10 +3,7 @@ package cn.tihuxueyuan.verticaltabrecycler;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Create by hsw
- * on 2018/12/3.
- */
+
 public class TestData implements Serializable {
     String name;
     List<String> itemName;

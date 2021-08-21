@@ -6,10 +6,7 @@
     android:layout_height="match_parent"
     tools:context="cn.tihuxueyuan.fragment.dashboard.DashboardFragment">
 
-    <ListView
-        android:id="@+id/lv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+
 <!--    <TextView-->
 <!--        android:id="@+id/text_dashboard"-->
 <!--        android:layout_width="match_parent"-->

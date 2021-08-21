@@ -1,10 +1,5 @@
 package cn.tihuxueyuan.verticaltabrecycler;
 
-//import android.support.v4.app.Fragment;
-//import android.support.v4.app.FragmentManager;
-//import android.support.v4.app.FragmentPagerAdapter;
-//import android.support.v4.view.ViewPager;
-//import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,7 +47,7 @@ public class ViewPagerActivity extends AppCompatActivity {
 
     private void initView(){
         tabLayout = findViewById(R.id.tab_layout);
-        viewPager = findViewById(R.id.view_pager);
+        viewPager = findViewById(R.id.view_pager_cc);
         ItemFragmentAdapter adapter = new ItemFragmentAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 

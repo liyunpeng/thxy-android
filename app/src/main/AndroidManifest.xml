@@ -11,8 +11,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.MyApplication33">
+        android:theme="@style/Theme.MyApplication33"
+        android:usesCleartextTraffic="true">
         <activity
             android:name="cn.tihuxueyuan.activity.MainActivity"
             android:exported="true"
@@ -25,8 +25,13 @@
         </activity>
 
 
+        <activity android:name="cn.tihuxueyuan.verticaltabrecycler.MainActivity" />
+        <activity android:name="cn.tihuxueyuan.verticaltabrecycler.RecyclerActivity" />
+        <activity android:name="cn.tihuxueyuan.verticaltabrecycler.ViewPagerActivity" />
+        <activity android:name="cn.tihuxueyuan.verticaltabrecycler.SimpleActivity" />
 
         <activity android:name="cn.tihuxueyuan.activity.Music_Activity" />
+
         <activity android:name="cn.tihuxueyuan.activity.MusicMainActivity" />
         <activity android:name="cn.tihuxueyuan.activity.OkActivity" />
 

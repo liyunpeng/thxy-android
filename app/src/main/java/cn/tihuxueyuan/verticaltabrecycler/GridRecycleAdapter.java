@@ -10,10 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-/**
- * Create by hsw
- * on 2018/12/3.
- */
+
 public class GridRecycleAdapter extends RecyclerView.Adapter {
     Context context;
     List<String> list;

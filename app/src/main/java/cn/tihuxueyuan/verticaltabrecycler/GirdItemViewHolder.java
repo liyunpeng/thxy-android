@@ -7,10 +7,7 @@ import android.widget.TextView;
 import cn.tihuxueyuan.R;
 import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * Create by hsw
- * on 2018/12/3.
- */
+
 public class GirdItemViewHolder extends RecyclerView.ViewHolder {
     public TextView tvName;
     public GirdItemViewHolder(Context context, ViewGroup parent) {

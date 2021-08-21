@@ -19,10 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import cn.tihuxueyuan.R;
-/**
- * Create by hsw
- * on 2018/12/6.
- */
+
 public class ItemFragment extends Fragment {
     private View view;
     private List<String> list;
