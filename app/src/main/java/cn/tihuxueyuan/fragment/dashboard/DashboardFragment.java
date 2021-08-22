@@ -30,7 +30,6 @@ import cn.tihuxueyuan.adapter.GridRecycleAdapter;
 import cn.tihuxueyuan.model.CourseTypeList.CourseType;
 import cn.tihuxueyuan.verticaltabrecycler.TestData;
 import q.rorbin.verticaltablayout.VerticalTabLayout;
-import q.rorbin.verticaltablayout.widget.QTabView;
 import q.rorbin.verticaltablayout.widget.TabView;
 
 public class DashboardFragment extends Fragment {
@@ -60,8 +59,10 @@ public class DashboardFragment extends Fragment {
         tvName = root.findViewById(R.id.tv_name);
         tabLayout = root.findViewById(R.id.tab_layout);
         recyclerView = root.findViewById(R.id.recycler_view);
-        initData();
 
+
+        initRecycleView();
+        initCourseType();
         return root;
     }
 
@@ -70,7 +71,7 @@ public class DashboardFragment extends Fragment {
         super.onResume();
 //        initCourseType();
 
-        initCourseType();
+
 //        TabAdapterA ac = new TabAdapterA();
 //        tabLayout.setTabAdapter(ac);
 
@@ -84,25 +85,25 @@ public class DashboardFragment extends Fragment {
     }
 
 
-    private void initData(){
+    private void initRecycleView(){
         recyclelist = new ArrayList<>();
-        for (int i = 0; i < 13; i++) {
-            TestData testData = new TestData();
-            List<String> itecourseTypeList = new ArrayList<>();
-
-            for (int j = 0; j < (i%2 == 0 ? 6 : 10); j++) {
-                itecourseTypeList.add("二级类目" + i + "-" + j);
-            }
-            testData.setItemName(itecourseTypeList);
-            testData.setName("类目12345 : "+ i);
-            recyclelist.add(testData);
-            tabLayout.addTab(new QTabView(this.getActivity().getBaseContext()).setTitle(
-                    new QTabView.TabTitle.Builder().setContent(testData.getName()).build()));
-        }
+//        for (int i = 0; i < 13; i++) {
+//            TestData testData = new TestData();
+//            List<String> itecourseTypeList = new ArrayList<>();
+//
+//            for (int j = 0; j < (i%2 == 0 ? 6 : 10); j++) {
+//                itecourseTypeList.add("二级类目" + i + "-" + j);
+//            }
+//            testData.setItemName(itecourseTypeList);
+//            testData.setName("类目12345 : "+ i);
+//            recyclelist.add(testData);
+//            tabLayout.addTab(new QTabView(this.getActivity().getBaseContext()).setTitle(
+//                    new QTabView.TabTitle.Builder().setContent(testData.getName()).build()));
+//        }
 
         GridLayoutManager glm = new GridLayoutManager(this.getActivity().getBaseContext(),2);
         recyclerView.setLayoutManager(glm);
-        tvName.setText(recyclelist.get(0).getName());
+//        tvName.setText(recyclelist.get(0).getName());
         recycleAdapter = new GridRecycleAdapter(this.getActivity().getBaseContext(), courseList);
         recyclerView.setAdapter(recycleAdapter);
 
@@ -125,13 +126,11 @@ public class DashboardFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabView tab, int position) {
+                Log.d("tag1", "onTabSelected:  id :" +courseTypeList.get(position).getId());
 //                getCourseByType(courseTypeList.get(position).getId());
-                getCourseByType("1");
-
+                getCourseByType(courseTypeList.get(position).getId());
 //                recycleAdapter.setList(recyclelist.get(position).getItemName());
-                tvName.setText(recyclelist.get(position).getName());
-                recycleAdapter.setList(courseList);
-                recycleAdapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -150,7 +149,9 @@ public class DashboardFragment extends Fragment {
                     return;
                 }
                 courseList = response.getCourseList();
-                refreshView();
+//                tvName.setText(recyclelist.get(typeId).getName());
+                recycleAdapter.setList(courseList);
+                recycleAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -170,6 +171,7 @@ public class DashboardFragment extends Fragment {
                 }
                 courseTypeList = response.getCourseType();
                 refreshView();
+                getCourseByType(courseTypeList.get(0).getId());
             }
 
             @Override
