@@ -3,9 +3,11 @@ package cn.tihuxueyuan.fragment.dashboard;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -22,6 +24,7 @@ import java.util.List;
 
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.http.HttpCallback;
+import cn.tihuxueyuan.listenner.RecyclerViewClickListener2;
 import cn.tihuxueyuan.model.CourseList;
 import cn.tihuxueyuan.model.CourseList.Course;
 import cn.tihuxueyuan.model.SearchMusic;
@@ -39,7 +42,7 @@ public class DashboardFragment extends Fragment {
 
     private List<CourseType> courseTypeList = new ArrayList<>();
     private List<Course> courseList = new ArrayList<>();
-//    private List<CourseType> courseTypeList = new ArrayList<>();
+    //    private List<CourseType> courseTypeList = new ArrayList<>();
     private TextView tvName;
     private VerticalTabLayout tabLayout;
     private RecyclerView recyclerView;
@@ -84,29 +87,84 @@ public class DashboardFragment extends Fragment {
         binding = null;
     }
 
+    public interface OnListItemClick {
+        void onClick(View view, int position);
+    }
 
-    private void initRecycleView(){
-        recyclelist = new ArrayList<>();
-//        for (int i = 0; i < 13; i++) {
-//            TestData testData = new TestData();
-//            List<String> itecourseTypeList = new ArrayList<>();
-//
-//            for (int j = 0; j < (i%2 == 0 ? 6 : 10); j++) {
-//                itecourseTypeList.add("二级类目" + i + "-" + j);
-//            }
-//            testData.setItemName(itecourseTypeList);
-//            testData.setName("类目12345 : "+ i);
-//            recyclelist.add(testData);
-//            tabLayout.addTab(new QTabView(this.getActivity().getBaseContext()).setTitle(
-//                    new QTabView.TabTitle.Builder().setContent(testData.getName()).build()));
+    public void setClickListener(OnListItemClick context) {
+//        this.onListItemClick = context;
+    }
+
+//    itemView.setOnClickListener(new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            onListItemClick.onClick(view, getAdapterPosition()); // passing click to interface
 //        }
+//    });
 
-        GridLayoutManager glm = new GridLayoutManager(this.getActivity().getBaseContext(),2);
+
+    private void initRecycleView() {
+        recyclelist = new ArrayList<>();
+
+        GridLayoutManager glm = new GridLayoutManager(this.getActivity().getBaseContext(), 2);
         recyclerView.setLayoutManager(glm);
 //        tvName.setText(recyclelist.get(0).getName());
         recycleAdapter = new GridRecycleAdapter(this.getActivity().getBaseContext(), courseList);
         recyclerView.setAdapter(recycleAdapter);
 
+        recyclerView.addOnItemTouchListener(new RecyclerViewClickListener2(DashboardFragment.this.getActivity().getBaseContext(), recyclerView,
+                new RecyclerViewClickListener2.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Toast.makeText(DashboardFragment.this.getActivity().getBaseContext(), "Click " + courseList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onItemLongClick(View view, int position) {
+                        Toast.makeText(DashboardFragment.this.getActivity().getBaseContext(), "Long Click " + courseList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                    }
+                }));
+
+//        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+//            private RecyclerView.OnItemTouchListener itemTouchListener;
+//
+//            @Override
+//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+//
+//            }
+//
+//            @Override
+//            public void onRequestDisallowInterceptTouchEvent(boolean b) {
+//
+//            }
+//        });
+////        recyclerView.addOnItemTouchListener(
+//                new RecyclerItemClickListener(getApplicationContext(), new RecyclerItemClickListener.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(View view, int position) {
+//                        if (view.getId()==R.id.attachmnet_remove) {
+//                            attachmentsList.remove(position);
+//                            mAttachmentAdapter.notifyDataSetChanged();
+//                            attachmentCount--;
+//                        }
+//                    }
+//                }
+//        );
+
+
+//        OnListItemClick onListItemClick = new OnListItemClick() {
+//            @Override
+//            public void onClick(View view, int position) {
+//                // you will get click here
+//                // do your code here
+//            }
+//        };
+//        recycleAdapter.(onListItemClick);
 
 //        LinearLayoutManager glm = new LinearLayoutManager(this.getActivity().getBaseContext());
 //        recyclerView.setLayoutManager(glm);
@@ -126,7 +184,7 @@ public class DashboardFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabView tab, int position) {
-                Log.d("tag1", "onTabSelected:  id :" +courseTypeList.get(position).getId());
+                Log.d("tag1", "onTabSelected:  id :" + courseTypeList.get(position).getId());
 //                getCourseByType(courseTypeList.get(position).getId());
                 getCourseByType(courseTypeList.get(position).getId());
 //                recycleAdapter.setList(recyclelist.get(position).getItemName());
@@ -140,7 +198,7 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-    public void getCourseByType( String typeId ) {
+    public void getCourseByType(String typeId) {
         HttpClient.getCourseByTypeId(typeId, new HttpCallback<CourseList>() {
             @Override
             public void onSuccess(CourseList response) {
