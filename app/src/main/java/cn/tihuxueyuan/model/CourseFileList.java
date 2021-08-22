@@ -44,13 +44,17 @@ public class CourseFileList {
             this.title = title;
         }
 
-//        public String getArtistname() {
-//            return artistname;
-//        }
+        public String getMp3url() {
+            return mp3_url;
+        }
 //
 //        public void setArtistname(String artistname) {
 //            this.artistname = artistname;
 //        }
+
+        public String getMp3FileName() {
+            return mp3_file_name;
+        }
 
         public String getId() {
             return id;

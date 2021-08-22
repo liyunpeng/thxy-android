@@ -33,6 +33,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     String name;
     Intent intent1,intent2;
     MyServiceConn conn;
+    String musicUrl;
     private boolean isUnbind =false;//记录服务是否被解绑
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,10 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
             }
         });
         ImageView iv_music=(ImageView)findViewById(R.id.iv_music);
-        String position= intent1.getStringExtra("position");
+
+
+//        String position= intent1.getStringExtra("position");
+        String position= "1";
         int i=parseInt(position);
         iv_music.setImageResource(ListFragment.icons[i]);
 
@@ -87,6 +91,8 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
         animator.setDuration(10000);//动画旋转一周的时间为10秒
         animator.setInterpolator(new LinearInterpolator());//匀速
         animator.setRepeatCount(-1);//-1表示设置动画无限循环
+
+        musicUrl = getIntent().getStringExtra("music_url");
     }
 
 
@@ -152,9 +158,10 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_play://播放按钮点击事件
-                String position=intent1.getStringExtra("position");
-                int i=parseInt(position);
-                musicControl.play(i);
+//                String position=intent1.getStringExtra("position");
+//                int i=parseInt(position);
+//                musicControl.play(i);
+                musicControl.play(musicUrl);
                 animator.start();
                 break;
             case R.id.btn_pause://暂停按钮点击事件

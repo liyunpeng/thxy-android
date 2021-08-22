@@ -51,7 +51,7 @@ public class MusicService extends Service {
         }
     }
     public class MusicControl extends Binder{ //Binder是一种跨进程的通信方式
-        public void play(int i){//String path
+        public void play(String url){//String path
 //                Uri uri=Uri.parse("android.resource://"+getPackageName()+"/raw/"+"music"+i);
                 try{
 /*
@@ -63,7 +63,8 @@ public class MusicService extends Service {
 
                     player.reset();
                     try {
-                        player.setDataSource("http://47.102.146.8:8082/api/fileDownload?fileName=%E4%B8%80%E5%A3%B0%E4%BD%9B%E5%8F%B7%E4%B8%80%E5%A3%B0%E5%BF%83.mp3");
+//                        player.setDataSource("http://47.102.146.8:8082/api/fileDownload?fileName=一声佛号一声心.mp3");
+                        player.setDataSource(url);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

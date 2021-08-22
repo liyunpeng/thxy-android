@@ -17,6 +17,7 @@ import android.widget.ListView;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.fragment.home.HomeFragment;
+import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.model.CourseFileList;
@@ -55,7 +56,14 @@ public class CourseListActivity extends AppCompatActivity{
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                Intent intent=new Intent(getApplicationContext(),Music_Activity.class);//创建Intent对象，启动check
+                //将数据存入Intent对象
+//                player.setDataSource("http://47.102.146.8:8082/api/fileDownload?fileName=一声佛号一声心.mp3");
+                String musicUrl =  mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
+                intent.putExtra("music_url", musicUrl);
+//                intent.putExtra("position",String.valueOf(position));
+                // ，
+                startActivity(intent);
             }
         });
 
