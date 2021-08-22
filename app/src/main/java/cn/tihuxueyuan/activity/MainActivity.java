@@ -1,6 +1,7 @@
 package cn.tihuxueyuan.activity;
 
 import android.os.Bundle;
+import android.view.Window;
 
 import cn.tihuxueyuan.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -20,8 +21,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+//        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        getSupportActionBar().hide();
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
