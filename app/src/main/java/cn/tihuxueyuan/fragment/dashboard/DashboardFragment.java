@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.fragment.dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.activity.CourseActivity;
+import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.adapter.TabAdapterA;
 import cn.tihuxueyuan.databinding.FragmentDashboardBinding;
 
@@ -31,6 +34,7 @@ import cn.tihuxueyuan.model.SearchMusic;
 import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.adapter.GridRecycleAdapter;
 import cn.tihuxueyuan.model.CourseTypeList.CourseType;
+import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.verticaltabrecycler.TestData;
 import q.rorbin.verticaltablayout.VerticalTabLayout;
 import q.rorbin.verticaltablayout.widget.TabView;
@@ -73,12 +77,6 @@ public class DashboardFragment extends Fragment {
     public void onResume() {
         super.onResume();
 //        initCourseType();
-
-
-//        TabAdapterA ac = new TabAdapterA();
-//        tabLayout.setTabAdapter(ac);
-
-
     }
 
     @Override
@@ -86,22 +84,6 @@ public class DashboardFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
-    public interface OnListItemClick {
-        void onClick(View view, int position);
-    }
-
-    public void setClickListener(OnListItemClick context) {
-//        this.onListItemClick = context;
-    }
-
-//    itemView.setOnClickListener(new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-//            onListItemClick.onClick(view, getAdapterPosition()); // passing click to interface
-//        }
-//    });
-
 
     private void initRecycleView() {
         recyclelist = new ArrayList<>();
@@ -117,6 +99,10 @@ public class DashboardFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         Toast.makeText(DashboardFragment.this.getActivity().getBaseContext(), "Click " + courseList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+
+                        Intent intent =new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseActivity.class);//创建意图对象
+
+                        startActivity(intent);
                     }
 
                     @Override
@@ -124,47 +110,6 @@ public class DashboardFragment extends Fragment {
                         Toast.makeText(DashboardFragment.this.getActivity().getBaseContext(), "Long Click " + courseList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
                     }
                 }));
-
-//        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-//            private RecyclerView.OnItemTouchListener itemTouchListener;
-//
-//            @Override
-//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-//
-//            }
-//
-//            @Override
-//            public void onRequestDisallowInterceptTouchEvent(boolean b) {
-//
-//            }
-//        });
-////        recyclerView.addOnItemTouchListener(
-//                new RecyclerItemClickListener(getApplicationContext(), new RecyclerItemClickListener.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(View view, int position) {
-//                        if (view.getId()==R.id.attachmnet_remove) {
-//                            attachmentsList.remove(position);
-//                            mAttachmentAdapter.notifyDataSetChanged();
-//                            attachmentCount--;
-//                        }
-//                    }
-//                }
-//        );
-
-
-//        OnListItemClick onListItemClick = new OnListItemClick() {
-//            @Override
-//            public void onClick(View view, int position) {
-//                // you will get click here
-//                // do your code here
-//            }
-//        };
-//        recycleAdapter.(onListItemClick);
 
 //        LinearLayoutManager glm = new LinearLayoutManager(this.getActivity().getBaseContext());
 //        recyclerView.setLayoutManager(glm);
@@ -185,10 +130,8 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onTabSelected(TabView tab, int position) {
                 Log.d("tag1", "onTabSelected:  id :" + courseTypeList.get(position).getId());
-//                getCourseByType(courseTypeList.get(position).getId());
                 getCourseByType(courseTypeList.get(position).getId());
 //                recycleAdapter.setList(recyclelist.get(position).getItemName());
-
             }
 
             @Override

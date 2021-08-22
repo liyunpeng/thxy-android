@@ -23,7 +23,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class OkActivity extends AppCompatActivity implements View.OnClickListener {
+public class CourseActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button bt_get;
     private Button bt_post;

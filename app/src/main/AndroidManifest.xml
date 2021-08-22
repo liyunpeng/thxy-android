@@ -33,7 +33,7 @@
         <activity android:name="cn.tihuxueyuan.activity.Music_Activity" />
 
         <activity android:name="cn.tihuxueyuan.activity.MusicMainActivity" />
-        <activity android:name="cn.tihuxueyuan.activity.OkActivity" />
+        <activity android:name="cn.tihuxueyuan.activity.CourseActivity" />
 
         <service
             android:name="cn.tihuxueyuan.service.MusicService"

@@ -7,12 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
@@ -20,11 +17,10 @@ import java.util.List;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.activity.MusicMainActivity;
-import cn.tihuxueyuan.activity.OkActivity;
+import cn.tihuxueyuan.activity.CourseActivity;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.databinding.FragmentHomeBinding;
-import cn.tihuxueyuan.fragment.dashboard.DashboardFragment;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.model.CourseTypeList;
@@ -67,7 +63,7 @@ public class HomeFragment extends Fragment {
 //                intent.putExtra("position",String.valueOf(position));
                     startActivity(intent);
                 } else if (id == 2) {
-                    Intent intent = new Intent(HomeFragment.this.getContext(), OkActivity.class);//创建Intent对象，启动check
+                    Intent intent = new Intent(HomeFragment.this.getContext(), CourseActivity.class);//创建Intent对象，启动check
                     startActivity(intent);
                 } else if ( id == 3){
                     Intent intent = new Intent(HomeFragment.this.getContext(), MainActivity.class);//创建Intent对象，启动check
