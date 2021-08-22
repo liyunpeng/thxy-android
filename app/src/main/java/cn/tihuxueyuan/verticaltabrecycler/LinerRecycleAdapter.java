@@ -64,8 +64,8 @@ public class LinerRecycleAdapter extends RecyclerView.Adapter {
         vh.tvName.setText(mList.get(i).getName());
         GridLayoutManager glm = new GridLayoutManager(mContext,3);
         vh.recyclerView.setLayoutManager(glm);
-        GridRecycleAdapter adapter = new GridRecycleAdapter(mContext,mList.get(i).getItemName());
-        vh.recyclerView.setAdapter(adapter);
+//        GridRecycleAdapter adapter = new GridRecycleAdapter(mContext,mList.get(i).getItemName());
+//        vh.recyclerView.setAdapter(adapter);
 
 
     }

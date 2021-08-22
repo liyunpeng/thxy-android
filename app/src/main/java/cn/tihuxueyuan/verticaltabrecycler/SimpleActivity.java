@@ -56,16 +56,18 @@ public class SimpleActivity extends AppCompatActivity {
 
         GridLayoutManager glm = new GridLayoutManager(getBaseContext(),3);
         recyclerView.setLayoutManager(glm);
-        adapter = new GridRecycleAdapter(getBaseContext(),list.get(0).getItemName());
+
         tvName.setText(list.get(0).getName());
-        recyclerView.setAdapter(adapter);
+//        adapter = new GridRecycleAdapter(getBaseContext(),list.get(0).getItemName());
+//        recyclerView.setAdapter(adapter);
 
         tabLayout.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabView tab, int position) {
-                adapter.setList(list.get(position).getItemName());
+
                 tvName.setText(list.get(position).getName());
-                adapter.notifyDataSetChanged();
+//                adapter.setList(list.get(position).getItemName());
+//                adapter.notifyDataSetChanged();
             }
 
             @Override

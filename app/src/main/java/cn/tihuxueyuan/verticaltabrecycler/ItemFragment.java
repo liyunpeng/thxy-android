@@ -56,7 +56,7 @@ public class ItemFragment extends Fragment {
         GridLayoutManager glm = new GridLayoutManager(getContext(),3);
         tvName.setText(title);
         recyclerView.setLayoutManager(glm);
-        adapter = new GridRecycleAdapter(getContext(),list);
-        recyclerView.setAdapter(adapter);
+//        adapter = new GridRecycleAdapter(getContext(),list);
+//        recyclerView.setAdapter(adapter);
     }
 }

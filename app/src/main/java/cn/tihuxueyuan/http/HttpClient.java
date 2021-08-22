@@ -10,13 +10,18 @@ import com.zhy.http.okhttp.callback.BitmapCallback;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 
 import cn.tihuxueyuan.model.SearchMusic;
 import cn.tihuxueyuan.model.CourseTypeList;
+import cn.tihuxueyuan.model.CourseList;
+import okhttp3.RequestBody;
 
 public class HttpClient {
     private static final String SPLASH_URL = "http://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1";
@@ -53,6 +58,7 @@ public class HttpClient {
                 .addParams("id", "1")
 //                .addParams(PARAM_QUERY, keyword)
                 .build()
+
                 .execute(new JsonCallback<SearchMusic>(SearchMusic.class) {
                     @Override
                     public void onResponse(SearchMusic response, int id) {
@@ -72,11 +78,40 @@ public class HttpClient {
     }
 
     public static void getCourseTypes(String keyword, final HttpCallback<CourseTypeList> callback) {
+
+
+
         OkHttpUtils.post().url(BASE_URL + "getCourseTypesOk")
                 .build()
                 .execute(new JsonCallback<CourseTypeList>(CourseTypeList.class) {
                     @Override
                     public void onResponse(CourseTypeList response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+    public static void getCourseByTypeId(String typeId, final HttpCallback<CourseList> callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", "1");
+
+        //  RequestBody r = RequestBody.create(MediaType.parse("application/json"), "aa");
+        OkHttpUtils.post().url(BASE_URL + "findCourseByTypeIdOk")
+                .params(params)
+                .build()
+                .execute(new JsonCallback<CourseList>(CourseList.class) {
+                    @Override
+                    public void onResponse(CourseList response, int id) {
                         callback.onSuccess(response);
                     }
 

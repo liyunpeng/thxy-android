@@ -10,16 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import cn.tihuxueyuan.model.CourseList.Course;
+
 
 public class GridRecycleAdapter extends RecyclerView.Adapter {
     Context context;
-    List<String> list;
-    public GridRecycleAdapter(Context context,List<String> list) {
+    List<Course> list;
+    public GridRecycleAdapter(Context context,List<Course> list) {
         this.context = context;
         this.list = list;
     }
 
-    public void setList(List<String> list){
+    public void setList(List<Course> list){
         this.list = list;
     }
 
@@ -32,7 +34,7 @@ public class GridRecycleAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         GirdItemViewHolder vh = (GirdItemViewHolder) viewHolder;
-        vh.tvName.setText(list.get(i));
+        vh.tvName.setText(list.get(i).getTitle());
 
 //        GirdItemViewHolderA vh = (GirdItemViewHolderA) viewHolder;
 //        vh.tvName.setText(list.get(i));

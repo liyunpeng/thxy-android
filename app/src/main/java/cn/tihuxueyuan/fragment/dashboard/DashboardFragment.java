@@ -22,6 +22,8 @@ import java.util.List;
 
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.http.HttpCallback;
+import cn.tihuxueyuan.model.CourseList;
+import cn.tihuxueyuan.model.CourseList.Course;
 import cn.tihuxueyuan.model.SearchMusic;
 import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.adapter.GridRecycleAdapter;
@@ -36,7 +38,9 @@ public class DashboardFragment extends Fragment {
     private DashboardViewModel dashboardViewModel;
     private FragmentDashboardBinding binding;
 
-    private List<CourseType> mList = new ArrayList<>();
+    private List<CourseType> courseTypeList = new ArrayList<>();
+    private List<Course> courseList = new ArrayList<>();
+//    private List<CourseType> courseTypeList = new ArrayList<>();
     private TextView tvName;
     private VerticalTabLayout tabLayout;
     private RecyclerView recyclerView;
@@ -84,12 +88,12 @@ public class DashboardFragment extends Fragment {
         recyclelist = new ArrayList<>();
         for (int i = 0; i < 13; i++) {
             TestData testData = new TestData();
-            List<String> itemList = new ArrayList<>();
+            List<String> itecourseTypeList = new ArrayList<>();
 
             for (int j = 0; j < (i%2 == 0 ? 6 : 10); j++) {
-                itemList.add("二级类目" + i + "-" + j);
+                itecourseTypeList.add("二级类目" + i + "-" + j);
             }
-            testData.setItemName(itemList);
+            testData.setItemName(itecourseTypeList);
             testData.setName("类目12345 : "+ i);
             recyclelist.add(testData);
             tabLayout.addTab(new QTabView(this.getActivity().getBaseContext()).setTitle(
@@ -98,8 +102,8 @@ public class DashboardFragment extends Fragment {
 
         GridLayoutManager glm = new GridLayoutManager(this.getActivity().getBaseContext(),2);
         recyclerView.setLayoutManager(glm);
-        recycleAdapter = new GridRecycleAdapter(this.getActivity().getBaseContext(), recyclelist.get(0).getItemName());
         tvName.setText(recyclelist.get(0).getName());
+        recycleAdapter = new GridRecycleAdapter(this.getActivity().getBaseContext(), courseList);
         recyclerView.setAdapter(recycleAdapter);
 
 
@@ -115,14 +119,18 @@ public class DashboardFragment extends Fragment {
     public void refreshView() {
 
         TabAdapterA ta = new TabAdapterA();
-        ta.titles = mList;
+        ta.titles = courseTypeList;
         tabLayout.setTabAdapter(ta);
 
         tabLayout.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabView tab, int position) {
-                recycleAdapter.setList(recyclelist.get(position).getItemName());
+//                getCourseByType(courseTypeList.get(position).getId());
+                getCourseByType("1");
+
+//                recycleAdapter.setList(recyclelist.get(position).getItemName());
                 tvName.setText(recyclelist.get(position).getName());
+                recycleAdapter.setList(courseList);
                 recycleAdapter.notifyDataSetChanged();
             }
 
@@ -133,6 +141,24 @@ public class DashboardFragment extends Fragment {
         });
     }
 
+    public void getCourseByType( String typeId ) {
+        HttpClient.getCourseByTypeId(typeId, new HttpCallback<CourseList>() {
+            @Override
+            public void onSuccess(CourseList response) {
+                if (response == null || response.getCourseList() == null || response.getCourseList().isEmpty()) {
+                    onFail(null);
+                    return;
+                }
+                courseList = response.getCourseList();
+                refreshView();
+            }
+
+            @Override
+            public void onFail(Exception e) {
+
+            }
+        });
+    }
 
     public void initCourseType() {
         HttpClient.getCourseTypes("", new HttpCallback<CourseTypeList>() {
@@ -142,7 +168,7 @@ public class DashboardFragment extends Fragment {
                     onFail(null);
                     return;
                 }
-                mList = response.getCourseType();
+                courseTypeList = response.getCourseType();
                 refreshView();
             }
 
