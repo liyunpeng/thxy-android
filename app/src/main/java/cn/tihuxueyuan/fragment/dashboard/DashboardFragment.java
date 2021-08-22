@@ -1,13 +1,10 @@
 package cn.tihuxueyuan.fragment.dashboard;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,11 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import cn.tihuxueyuan.activity.MusicMainActivity;
-import cn.tihuxueyuan.activity.OkActivity;
 import cn.tihuxueyuan.R;
-import cn.tihuxueyuan.commonlistview.CommonAdapter;
-import cn.tihuxueyuan.commonlistview.ViewHolder;
+import cn.tihuxueyuan.adapter.TabAdapterA;
 import cn.tihuxueyuan.databinding.FragmentDashboardBinding;
 
 import java.util.ArrayList;
@@ -30,8 +24,7 @@ import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.model.SearchMusic;
 import cn.tihuxueyuan.model.CourseTypeList;
-import cn.tihuxueyuan.verticaltabrecycler.GridRecycleAdapter;
-import cn.tihuxueyuan.verticaltabrecycler.MainActivity;
+import cn.tihuxueyuan.adapter.GridRecycleAdapter;
 import cn.tihuxueyuan.model.CourseTypeList.CourseType;
 import cn.tihuxueyuan.verticaltabrecycler.TestData;
 import q.rorbin.verticaltablayout.VerticalTabLayout;
@@ -43,13 +36,13 @@ public class DashboardFragment extends Fragment {
     private DashboardViewModel dashboardViewModel;
     private FragmentDashboardBinding binding;
 
-
+    private List<CourseType> mList = new ArrayList<>();
     private TextView tvName;
     private VerticalTabLayout tabLayout;
     private RecyclerView recyclerView;
-    List<TestData> list;
+    List<TestData> recyclelist;
 
-    private GridRecycleAdapter adapter;
+    private GridRecycleAdapter recycleAdapter;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -60,7 +53,6 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-//        this.getActivity().setContentView(R.layout.activity_simple);
         tvName = root.findViewById(R.id.tv_name);
         tabLayout = root.findViewById(R.id.tab_layout);
         recyclerView = root.findViewById(R.id.recycler_view);
@@ -73,6 +65,12 @@ public class DashboardFragment extends Fragment {
     public void onResume() {
         super.onResume();
 //        initCourseType();
+
+        initCourseType();
+//        TabAdapterA ac = new TabAdapterA();
+//        tabLayout.setTabAdapter(ac);
+
+
     }
 
     @Override
@@ -81,18 +79,9 @@ public class DashboardFragment extends Fragment {
         binding = null;
     }
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_simple);
-//        tvName = findViewById(R.id.tv_name);
-//        tabLayout = findViewById(R.id.tab_layout);
-//        recyclerView = findViewById(R.id.recycler_view);
-//        initData();
-//    }
 
     private void initData(){
-        list = new ArrayList<>();
+        recyclelist = new ArrayList<>();
         for (int i = 0; i < 13; i++) {
             TestData testData = new TestData();
             List<String> itemList = new ArrayList<>();
@@ -101,28 +90,64 @@ public class DashboardFragment extends Fragment {
                 itemList.add("二级类目" + i + "-" + j);
             }
             testData.setItemName(itemList);
-            testData.setName("类目"+ i);
-            list.add(testData);
+            testData.setName("类目12345 : "+ i);
+            recyclelist.add(testData);
             tabLayout.addTab(new QTabView(this.getActivity().getBaseContext()).setTitle(
                     new QTabView.TabTitle.Builder().setContent(testData.getName()).build()));
         }
 
-        GridLayoutManager glm = new GridLayoutManager(this.getActivity().getBaseContext(),3);
+        GridLayoutManager glm = new GridLayoutManager(this.getActivity().getBaseContext(),2);
         recyclerView.setLayoutManager(glm);
-        adapter = new GridRecycleAdapter(this.getActivity().getBaseContext(),list.get(0).getItemName());
-        tvName.setText(list.get(0).getName());
-        recyclerView.setAdapter(adapter);
+        recycleAdapter = new GridRecycleAdapter(this.getActivity().getBaseContext(), recyclelist.get(0).getItemName());
+        tvName.setText(recyclelist.get(0).getName());
+        recyclerView.setAdapter(recycleAdapter);
+
+
+//        LinearLayoutManager glm = new LinearLayoutManager(this.getActivity().getBaseContext());
+//        recyclerView.setLayoutManager(glm);
+//        adapter = new GridRecycleAdapter(this.getActivity().getBaseContext(),list.get(0).getItemName());
+//        tvName.setText(list.get(0).getName());
+//        recyclerView.setAdapter(adapter);
+
+
+    }
+
+    public void refreshView() {
+
+        TabAdapterA ta = new TabAdapterA();
+        ta.titles = mList;
+        tabLayout.setTabAdapter(ta);
 
         tabLayout.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabView tab, int position) {
-                adapter.setList(list.get(position).getItemName());
-                tvName.setText(list.get(position).getName());
-                adapter.notifyDataSetChanged();
+                recycleAdapter.setList(recyclelist.get(position).getItemName());
+                tvName.setText(recyclelist.get(position).getName());
+                recycleAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onTabReselected(TabView tab, int position) {
+
+            }
+        });
+    }
+
+
+    public void initCourseType() {
+        HttpClient.getCourseTypes("", new HttpCallback<CourseTypeList>() {
+            @Override
+            public void onSuccess(CourseTypeList response) {
+                if (response == null || response.getCourseType() == null || response.getCourseType().isEmpty()) {
+                    onFail(null);
+                    return;
+                }
+                mList = response.getCourseType();
+                refreshView();
+            }
+
+            @Override
+            public void onFail(Exception e) {
 
             }
         });

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.adapter.GridRecycleAdapter;
 
 public class ItemFragment extends Fragment {
     private View view;

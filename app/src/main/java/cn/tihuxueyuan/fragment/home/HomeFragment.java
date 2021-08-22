@@ -111,10 +111,6 @@ public class HomeFragment extends Fragment {
                     return;
                 }
                 mList = response.getCourseType();
-//                for (int i = 0; i < 5; i++) {
-//                    Log.d("tag2", "item： " +  mList.get(i).getName());
-//                }
-
                 refreshListView();
             }
 

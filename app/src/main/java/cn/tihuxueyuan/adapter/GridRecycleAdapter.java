@@ -1,4 +1,4 @@
-package cn.tihuxueyuan.verticaltabrecycler;
+package cn.tihuxueyuan.adapter;
 
 import android.content.Context;
 //import android.support.annotation.NonNull;
@@ -33,6 +33,9 @@ public class GridRecycleAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         GirdItemViewHolder vh = (GirdItemViewHolder) viewHolder;
         vh.tvName.setText(list.get(i));
+
+//        GirdItemViewHolderA vh = (GirdItemViewHolderA) viewHolder;
+//        vh.tvName.setText(list.get(i));
     }
 
     @Override

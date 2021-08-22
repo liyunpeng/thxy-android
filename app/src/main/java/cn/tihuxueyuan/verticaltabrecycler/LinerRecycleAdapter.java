@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
+import cn.tihuxueyuan.adapter.GridRecycleAdapter;
+
 
 public class LinerRecycleAdapter extends RecyclerView.Adapter {
     Context mContext;
