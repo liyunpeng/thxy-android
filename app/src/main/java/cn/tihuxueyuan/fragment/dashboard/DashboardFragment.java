@@ -100,6 +100,7 @@ public class DashboardFragment extends Fragment {
 
                         Intent intent =new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseListActivity.class);//创建意图对象
                         intent.putExtra("course_id", courseList.get(position).getId());
+                        intent.putExtra("title", courseList.get(position).getTitle());
 
                         startActivity(intent);
                     }

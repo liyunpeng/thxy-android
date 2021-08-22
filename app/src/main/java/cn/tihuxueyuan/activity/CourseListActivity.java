@@ -45,13 +45,16 @@ public class CourseListActivity extends AppCompatActivity{
     private android.widget.ListView lv;
     private CommonAdapter mAdapter;
     private  String couseId;
+    private  String title;
     private List<CourseFileList.CourseFile> mList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.course_list_activity);
-        couseId = (String) getIntent().getStringExtra("course_id");
 
+        couseId = (String) getIntent().getStringExtra("course_id");
+        title = (String) getIntent().getStringExtra("title");
+        setTitle(title);
         this.lv = (ListView) findViewById(R.id.courseList);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,6 +64,7 @@ public class CourseListActivity extends AppCompatActivity{
 //                player.setDataSource("http://47.102.146.8:8082/api/fileDownload?fileName=一声佛号一声心.mp3");
                 String musicUrl =  mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
                 intent.putExtra("music_url", musicUrl);
+                intent.putExtra("title", mList.get(position).getTitle());
 //                intent.putExtra("position",String.valueOf(position));
                 // ，
                 startActivity(intent);

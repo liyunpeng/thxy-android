@@ -32,6 +32,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     private static SeekBar sb;
     private static TextView tv_progress, tv_total, name_song;
     private ObjectAnimator animator;
+    private String title;
     public MusicService.MusicControl musicControl;
     String name;
     Intent intent1, intent2;
@@ -43,6 +44,9 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
+        title = (String) getIntent().getStringExtra("title");
+        setTitle(title);
+
         intent1 = getIntent();
         init();
     }
