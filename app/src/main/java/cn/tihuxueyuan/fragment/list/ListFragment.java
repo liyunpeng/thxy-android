@@ -20,7 +20,8 @@ import cn.tihuxueyuan.activity.Music_Activity;
 public class ListFragment extends Fragment {
     private View view;
     public String[] name={"邓紫棋——光年之外","蔡健雅——红色高跟鞋","Taylor Swift——Love Story"};
-    public static int[] icons={R.drawable.music0,R.drawable.music1,R.drawable.music2};
+//    public static int[] icons={R.drawable.music0,R.drawable.music1,R.drawable.music2};
+    public static int[] icons={R.drawable.tihuxueyuan,R.drawable.tihuxueyuan,R.drawable.tihuxueyuan};
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view=inflater.inflate(R.layout.music_list,null);
