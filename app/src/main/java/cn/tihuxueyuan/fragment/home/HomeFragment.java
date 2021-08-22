@@ -17,7 +17,7 @@ import java.util.List;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.activity.MusicMainActivity;
-import cn.tihuxueyuan.activity.CourseActivity;
+import cn.tihuxueyuan.activity.OkhttpClientActivity;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.databinding.FragmentHomeBinding;
@@ -63,7 +63,7 @@ public class HomeFragment extends Fragment {
 //                intent.putExtra("position",String.valueOf(position));
                     startActivity(intent);
                 } else if (id == 2) {
-                    Intent intent = new Intent(HomeFragment.this.getContext(), CourseActivity.class);//创建Intent对象，启动check
+                    Intent intent = new Intent(HomeFragment.this.getContext(), OkhttpClientActivity.class);//创建Intent对象，启动check
                     startActivity(intent);
                 } else if ( id == 3){
                     Intent intent = new Intent(HomeFragment.this.getContext(), MainActivity.class);//创建Intent对象，启动check

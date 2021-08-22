@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import cn.tihuxueyuan.model.CourseFileList;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -78,14 +79,36 @@ public class HttpClient {
     }
 
     public static void getCourseTypes(String keyword, final HttpCallback<CourseTypeList> callback) {
-
-
-
         OkHttpUtils.post().url(BASE_URL + "getCourseTypesOk")
                 .build()
                 .execute(new JsonCallback<CourseTypeList>(CourseTypeList.class) {
                     @Override
                     public void onResponse(CourseTypeList response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+    public static void getCourseFilesByCourseId(String courseId, final HttpCallback<CourseFileList> callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("course_id", courseId);
+
+        OkHttpUtils.post().url(BASE_URL + "findCourseFileByCourseIdOk")
+                .params(params)
+                .build()
+                .execute(new JsonCallback<CourseFileList>(CourseFileList.class) {
+                    @Override
+                    public void onResponse(CourseFileList response, int id) {
                         callback.onSuccess(response);
                     }
 

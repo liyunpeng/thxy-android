@@ -23,7 +23,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class CourseActivity extends AppCompatActivity implements View.OnClickListener {
+public class OkhttpClientActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button bt_get;
     private Button bt_post;
@@ -41,7 +41,11 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
         bt_get.setOnClickListener(this);
         bt_post.setOnClickListener(this);
 
+        String s = (String) getIntent().getStringExtra("course_id");
+        Log.d("tag2", "onCreate: param: "+ s);
     }
+
+
 
     @Override
     public void onClick(View view) {
@@ -86,7 +90,6 @@ public class CourseActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void postRequest() {
-
 //        RequestBody formBody = new FormEncodingBuilder()
         RequestBody formBody = new FormBody.Builder()
                 .add("","")

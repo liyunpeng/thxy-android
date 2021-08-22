@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -17,8 +16,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import cn.tihuxueyuan.R;
-import cn.tihuxueyuan.activity.CourseActivity;
-import cn.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.activity.CourseListActivity;
+import cn.tihuxueyuan.activity.OkhttpClientActivity;
 import cn.tihuxueyuan.adapter.TabAdapterA;
 import cn.tihuxueyuan.databinding.FragmentDashboardBinding;
 
@@ -34,7 +33,6 @@ import cn.tihuxueyuan.model.SearchMusic;
 import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.adapter.GridRecycleAdapter;
 import cn.tihuxueyuan.model.CourseTypeList.CourseType;
-import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.verticaltabrecycler.TestData;
 import q.rorbin.verticaltablayout.VerticalTabLayout;
 import q.rorbin.verticaltablayout.widget.TabView;
@@ -100,7 +98,8 @@ public class DashboardFragment extends Fragment {
                     public void onItemClick(View view, int position) {
                         Toast.makeText(DashboardFragment.this.getActivity().getBaseContext(), "Click " + courseList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-                        Intent intent =new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseActivity.class);//创建意图对象
+                        Intent intent =new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseListActivity.class);//创建意图对象
+                        intent.putExtra("course_id", courseList.get(position).getId());
 
                         startActivity(intent);
                     }
