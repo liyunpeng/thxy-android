@@ -34,6 +34,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     private ObjectAnimator animator;
     private String title;
     public MusicService.MusicControl musicControl;
+//    public MusicService musicService;
     String name;
     Intent intent1, intent2;
     MyServiceConn conn;
@@ -44,23 +45,29 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
+//        todo :标题居中
+//        getSupportActionBar().
+
         title = (String) getIntent().getStringExtra("title");
         setTitle(title);
+
 
         intent1 = getIntent();
         init();
     }
 
+    ImageView  playPauseView;
     private void init() {
         tv_progress = (TextView) findViewById(R.id.tv_progress);
         tv_total = (TextView) findViewById(R.id.tv_total);
         sb = (SeekBar) findViewById(R.id.sb);
         name_song = (TextView) findViewById(R.id.song_name);
 
-        findViewById(R.id.btn_play).setOnClickListener(this);
-        findViewById(R.id.btn_pause).setOnClickListener(this);
-        findViewById(R.id.btn_continue_play).setOnClickListener(this);
-        findViewById(R.id.btn_exit).setOnClickListener(this);
+        playPauseView = findViewById(R.id.play_pause);
+        playPauseView.setOnClickListener(this);
+//        findViewById(R.id.btn_pause).setOnClickListener(this);
+//        findViewById(R.id.btn_continue_play).setOnClickListener(this);
+//        findViewById(R.id.btn_exit).setOnClickListener(this);
 
         name = intent1.getStringExtra("name");
         name_song.setText(name);
@@ -80,6 +87,10 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {//滑动条开始滑动时调用
+//                int progress = seekBar.getProgress();//获取seekBar的进度
+//                musicControl.seekTo(progress);//改变播放进度
+//                int progress = seekBar.getProgress();//获取seekBar的进度
+//                musicControl.setText();
             }
 
             @Override
@@ -87,6 +98,11 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
                 //根据拖动的进度改变音乐播放进度
                 int progress = seekBar.getProgress();//获取seekBar的进度
                 musicControl.seekTo(progress);//改变播放进度
+                if (musicControl.isPlaying() != true ) {
+                    musicControl.play();
+                    playPauseView.setImageResource(R.drawable.stop);
+                }
+
             }
         });
         ImageView iv_music = (ImageView) findViewById(R.id.iv_music);
@@ -161,6 +177,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
         public void onServiceConnected(ComponentName name, IBinder service) {
 
             Log.d("tag1", "onServiceConnected: 服务连接成功 ");
+//            musicService = (MusicService) service;
             musicControl = (MusicService.MusicControl) service;
             musicControl.init(musicUrl);
 
@@ -170,6 +187,8 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
                         Thread.sleep(1000);
                         musicControl.setText();
                         musicControl.play();
+//                        animator.start();
+                        playPauseView.setImageResource(R.drawable.stop);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -195,33 +214,44 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_play://播放按钮点击事件
+            case R.id.play_pause://播放按钮点击事件
 //                String position=intent1.getStringExtra("position");
 //                int i=parseInt(position);
 //                musicControl.play(i);
-                musicControl.play();
-                animator.start();
+
+                if (musicControl.isPlaying() != true ){
+                    musicControl.play();
+//                    animator.start();
+                    playPauseView.setImageResource(R.drawable.stop);
+                }else{
+                    musicControl.pausePlay();
+//                    animator.pause();
+                    playPauseView.setImageResource(R.drawable.start);
+
+                }
+
                 break;
-            case R.id.btn_pause://暂停按钮点击事件
-                musicControl.pausePlay();
-                animator.pause();
-                break;
-            case R.id.btn_continue_play://继续播放按钮点击事件
-                musicControl.continuePlay();
-                animator.start();
-                break;
-            case R.id.btn_exit://退出按钮点击事件
-                unbind(isUnbind);
-                isUnbind = true;
-                finish();
-                break;
+//            case R.id.btn_pause://暂停按钮点击事件
+//
+//                break;
+//            case R.id.btn_continue_play://继续播放按钮点击事件
+//                musicControl.continuePlay();
+//                animator.start();
+//                break;
+//            case R.id.btn_exit://退出按钮点击事件
+//                unbind(isUnbind);
+//                isUnbind = true;
+//                finish();
+//                break;
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbind(isUnbind);//解绑服务
+        unbind(isUnbind);
+        isUnbind = true;
+        finish();
     }
 }
 

@@ -91,6 +91,7 @@ public class MusicService extends Service {
         public void play() {//String path
 //                Uri uri=Uri.parse("android.resource://"+getPackageName()+"/raw/"+"music"+i);
             try {
+
                 player.start(); //播放音乐
 /*
                     player.reset(); //重置音乐播放器
@@ -98,7 +99,6 @@ public class MusicService extends Service {
                     player=MediaPlayer.create(getApplicationContext(),uri);
                     player.start(); //播放音乐
 */
-
 
 
 
@@ -117,8 +117,13 @@ public class MusicService extends Service {
             player.start();//继续播放音乐
         }
 
+        public boolean isPlaying() {
+            return player.isPlaying();
+        }
         public void seekTo(int progress) {
             player.seekTo(progress);//设置音乐的播放位置
+
+
         }
     }
 

@@ -1,6 +1,7 @@
 package cn.tihuxueyuan.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 
 import cn.tihuxueyuan.R;
@@ -13,6 +14,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
+import cn.tihuxueyuan.setting.AppConfig;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 //        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+
         getSupportActionBar().hide();
         setContentView(binding.getRoot());
 
@@ -35,6 +39,12 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+
+        String appId = "android_" + AppConfig.getVersionName(MainActivity.this) + "_" + AppConfig.getAppMetaData(MainActivity.this, "UMENG_CHANNEL");
+
+
+        Log.d("tag1", "onCreate: id:" + appId);
     }
 
 }

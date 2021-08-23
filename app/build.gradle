@@ -28,7 +28,16 @@ android {
     buildFeatures {
         viewBinding true
     }
+    signingConfigs{
+        debug{  //这里配置的就是debug的签名配置了
+            storeFile file("/Users/zhenglun1/AndroidStudioProjects/thxy-android/sign/test1")   //这个文件是我的,改成你自己的release签名文件
+            storePassword "fsjsjsjx"   //密码改成自己的
+            keyAlias "key0"              //再改成你自己的
+            keyPassword "fsjsjsjx"     //再改成你自己的
 
+
+        }
+    }
 }
 
 dependencies {
