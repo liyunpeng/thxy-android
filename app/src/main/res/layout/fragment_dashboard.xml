@@ -18,7 +18,7 @@
             android:background="#EDEDED"
             app:indicator_color="#FFFFFF"
             app:indicator_gravity="fill"
-            app:tab_height="56dp"
+            app:tab_height="50dp"
             app:tab_mode="scrollable" />
 
         <LinearLayout
@@ -33,7 +33,7 @@
                 android:textStyle="bold"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

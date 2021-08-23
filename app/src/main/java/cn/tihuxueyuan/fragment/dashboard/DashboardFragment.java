@@ -181,27 +181,4 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
-
-    public void f1() {
-        HttpClient.searchMusic("", new HttpCallback<SearchMusic>() {
-            @Override
-            public void onSuccess(SearchMusic response) {
-                if (response == null || response.getSong() == null || response.getSong().isEmpty()) {
-                    onFail(null);
-                    return;
-                }
-                List<SearchMusic.Song> s = response.getSong();
-                for (int i = 0; i < 1; i++) {
-                    Log.d("tag2", "onSuccess:  " + s.get(i).getSongname());
-                }
-            }
-
-            @Override
-            public void onFail(Exception e) {
-
-            }
-        });
-    }
-
-
 }
