@@ -26,6 +26,8 @@ import java.io.IOException;
 import cn.tihuxueyuan.R;
 
 import cn.tihuxueyuan.fragment.list.ListFragment;
+import cn.tihuxueyuan.globaldata.Data;
+import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.service.MusicService;
 
 public class Music_Activity extends AppCompatActivity implements View.OnClickListener {
@@ -34,13 +36,14 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     private ObjectAnimator animator;
     private String title;
     public MusicService.MusicControl musicControl;
-//    public MusicService musicService;
+    //    public MusicService musicService;
     String name;
     Intent intent1, intent2;
     MyServiceConn conn;
     String musicUrl;
+    int currentPostion;
     private boolean isUnbind = false;//记录服务是否被解绑
-
+     Data app;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,14 +52,17 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 //        getSupportActionBar().
 
         title = (String) getIntent().getStringExtra("title");
+        currentPostion = getIntent().getIntExtra("current_position", 0);
         setTitle(title);
 
 
         intent1 = getIntent();
         init();
+        app = (Data) getApplication();
     }
 
-    ImageView  playPauseView;
+    ImageView playPauseView;
+
     private void init() {
         tv_progress = (TextView) findViewById(R.id.tv_progress);
         tv_total = (TextView) findViewById(R.id.tv_total);
@@ -65,8 +71,8 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 
         playPauseView = findViewById(R.id.play_pause);
         playPauseView.setOnClickListener(this);
-//        findViewById(R.id.btn_pause).setOnClickListener(this);
-//        findViewById(R.id.btn_continue_play).setOnClickListener(this);
+        findViewById(R.id.play_previous).setOnClickListener(this);
+        findViewById(R.id.play_next).setOnClickListener(this);
 //        findViewById(R.id.btn_exit).setOnClickListener(this);
 
         name = intent1.getStringExtra("name");
@@ -98,7 +104,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
                 //根据拖动的进度改变音乐播放进度
                 int progress = seekBar.getProgress();//获取seekBar的进度
                 musicControl.seekTo(progress);//改变播放进度
-                if (musicControl.isPlaying() != true ) {
+                if (musicControl.isPlaying() != true) {
                     musicControl.play();
                     playPauseView.setImageResource(R.drawable.stop);
                 }
@@ -219,18 +225,39 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 //                int i=parseInt(position);
 //                musicControl.play(i);
 
-                if (musicControl.isPlaying() != true ){
+                if (musicControl.isPlaying() != true) {
                     musicControl.play();
 //                    animator.start();
                     playPauseView.setImageResource(R.drawable.stop);
-                }else{
+                } else {
                     musicControl.pausePlay();
 //                    animator.pause();
                     playPauseView.setImageResource(R.drawable.start);
 
                 }
+                break;
+            case R.id.play_previous://继续播放按钮点击事件
+                if (currentPostion <= 0) {
+                    currentPostion = 0;
+                } else {
+                    currentPostion--;
+                    playNextPrevious();
+                    setTitle(app.mList.get(currentPostion).getTitle().split("\\.")[0]);
+                }
 
                 break;
+            case R.id.play_next://继续播放按钮点击事件
+                if (currentPostion >=  (app.mList.size() - 1)) {
+                    currentPostion =  (app.mList.size() - 1);
+                } else {
+                    currentPostion++;
+                    playNextPrevious();
+                    setTitle(app.mList.get(currentPostion).getTitle().split("\\.")[0]);
+                }
+
+                break;
+
+
 //            case R.id.btn_pause://暂停按钮点击事件
 //
 //                break;
@@ -252,6 +279,28 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
         unbind(isUnbind);
         isUnbind = true;
         finish();
+    }
+
+    private void playNextPrevious() {
+
+        CourseFileList.CourseFile c = app.mList.get(currentPostion);
+        String musicUrl = c.getMp3url() + "?fileName=" + c.getMp3FileName();
+        musicControl.init(musicUrl);
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                    musicControl.setText();
+                    musicControl.play();
+//                        animator.start();
+                    playPauseView.setImageResource(R.drawable.stop);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
 

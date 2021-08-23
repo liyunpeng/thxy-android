@@ -19,6 +19,7 @@ import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.fragment.home.HomeFragment;
 import cn.tihuxueyuan.fragment.list.ListFragment;
+import cn.tihuxueyuan.globaldata.Data;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.model.CourseFileList;
@@ -47,7 +48,7 @@ public class CourseListActivity extends AppCompatActivity {
     private CommonAdapter mAdapter;
     private String couseId;
     private String title;
-    private List<CourseFileList.CourseFile> mList = new ArrayList<>();
+    public List<CourseFileList.CourseFile> mList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class CourseListActivity extends AppCompatActivity {
 //                player.setDataSource("http://47.102.146.8:8082/api/fileDownload?fileName=一声佛号一声心.mp3");
                 String musicUrl = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
                 intent.putExtra("music_url", musicUrl);
+                intent.putExtra("current_position", position);
                 String a[] = mList.get(position).getTitle().split("\\.");
                 intent.putExtra("title", a[0]);
 //                intent.putExtra("position",String.valueOf(position));
@@ -120,6 +122,9 @@ public class CourseListActivity extends AppCompatActivity {
                     return;
                 }
                 mList = response.getCourseFileList();
+
+                final Data app = (Data)getApplication();
+                app.mList = mList;
                 refreshListView();
             }
 
