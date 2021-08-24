@@ -21,7 +21,7 @@ import cn.tihuxueyuan.basic.ActivityManager;
  */
 public class NotificationClickReceiver extends BroadcastReceiver {
 
-    public static final String TAG = "tag2";
+    public static final String TAG = "musictag";
 
     @Override
     public void onReceive(Context context, Intent intent) {

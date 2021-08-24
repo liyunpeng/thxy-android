@@ -9,7 +9,7 @@ import cn.tihuxueyuan.model.CourseFileList;
 
 public class Data extends Application{
     private String b;
-
+    public int currentPostion;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
 
     public String getB(){

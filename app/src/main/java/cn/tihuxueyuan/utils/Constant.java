@@ -18,5 +18,19 @@ public class Constant {
      * 下一曲
      */
     public static final String NEXT = "next";
+
+
+    /**
+     * 关闭通知栏
+     */
     public static final String CLOSE = "close";
+    /**
+     * 进度变化
+     */
+    public static final String PROGRESS = "progress";
+
+    /**
+     * 用于判断当前滑动歌名改变的通知栏播放状态
+     */
+    public static final String IS_CHANGE = "isChange";
 }

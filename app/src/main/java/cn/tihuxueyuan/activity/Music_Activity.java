@@ -41,7 +41,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     Intent intent1, intent2;
     MyServiceConn conn;
     String musicUrl;
-    int currentPostion;
+    
     private boolean isUnbind = false;//记录服务是否被解绑
     Data app;
 
@@ -53,13 +53,16 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 //        getSupportActionBar().
 
         title = (String) getIntent().getStringExtra("title");
-        currentPostion = getIntent().getIntExtra("current_position", 0);
+
+        app = (Data) getApplication();
+        app.currentPostion = getIntent().getIntExtra("current_position", 0);
         setTitle(title);
 
 
         intent1 = getIntent();
         init();
-        app = (Data) getApplication();
+        
+        
     }
 
     ImageView playPauseView;
@@ -235,23 +238,23 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
                     playPauseView.setImageResource(R.drawable.start);
                 }
                 break;
-            case R.id.play_previous://继续播放按钮点击事件
-                if (currentPostion <= 0) {
-                    currentPostion = 0;
+            case R.id.play_previous:
+                if (app.currentPostion <= 0) {
+                    app.currentPostion = 0;
                 } else {
-                    currentPostion--;
+                    app.currentPostion--;
                     playNextPrevious();
-                    setTitle(app.mList.get(currentPostion).getTitle().split("\\.")[0]);
+                    setTitle(app.mList.get(app.currentPostion).getTitle().split("\\.")[0]);
                 }
 
                 break;
-            case R.id.play_next://继续播放按钮点击事件
-                if (currentPostion >= (app.mList.size() - 1)) {
-                    currentPostion = (app.mList.size() - 1);
+            case R.id.play_next:
+                if (app.currentPostion >= (app.mList.size() - 1)) {
+                    app.currentPostion = (app.mList.size() - 1);
                 } else {
-                    currentPostion++;
+                    app.currentPostion++;
                     playNextPrevious();
-                    setTitle(app.mList.get(currentPostion).getTitle().split("\\.")[0]);
+                    setTitle(app.mList.get(app.currentPostion).getTitle().split("\\.")[0]);
                 }
 
                 break;
@@ -271,7 +274,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 //                break;
         }
 
-        musicControl.updateNotify(currentPostion);
+        musicControl.updateNotify(app.currentPostion);
     }
 
     @Override
@@ -284,7 +287,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 
     private void playNextPrevious() {
 
-        CourseFileList.CourseFile c = app.mList.get(currentPostion);
+        CourseFileList.CourseFile c = app.mList.get(app.currentPostion);
         String musicUrl = c.getMp3url() + "?fileName=" + c.getMp3FileName();
         musicControl.init(musicUrl);
 

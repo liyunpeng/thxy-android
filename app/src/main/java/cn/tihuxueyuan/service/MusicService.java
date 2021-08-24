@@ -2,6 +2,7 @@ package cn.tihuxueyuan.service;
 
 import static cn.tihuxueyuan.utils.Constant.CLOSE;
 import static cn.tihuxueyuan.utils.Constant.NEXT;
+import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.PREV;
 
@@ -31,8 +32,11 @@ import androidx.core.app.NotificationCompat;
 
 import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.globaldata.Data;
+import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.receiver.NotificationClickReceiver;
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.SPUtils;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -41,6 +45,11 @@ import java.util.TimerTask;
 public class MusicService extends Service {
     public MediaPlayer player;
     public Timer timer;
+
+    /**
+     * 通知栏控制Activity页面UI
+     */
+    private LiveDataBus.BusMutableLiveData<String> activityLiveData;
 
     /**
      * 通知
@@ -70,7 +79,7 @@ public class MusicService extends Service {
     public IBinder onBind(Intent intent) {
         return new MusicControl();
     }
-
+    Data app;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
@@ -79,9 +88,23 @@ public class MusicService extends Service {
         initNotification();
         //注册动态广播
         registerMusicReceiver();
+        app = (Data) getApplication();
         player = new MediaPlayer();//创建音乐播放器对象
+        activityLiveData = LiveDataBus.getInstance().with("activity_control", String.class);
     }
-
+    /**
+     * Activity的观察者
+     */
+//    private void activityObserver() {
+//        notification0LiveData = LiveDataBus.getInstance().with("notification_control", String.class);
+//        notificationLiveData.observe(MusicService.this, new Observer<String>() {
+//            @Override
+//            public void onChanged(String state) {
+//                //UI控制
+//                UIControl(state, TAG);
+//            }
+//        });
+//    }
 
     /**
      * 初始化自定义通知栏 的按钮点击事件
@@ -192,6 +215,64 @@ public class MusicService extends Service {
         manager.createNotificationChannel(channel);
     }
 
+    public void pauseOrContinueMusic() {
+        if (player.isPlaying()) {
+            player.pause();
+            activityLiveData.postValue(PAUSE);
+        } else {
+            player.start();
+            activityLiveData.postValue(PLAY);
+        }
+        //更改通知栏播放状态
+        updateNotificationShow(app.currentPostion);
+    }
+
+    /**
+     * 关闭音乐通知栏
+     */
+    public void closeNotification() {
+        if (player != null) {
+            if (player.isPlaying()) {
+                player.pause();
+            }
+        }
+        manager.cancel(NOTIFICATION_ID);
+
+        activityLiveData.postValue(CLOSE);
+    }
+
+
+    /**
+     * 页面的UI 控制 ，通过服务来控制页面和通知栏的UI
+     *
+     * @param state 状态码
+     * @param tag
+     */
+    private void UIControl(String state, String tag) {
+        switch (state) {
+            case PLAY:
+                //暂停或继续
+                pauseOrContinueMusic();
+                Log.d(tag, PLAY + " or " + PAUSE);
+                break;
+//            case PREV:
+//
+//                previousMusic();
+//                Log.d(tag, PREV);
+//                break;
+//            case NEXT:
+//
+//                nextMusic();
+//                Log.d(tag, NEXT);
+//                break;
+            case CLOSE:
+                closeNotification();
+                Log.d(tag, CLOSE);
+                break;
+            default:
+                break;
+        }
+    }
 
     /**
      * 注册动态广播
@@ -215,11 +296,9 @@ public class MusicService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("tag1", "onReceive : "+ intent.toString());
-//            SPUtils.putBoolean(Constant.IS_CHANGE, true, context);
-//            //UI控制
-
-//            UIControl(intent.getAction(), TAG);
+            Log.d(TAG, "onReceive : " + intent.toString());
+            SPUtils.putBoolean(Constant.IS_CHANGE, true, context);
+            UIControl(intent.getAction(), TAG);
         }
     }
 
