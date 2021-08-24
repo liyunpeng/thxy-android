@@ -43,7 +43,8 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     String musicUrl;
     int currentPostion;
     private boolean isUnbind = false;//记录服务是否被解绑
-     Data app;
+    Data app;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -224,16 +225,14 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 //                String position=intent1.getStringExtra("position");
 //                int i=parseInt(position);
 //                musicControl.play(i);
-
                 if (musicControl.isPlaying() != true) {
                     musicControl.play();
-//                    animator.start();
+//                   animator.start();
                     playPauseView.setImageResource(R.drawable.stop);
                 } else {
                     musicControl.pausePlay();
 //                    animator.pause();
                     playPauseView.setImageResource(R.drawable.start);
-
                 }
                 break;
             case R.id.play_previous://继续播放按钮点击事件
@@ -247,8 +246,8 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 
                 break;
             case R.id.play_next://继续播放按钮点击事件
-                if (currentPostion >=  (app.mList.size() - 1)) {
-                    currentPostion =  (app.mList.size() - 1);
+                if (currentPostion >= (app.mList.size() - 1)) {
+                    currentPostion = (app.mList.size() - 1);
                 } else {
                     currentPostion++;
                     playNextPrevious();
@@ -271,6 +270,8 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 //                finish();
 //                break;
         }
+
+        musicControl.updateNotify(currentPostion);
     }
 
     @Override
