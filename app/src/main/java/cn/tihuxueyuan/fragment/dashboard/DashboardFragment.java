@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.activity.CourseListActivity;
+import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.activity.OkhttpClientActivity;
 import cn.tihuxueyuan.adapter.TabAdapterA;
+import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.databinding.FragmentDashboardBinding;
 
 import java.util.ArrayList;
@@ -75,6 +77,7 @@ public class DashboardFragment extends Fragment {
     public void onResume() {
         super.onResume();
 //        initCourseType();
+        ActivityManager.setCurrentActivity(DashboardFragment.this.getActivity());
     }
 
     @Override

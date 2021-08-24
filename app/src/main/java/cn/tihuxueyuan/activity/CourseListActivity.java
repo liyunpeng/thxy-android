@@ -15,8 +15,10 @@ import android.widget.Button;
 import android.view.View;
 import android.widget.ListView;
 
+import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
+import cn.tihuxueyuan.fragment.dashboard.DashboardFragment;
 import cn.tihuxueyuan.fragment.home.HomeFragment;
 import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.Data;
@@ -83,6 +85,7 @@ public class CourseListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        ActivityManager.setCurrentActivity(CourseListActivity.this);
         initCourseType();
     }
 

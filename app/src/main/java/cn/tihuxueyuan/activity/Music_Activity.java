@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import cn.tihuxueyuan.R;
 
+import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.Data;
 import cn.tihuxueyuan.livedata.LiveDataBus;
@@ -145,6 +146,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onResume() {
         super.onResume();
+        ActivityManager.setCurrentActivity(Music_Activity.this);
     }
 
     public static Handler handler = new Handler() {//创建消息处理器对象
