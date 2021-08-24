@@ -2,6 +2,9 @@ package cn.tihuxueyuan.activity;
 
 import static java.lang.Integer.parseInt;
 
+import static cn.tihuxueyuan.utils.Constant.PAUSE;
+import static cn.tihuxueyuan.utils.Constant.PLAY;
+
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -20,6 +23,7 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
 import java.io.IOException;
 
@@ -27,6 +31,7 @@ import cn.tihuxueyuan.R;
 
 import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.Data;
+import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.service.MusicService;
 
@@ -41,9 +46,11 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     Intent intent1, intent2;
     MyServiceConn conn;
     String musicUrl;
-    
+
     private boolean isUnbind = false;//记录服务是否被解绑
     Data app;
+
+    private LiveDataBus.BusMutableLiveData<String> notificationLiveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +64,14 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
         app = (Data) getApplication();
         app.currentPostion = getIntent().getIntExtra("current_position", 0);
         setTitle(title);
-
-
         intent1 = getIntent();
         init();
-        
-        
+
+        //通知栏的观察者
+        notificationObserver();
+        //控制通知栏
+        notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
+
     }
 
     ImageView playPauseView;
@@ -181,6 +190,64 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
         }
     };
 
+
+    private LiveDataBus.BusMutableLiveData<String> activityLiveData;
+
+    /**
+     * 通知栏动作观察者
+     */
+    private void notificationObserver() {
+        activityLiveData = LiveDataBus.getInstance().with("activity_control", String.class);
+        activityLiveData.observe(Music_Activity.this, true, new Observer<String>() {
+            @Override
+            public void onChanged(String state) {
+                Log.d("tag2", " onChanged state = " + state);
+                switch (state) {
+                    case PAUSE:
+                        playPauseView.setImageResource(R.drawable.start);
+                        break;
+                    case PLAY:
+//                    case PAUSE:
+//                        btnPlay.setIcon(getDrawable(R.mipmap.icon_pause));
+//                        btnPlay.setIconTint(getColorStateList(R.color.gold_color));
+//                        BLog.d(TAG,state);
+//                        changeUI(musicService.getPlayPosition());
+//                        if (musicControl.isPlaying() != true) {
+//                            musicControl.play();
+//                   animator.start();
+                        playPauseView.setImageResource(R.drawable.stop);
+//                        } else {
+////                            musicControl.pausePlay();
+////                    animator.pause();
+//                            playPauseView.setImageResource(R.drawable.start);
+//                        }
+                        break;
+
+//                    case CLOSE:
+//                        btnPlay.setIcon(getDrawable(R.mipmap.icon_play));
+//                        btnPlay.setIconTint(getColorStateList(R.color.white));
+//                        changeUI(musicService.getPlayPosition());
+//                        break;
+//                    case PREV:
+//                        BLog.d(TAG, "上一曲");
+//                        changeUI(musicService.getPlayPosition());
+//                        break;
+//                    case NEXT:
+//                        BLog.d(TAG, "下一曲");
+//                        changeUI(musicService.getPlayPosition());
+//                        break;
+//                    case PROGRESS:
+//                        //播放进度发生改变时,只改变进度，不改变其他
+//                        musicProgress.setProgress(musicService.mediaPlayer.getCurrentPosition(), musicService.mediaPlayer.getDuration());
+//                        break;
+                    default:
+                        break;
+                }
+
+            }
+        });
+    }
+
     class MyServiceConn implements ServiceConnection {//用于实现连接服务
 
         @Override
@@ -199,6 +266,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
                         musicControl.play();
 //                        animator.start();
                         playPauseView.setImageResource(R.drawable.stop);
+                        musicControl.updateNotify(app.currentPostion);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
