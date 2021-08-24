@@ -9,17 +9,20 @@ import android.animation.ObjectAnimator;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +37,7 @@ import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.Data;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 
 public class Music_Activity extends AppCompatActivity implements View.OnClickListener {
@@ -250,6 +254,21 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
+    public void startFloatingImageDisplayService() {
+        if (FloatingImageDisplayService.isStarted) {
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (!Settings.canDrawOverlays(this)) {
+//                Toast.makeText(this, "当前无权限，请授权", Toast.LENGTH_SHORT);
+//                startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 1);
+//            } else {
+                startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
+//            }
+        }
+    }
+
+
     class MyServiceConn implements ServiceConnection {//用于实现连接服务
 
         @Override
@@ -269,6 +288,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 //                        animator.start();
                         playPauseView.setImageResource(R.drawable.stop);
                         musicControl.updateNotify(app.currentPostion);
+                        startFloatingImageDisplayService();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

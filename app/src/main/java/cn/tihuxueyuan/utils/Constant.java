@@ -2,6 +2,7 @@ package cn.tihuxueyuan.utils;
 
 public class Constant {
 
+    public static final String Tag = "thxy";
     /**
      * 歌曲播放
      */

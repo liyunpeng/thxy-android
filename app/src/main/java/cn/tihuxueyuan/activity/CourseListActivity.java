@@ -2,8 +2,11 @@ package cn.tihuxueyuan.activity;
 //
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 ////import android.support.v7.app.AppCompatActivity;
+import android.provider.Settings;
 import android.util.Log;
 //import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +17,7 @@ import android.widget.Button;
 //
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
@@ -27,10 +31,12 @@ import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.model.CourseTypeList;
+import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.verticaltabrecycler.MainActivity;
 import okhttp3.OkHttpClient;
 import okhttp3.FormBody;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import cn.tihuxueyuan.R;
@@ -81,6 +87,40 @@ public class CourseListActivity extends AppCompatActivity {
 
         Log.d("tag2", "onCreate: param: " + couseId);
     }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this)) {
+                    Toast.makeText(this, "授权失败", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show();
+                    startService(new Intent(CourseListActivity.this, FloatingImageDisplayService.class));
+                }
+            }
+        } else if (requestCode == 1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this)) {
+                    Toast.makeText(this, "授权失败", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show();
+                    startService(new Intent(CourseListActivity.this, FloatingImageDisplayService.class));
+                }
+            }
+        } else if (requestCode == 2) {
+            if (!Settings.canDrawOverlays(this)) {
+                Toast.makeText(this, "授权失败", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show();
+                startService(new Intent(CourseListActivity.this, FloatingImageDisplayService.class));
+            }
+        }
+    }
+
 
     @Override
     public void onResume() {
