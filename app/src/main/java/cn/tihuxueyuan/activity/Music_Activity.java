@@ -44,6 +44,7 @@ import cn.tihuxueyuan.utils.Constant;
 public class Music_Activity extends BaseActivity implements View.OnClickListener {
     private static SeekBar sb;
     private static TextView tv_progress, tv_total, name_song;
+    private ImageView playPauseView;
     private ObjectAnimator animator;
     private String title;
 
@@ -81,13 +82,10 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         String title;
         if (isNew == true) {
             bindMusicService();
-
 //            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
             app.currentPostion = getIntent().getIntExtra("current_position", 0);
             title = getIntent().getStringExtra("title");
             app.musicTitle = title;
-
-
         } else {
 
 //            bootstrapReflect();
@@ -175,7 +173,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         super.onRestart();
     }
 
-    ImageView playPauseView;
+
 
     private void init() {
         tv_progress = (TextView) findViewById(R.id.tv_progress);
@@ -245,7 +243,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         //在主线程中处理从子线程发送过来的消息
         @Override
         public void handleMessage(Message msg) {
-            Log.d("tag1", "handleMessage: 处理消息 ： " + msg.toString());
+//            Log.d("tag1", "handleMessage: 处理消息 ： " + msg.toString());
             Bundle bundle = msg.getData();//获取从子线程发送过来的音乐播放进度
             int duration = bundle.getInt("duration");
             int currentPosition = bundle.getInt("currentPosition");
@@ -362,11 +360,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-
             Log.d("tag1", "onServiceConnected: 服务连接成功, serrvice 类名：" + name.getShortClassName());
-//            musicService = (MusicService) service;
-            String cN = name.getShortClassName();
-            if (cN.contains("MusicService")) {
+            String shortClassName = name.getShortClassName();
+            if (shortClassName.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
                 musicControl.init(musicUrl);
 
@@ -386,13 +382,12 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //                            handler.sendMessage();
                     }
                 }).start();
-
-                Log.d(Constant.Tag, "musicControl 初始化: ");
-            } else if (cN.contains("FloatingImageDisplayService")) {
+                Log.d(Constant.Tag, "musicControl 初始化完成 ");
+            } else if (shortClassName.contains("FloatingImageDisplayService")) {
                 Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
                 Constant.floatingControl.initFloatingWindow();
                 Constant.floatingControl.setVisibility(false);
-                Log.d(Constant.Tag, "floatingControl 初始化: ");
+                Log.d(Constant.Tag, "floatingControl 初始化完成");
             }
         }
 

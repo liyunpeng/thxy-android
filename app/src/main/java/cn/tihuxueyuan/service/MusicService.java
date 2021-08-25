@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.service;
 
+import static cn.tihuxueyuan.utils.Constant.Tag;
 import static cn.tihuxueyuan.utils.Constant.CLOSE;
 import static cn.tihuxueyuan.utils.Constant.NEXT;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
@@ -50,7 +51,6 @@ public class MusicService extends Service {
      * 通知栏控制Activity页面UI
      */
     private LiveDataBus.BusMutableLiveData<String> activityLiveData;
-
     /**
      * 通知
      */
@@ -291,14 +291,11 @@ public class MusicService extends Service {
      * 广播接收器 （内部类）
      */
     public class MusicReceiver extends BroadcastReceiver {
-
-        public static final String TAG = "MusicReceiver";
-
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "onReceive : " + intent.toString());
+            Log.d(Tag, "MusicReceiver onReceive : " + intent.toString());
             SPUtils.putBoolean(Constant.IS_CHANGE, true, context);
-            UIControl(intent.getAction(), TAG);
+            UIControl(intent.getAction(), Tag);
         }
     }
 
@@ -358,7 +355,6 @@ public class MusicService extends Service {
         public void init(String url) {
             if ( player.isLooping()) {
                 player.stop();
-
                 player.release();
             }
 
@@ -369,8 +365,6 @@ public class MusicService extends Service {
                 e.printStackTrace();
             }
             player.prepareAsync();
-
-
             setText();
         }
 

@@ -74,8 +74,6 @@ public class FloatingImageDisplayService extends Service {
         return new FloatingImageDisplayService.FloatingControl();
     }
 
-
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
