@@ -356,6 +356,12 @@ public class MusicService extends Service {
         }
 
         public void init(String url) {
+            if ( player.isLooping()) {
+                player.stop();
+
+                player.release();
+            }
+
             player.reset();
             try {
                 player.setDataSource(url);
@@ -405,14 +411,14 @@ public class MusicService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (player == null) return;
-        if (player.isPlaying()) player.stop();//停止播放音乐
-        player.release();//释放占用的资源
-        player = null;//将player置为空
-
-        if (musicReceiver != null) {
-            //解除动态注册的广播
-            unregisterReceiver(musicReceiver);
-        }
+//        if (player == null) return;
+//        if (player.isPlaying()) player.stop();//停止播放音乐
+//        player.release();//释放占用的资源
+//        player = null;//将player置为空
+//
+//        if (musicReceiver != null) {
+//            //解除动态注册的广播
+//            unregisterReceiver(musicReceiver);
+//        }
     }
 }

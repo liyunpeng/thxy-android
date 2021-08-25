@@ -1,11 +1,19 @@
 package cn.tihuxueyuan.utils;
 
+import static android.os.Build.VERSION.SDK_INT;
+
+import android.os.Build;
+import android.util.Log;
+
+import java.lang.reflect.Method;
+
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
+import cn.tihuxueyuan.service.MusicService;
 
 public class Constant {
 
     public static FloatingImageDisplayService.FloatingControl floatingControl;
-
+    public static MusicService.MusicControl musicControl;
     public static final String Tag = "thxy";
     /**
      * 歌曲播放
@@ -38,4 +46,21 @@ public class Constant {
      * 用于判断当前滑动歌名改变的通知栏播放状态
      */
     public static final String IS_CHANGE = "isChange";
+
+    public static void bootstrapReflect() {
+        if (SDK_INT < Build.VERSION_CODES.P) {
+            return;
+        }
+        try {
+            Method forName = Class.class.getDeclaredMethod("forName", String.class);
+            Method getDeclaredMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
+            Class<?> vmRuntimeClass = (Class<?>) forName.invoke(null, "dalvik.system.VMRuntime");
+            Method getRuntime = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "getRuntime", null);
+            Method setHiddenApiExemptions = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "setHiddenApiExemptions", new Class[]{String[].class});
+            Object sVmRuntime = getRuntime.invoke(null);
+            setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{new String[]{"L"}});
+        } catch (Throwable e) {
+            Log.e(Constant.Tag, "reflect bootstrap failed:", e);
+        }
+    }
 }

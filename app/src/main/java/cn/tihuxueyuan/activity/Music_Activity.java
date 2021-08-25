@@ -4,6 +4,9 @@ import static java.lang.Integer.parseInt;
 
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
+import static cn.tihuxueyuan.utils.Constant.bootstrapReflect;
+import static cn.tihuxueyuan.utils.Constant.floatingControl;
+import static cn.tihuxueyuan.utils.Constant.musicControl;
 
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
@@ -43,7 +46,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private static TextView tv_progress, tv_total, name_song;
     private ObjectAnimator animator;
     private String title;
-    public MusicService.MusicControl musicControl;
+
     private Intent intent3;
     private MyServiceConn conn1;
     private String name;
@@ -59,44 +62,78 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(Constant.Tag, "Music Activity oncreate  ");
         setContentView(R.layout.activity_music);
 //        todo :标题居中
 //        getSupportActionBar().
 
+        musicUrl = getIntent().getStringExtra("music_url");
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
         app = (Data) getApplication();
 
+        intent1 = getIntent();
+        init();
+        //通知栏的观察者
+        notificationObserver();
+        //控制通知栏
+        notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
+
+        String title;
         if (isNew == true) {
             bindMusicService();
-//            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
 
+//            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
             app.currentPostion = getIntent().getIntExtra("current_position", 0);
             title = getIntent().getStringExtra("title");
-            setTitle(title);
-            intent1 = getIntent();
-            init();
+            app.musicTitle = title;
 
-            //通知栏的观察者
-            notificationObserver();
-
-            //控制通知栏
-            notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
 
         } else {
 
+//            bootstrapReflect();
+            title = app.musicTitle;
+            musicControl.setText();
+            if ( musicControl.isPlaying()) {
+                playPauseView.setImageResource(R.drawable.stop);
+            }else{
+                playPauseView.setImageResource(R.drawable.start);
+            }
         }
+        setTitle(title);
     }
 
 
     private void bindMusicService() {
-        intent2 = new Intent(this, MusicService.class);//创建意图对象
-        conn = new MyServiceConn();
-        bindService(intent2, conn, BIND_AUTO_CREATE); //绑定服务
 
+        if (musicControl == null) {
+            intent2 = new Intent(this, MusicService.class);//创建意图对象
+            conn = new MyServiceConn();
+            bindService(intent2, conn, BIND_AUTO_CREATE); //绑定服务
+        }else{
+            musicControl.init(musicUrl);
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(1000);
+//                            musicControl.setText();
+                        musicControl.play();
+//                        animator.start();
+                        playPauseView.setImageResource(R.drawable.stop);
+                        musicControl.updateNotify(app.currentPostion);
+                        startFloatingImageDisplayService();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+//                            handler.sendMessage();
+                }
+            }).start();
+        }
 
-        intent3 = new Intent(this, FloatingImageDisplayService.class);//创建意图对象
-        conn1 = new MyServiceConn();
-        bindService(intent3, conn1, BIND_AUTO_CREATE); //绑定服务
+        if ( floatingControl == null){
+            intent3 = new Intent(this, FloatingImageDisplayService.class);//创建意图对象
+            conn1 = new MyServiceConn();
+            bindService(intent3, conn1, BIND_AUTO_CREATE); //绑定服务
+        }
     }
 
 
@@ -194,7 +231,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         animator.setInterpolator(new LinearInterpolator());//匀速
         animator.setRepeatCount(-1);//-1表示设置动画无限循环
 
-        musicUrl = getIntent().getStringExtra("music_url");
+
     }
 
 
@@ -337,7 +374,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     public void run() {
                         try {
                             Thread.sleep(1000);
-                            musicControl.setText();
+//                            musicControl.setText();
                             musicControl.play();
 //                        animator.start();
                             playPauseView.setImageResource(R.drawable.stop);

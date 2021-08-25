@@ -1,6 +1,7 @@
 package cn.tihuxueyuan.service;
 
 import static android.os.Build.VERSION.SDK_INT;
+import static cn.tihuxueyuan.utils.Constant.bootstrapReflect;
 
 import android.app.Service;
 import android.content.Intent;
@@ -10,26 +11,22 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-//import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
+
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
-
 import java.lang.reflect.Method;
-
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.utils.Constant;
 
-/**
- * Created by dongzhong on 2018/5/30.
- */
 
 public class FloatingImageDisplayService extends Service {
     public static boolean isStarted = false;
@@ -64,59 +61,28 @@ public class FloatingImageDisplayService extends Service {
         layoutParams.y = 300;
 
         images = new int[]{
-//                R.drawable.start,
-//                R.drawable.stop,
                 R.drawable.image_01,
                 R.drawable.image_02,
-//                R.drawable.image_03,
-//                R.drawable.image_04,
-//                R.drawable.image_05,
         };
 
         changeImageHandler = new Handler(this.getMainLooper(), changeImageCallback);
     }
 
-//    @Override
-//    public IBinder onBind(Intent intent) {
-//        return null;
-//    }
 
     @Override
     public IBinder onBind(Intent intent) {
         return new FloatingImageDisplayService.FloatingControl();
     }
 
-    private void f() {
-        if (SDK_INT < Build.VERSION_CODES.P) {
-            return;
-        }
-        try {
-            Method forName = Class.class.getDeclaredMethod("forName", String.class);
-            Method getDeclaredMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
-            Class<?> vmRuntimeClass = (Class<?>) forName.invoke(null, "dalvik.system.VMRuntime");
-            Method getRuntime = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "getRuntime", null);
-            Method setHiddenApiExemptions = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "setHiddenApiExemptions", new Class[]{String[].class});
-            Object sVmRuntime = getRuntime.invoke(null);
-            setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{new String[]{"L"}});
-        } catch (Throwable e) {
-            Log.e("[error]", "reflect bootstrap failed:", e);
-        }
-    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("tag2", "onStartCommand  ");
-
-        f();
-
-//        initFloatingWindow();
+        Log.d(Constant.Tag, " 悬浮窗服务 onStartCommand  ");
+        bootstrapReflect();
         return super.onStartCommand(intent, flags, startId);
     }
-
-
-
-
 
     public class FloatingControl extends Binder { //Binder是一种跨进程的通信方式
 
@@ -127,8 +93,13 @@ public class FloatingImageDisplayService extends Service {
             LayoutInflater layoutInflater = LayoutInflater.from(FloatingImageDisplayService.this);
             displayView = layoutInflater.inflate(R.layout.image_display, null);
             displayView.setOnTouchListener(new FloatingOnTouchListener());
-            ImageView imageView = displayView.findViewById(R.id.image_display_imageview);
-            imageView.setImageResource(images[imageIndex]);
+//            ImageView imageView = displayView.findViewById(R.id.image_display_imageview);
+//            imageView.setImageResource(images[imageIndex]);
+
+            TextView textView = displayView.findViewById(R.id.float_text);
+            textView.setText("12345");
+
+            textView.setBackgroundResource (R.drawable.shape);
             windowManager.addView(displayView, layoutParams);
             displayView.setVisibility(View.GONE);
 
