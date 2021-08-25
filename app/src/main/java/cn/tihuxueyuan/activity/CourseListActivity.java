@@ -1,63 +1,34 @@
 package cn.tihuxueyuan.activity;
-//
 
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-////import android.support.v7.app.AppCompatActivity;
-import android.provider.Settings;
 import android.util.Log;
-//import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-//
-////
-//import  com.squareup.*;
-//
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
-import cn.tihuxueyuan.fragment.dashboard.DashboardFragment;
-import cn.tihuxueyuan.fragment.home.HomeFragment;
-import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.Data;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
-import cn.tihuxueyuan.model.CourseTypeList;
-import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.utils.Constant;
-import cn.tihuxueyuan.verticaltabrecycler.MainActivity;
-import okhttp3.OkHttpClient;
-import okhttp3.FormBody;
-
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import cn.tihuxueyuan.R;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class CourseListActivity extends BaseActivity {
 
-    final OkHttpClient client = new OkHttpClient();
     private android.widget.ListView lv;
-    private CommonAdapter mAdapter;
     private String couseId;
     private String title;
+    private CommonAdapter<CourseFile> mAdapter;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
 
     @Override
@@ -65,8 +36,8 @@ public class CourseListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.course_list_activity);
 
-        couseId = (String) getIntent().getStringExtra("course_id");
-        title = (String) getIntent().getStringExtra("title");
+        couseId = getIntent().getStringExtra("course_id");
+        title = getIntent().getStringExtra("title");
         setTitle(title);
         this.lv = (ListView) findViewById(R.id.courseList);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,8 +53,6 @@ public class CourseListActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
-
         Log.d("tag2", "onCreate: param: " + couseId);
     }
 
@@ -93,11 +62,11 @@ public class CourseListActivity extends BaseActivity {
 //        moveTaskToBack(true);
 //    }
 
-/*
-进入时log输出：
-E/====: onRestart()
-E/====: onStart()
- */
+    /*
+    进入时log输出：
+    E/====: onRestart()
+    E/====: onStart()
+     */
     @Override
     protected void onRestart() {
         Log.e("====", "onRestart()");
@@ -177,23 +146,13 @@ D/tag1: parseNetworkResponse:
         lv.setAdapter(mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
-//                String s = courseFile.getTitle();
-//                Log.d("tag1", "s: " + s);
-
                 /*
                 在正则表达式中是个已经被使用的特殊符号（"."、"|"、"^"等字符）
 所以想要使用 | ，必须用 \ 来进行转义，而在java字符串中，\ 也是个已经被使用的特殊符号，也需要使用 \ 来转义。
 所以应为：String[] all=str.split(("\\.")
                  */
-                String a[] = courseFile.getTitle().split("\\.");
-//                if (a != null  && a[0] != null) {
-//                    holder.set(R.id.name, a[0]);
-//                }else{
-//                    holder.set(R.id.name,contactsBean.getTitle());
-//                }
-
-                holder.set(R.id.name, a[0]);
-
+                String titleArr[] = courseFile.getTitle().split("\\.");
+                holder.set(R.id.name, titleArr[0]);
             }
         });
 
@@ -210,7 +169,7 @@ D/tag1: parseNetworkResponse:
                 }
                 mList = response.getCourseFileList();
 
-                final Data app = (Data)getApplication();
+                final Data app = (Data) getApplication();
                 app.mList = mList;
                 refreshListView();
             }

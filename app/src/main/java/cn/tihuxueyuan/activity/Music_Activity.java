@@ -23,16 +23,11 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
-import java.io.IOException;
-
 import cn.tihuxueyuan.R;
-
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.fragment.list.ListFragment;
@@ -49,11 +44,12 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private ObjectAnimator animator;
     private String title;
     public MusicService.MusicControl musicControl;
-
-    String name;
-    Intent intent1, intent2;
-    MyServiceConn conn;
-    String musicUrl;
+    private Intent intent3;
+    private MyServiceConn conn1;
+    private String name;
+    private Intent intent1, intent2;
+    private MyServiceConn conn;
+    private String musicUrl;
 
     private boolean isUnbind = false; //记录服务是否被解绑
     Data app;
@@ -70,7 +66,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
         app = (Data) getApplication();
 
-        if (isNew == true ) {
+        if (isNew == true) {
             bindMusicService();
 //            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
 
@@ -86,19 +82,13 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             //控制通知栏
             notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
 
-        }else{
+        } else {
 
         }
-
-
     }
 
 
-    Intent intent3;
-    MyServiceConn conn1;
-
-
-    private  void  bindMusicService() {
+    private void bindMusicService() {
         intent2 = new Intent(this, MusicService.class);//创建意图对象
         conn = new MyServiceConn();
         bindService(intent2, conn, BIND_AUTO_CREATE); //绑定服务
@@ -324,7 +314,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //                Toast.makeText(this, "当前无权限，请授权", Toast.LENGTH_SHORT);
 //                startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 1);
 //            } else {
-                startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
+            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
 //            }
         }
     }
@@ -336,10 +326,10 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
 
-            Log.d("tag1", "onServiceConnected: 服务连接成功, serrvice 类名：" +  name.getShortClassName());
+            Log.d("tag1", "onServiceConnected: 服务连接成功, serrvice 类名：" + name.getShortClassName());
 //            musicService = (MusicService) service;
             String cN = name.getShortClassName();
-            if  (cN.contains("MusicService") ){
+            if (cN.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
                 musicControl.init(musicUrl);
 
@@ -361,8 +351,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 }).start();
 
                 Log.d(Constant.Tag, "musicControl 初始化: ");
-            }else if  (cN.contains( "FloatingImageDisplayService") ) {
-                Constant.floatingControl  = (FloatingImageDisplayService.FloatingControl) service;
+            } else if (cN.contains("FloatingImageDisplayService")) {
+                Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
                 Constant.floatingControl.initFloatingWindow();
                 Constant.floatingControl.setVisibility(false);
                 Log.d(Constant.Tag, "floatingControl 初始化: ");

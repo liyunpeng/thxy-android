@@ -2,20 +2,16 @@ package cn.tihuxueyuan.activity;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
-
 import cn.tihuxueyuan.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
 import cn.tihuxueyuan.setting.AppConfig;
+import cn.tihuxueyuan.utils.Constant;
 
 public class MainActivity extends BaseActivity {
 
@@ -44,8 +40,7 @@ public class MainActivity extends BaseActivity {
 
         String appId = "android_" + AppConfig.getVersionName(MainActivity.this) + "_" + AppConfig.getAppMetaData(MainActivity.this, "UMENG_CHANNEL");
 
-
-        Log.d("tag1", "onCreate: id:" + appId);
+        Log.d(Constant.Tag, "onCreate: id:" + appId);
     }
 
 }

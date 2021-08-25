@@ -46,7 +46,7 @@ public class OkhttpClientActivity extends BaseActivity implements View.OnClickLi
         String s = (String) getIntent().getStringExtra("course_id");
         Log.d("tag2", "onCreate: param: "+ s);
     }
-    
+
     @Override
     public void onClick(View view) {
         switch (view.getId()){
