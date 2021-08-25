@@ -1,6 +1,10 @@
 package cn.tihuxueyuan.utils;
 
+import cn.tihuxueyuan.service.FloatingImageDisplayService;
+
 public class Constant {
+
+    public static FloatingImageDisplayService.FloatingControl floatingControl;
 
     public static final String Tag = "thxy";
     /**

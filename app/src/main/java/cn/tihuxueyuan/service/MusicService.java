@@ -358,7 +358,6 @@ public class MusicService extends Service {
         public void init(String url) {
             player.reset();
             try {
-//                        player.setDataSource("http://47.102.146.8:8082/api/fileDownload?fileName=一声佛号一声心.mp3");
                 player.setDataSource(url);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -370,26 +369,15 @@ public class MusicService extends Service {
         }
 
         public void updateNotify(int position) {
-            //显示通知
             updateNotificationShow(position);
-
         }
 
 
-        public void play() {//String path
+        public void play() {
 //                Uri uri=Uri.parse("android.resource://"+getPackageName()+"/raw/"+"music"+i);
             try {
-
-                player.start(); //播放音乐
-/*
-                    player.reset(); //重置音乐播放器
-                    //加载多媒体文件
-                    player=MediaPlayer.create(getApplicationContext(),uri);
-                    player.start(); //播放音乐
-*/
-
-
-                addTimer();//添加计时器
+                player.start();
+                addTimer();
             } catch (Exception e) {
                 e.printStackTrace();
             }

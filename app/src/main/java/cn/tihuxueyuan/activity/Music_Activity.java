@@ -17,6 +17,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -39,6 +40,7 @@ import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
+import cn.tihuxueyuan.utils.Constant;
 
 public class Music_Activity extends AppCompatActivity implements View.OnClickListener {
     private static SeekBar sb;
@@ -46,6 +48,7 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     private ObjectAnimator animator;
     private String title;
     public MusicService.MusicControl musicControl;
+
     //    public MusicService musicService;
     String name;
     Intent intent1, intent2;
@@ -64,19 +67,85 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 //        todo :标题居中
 //        getSupportActionBar().
 
-        title = (String) getIntent().getStringExtra("title");
-
+        boolean isNew = getIntent().getBooleanExtra("is_new", false);
         app = (Data) getApplication();
-        app.currentPostion = getIntent().getIntExtra("current_position", 0);
-        setTitle(title);
-        intent1 = getIntent();
-        init();
 
-        //通知栏的观察者
-        notificationObserver();
-        //控制通知栏
-        notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
+        if (isNew == true ) {
+            bindMusicService();
+//            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
 
+            app.currentPostion = getIntent().getIntExtra("current_position", 0);
+            title = getIntent().getStringExtra("title");
+            setTitle(title);
+            intent1 = getIntent();
+            init();
+
+            //通知栏的观察者
+            notificationObserver();
+
+            //控制通知栏
+            notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
+
+        }else{
+
+        }
+
+
+    }
+
+
+    Intent intent3;
+    MyServiceConn conn1;
+
+
+    private  void  bindMusicService() {
+        intent2 = new Intent(this, MusicService.class);//创建意图对象
+        conn = new MyServiceConn();
+        bindService(intent2, conn, BIND_AUTO_CREATE); //绑定服务
+
+
+        intent3 = new Intent(this, FloatingImageDisplayService.class);//创建意图对象
+        conn1 = new MyServiceConn();
+        bindService(intent3, conn1, BIND_AUTO_CREATE); //绑定服务
+    }
+
+
+
+    /*
+    singleTask运行逻辑
+    1.activity1(singleTop)–>intent–>activity2(singleTask)，这个时候activity2位于栈顶，
+    activity1处理stop状态，并没有销毁，因为栈中activity1不在activity2的上层，不会销毁。
+
+    当直接finish掉activity2，activity1会执行onResume，不会重新创建。
+
+    当通过调用intent回到activity1时，因为activity1是singleTop模式，并且不是在栈顶。这个时候activity1会重新创建，执行onCreate。
+
+    2.当启动main activity1是singleTask模式时，通过activity1调用intent跳转到activity2，显示activity2界面，
+    这个时候按下home键回到桌面，再进入应用时，发现并没有显示activity2，而是显示activity1。
+    意思就是没有保存回到桌面时的界面状态，activity2被销毁了，此时activity1执行了onNewIntent。
+
+    结论是：当启动main activity1是singleTask模式时，不管此时显示哪一个activity，按下home键，重新进入应用，
+    都会执行activity1的onNewIntent方法，之前显示的activity将会销毁。
+
+    3.当启动main activity1是singleTop模式时，在显示activity1时按下home键回到桌面，
+    再进入应用时，此时activity1执行了onNewIntent。跳转到activity2(singTask)界面，
+    按下home键，再回到应用，会执行activity2的onResume，显示正常。
+
+    结论是：当启动main activity1是singleTop模式时，不管此时显示哪一个activity，按下home键，重新进入应用，
+    之前显示的activity将会执行onResume，显示正常。
+
+     */
+
+    @Override
+    protected void onStart() {
+        Log.e("====", "onStart()");
+        super.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.e("====", "onRestart()");
+        super.onRestart();
     }
 
     ImageView playPauseView;
@@ -86,18 +155,13 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
         tv_total = (TextView) findViewById(R.id.tv_total);
         sb = (SeekBar) findViewById(R.id.sb);
         name_song = (TextView) findViewById(R.id.song_name);
-
         playPauseView = findViewById(R.id.play_pause);
         playPauseView.setOnClickListener(this);
         findViewById(R.id.play_previous).setOnClickListener(this);
         findViewById(R.id.play_next).setOnClickListener(this);
-//        findViewById(R.id.btn_exit).setOnClickListener(this);
-
         name = intent1.getStringExtra("name");
         name_song.setText(name);
-        intent2 = new Intent(this, MusicService.class);//创建意图对象
-        conn = new MyServiceConn();//创建服务连接对象
-        bindService(intent2, conn, BIND_AUTO_CREATE);//绑定服务
+
         //为滑动条添加事件监听
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -130,13 +194,10 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
             }
         });
         ImageView iv_music = (ImageView) findViewById(R.id.iv_music);
-
-
 //        String position= intent1.getStringExtra("position");
         String position = "1";
         int i = parseInt(position);
         iv_music.setImageResource(ListFragment.icons[i]);
-
 
         animator = ObjectAnimator.ofFloat(iv_music, "rotation", 0f, 360.0f);
         animator.setDuration(10000);//动画旋转一周的时间为10秒
@@ -271,30 +332,41 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
 
     class MyServiceConn implements ServiceConnection {//用于实现连接服务
 
+        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
 
-            Log.d("tag1", "onServiceConnected: 服务连接成功 ");
+            Log.d("tag1", "onServiceConnected: 服务连接成功, serrvice 类名：" +  name.getShortClassName());
 //            musicService = (MusicService) service;
-            musicControl = (MusicService.MusicControl) service;
-            musicControl.init(musicUrl);
+            String cN = name.getShortClassName();
+            if  (cN.contains("MusicService") ){
+                musicControl = (MusicService.MusicControl) service;
+                musicControl.init(musicUrl);
 
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                        musicControl.setText();
-                        musicControl.play();
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                            musicControl.setText();
+                            musicControl.play();
 //                        animator.start();
-                        playPauseView.setImageResource(R.drawable.stop);
-                        musicControl.updateNotify(app.currentPostion);
-                        startFloatingImageDisplayService();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                            playPauseView.setImageResource(R.drawable.stop);
+                            musicControl.updateNotify(app.currentPostion);
+                            startFloatingImageDisplayService();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 //                            handler.sendMessage();
-                }
-            }).start();
+                    }
+                }).start();
+
+                Log.d(Constant.Tag, "musicControl 初始化: ");
+            }else if  (cN.contains( "FloatingImageDisplayService") ) {
+                Constant.floatingControl  = (FloatingImageDisplayService.FloatingControl) service;
+                Constant.floatingControl.initFloatingWindow();
+                Constant.floatingControl.setVisibility(false);
+                Log.d(Constant.Tag, "floatingControl 初始化: ");
+            }
         }
 
         @Override
@@ -370,9 +442,10 @@ public class Music_Activity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbind(isUnbind);
-        isUnbind = true;
-        finish();
+        Log.d(Constant.Tag, " Music activity onDestroy");
+//        unbind(isUnbind);
+//        isUnbind = true;
+//        finish();
     }
 
     private void playNextPrevious() {
