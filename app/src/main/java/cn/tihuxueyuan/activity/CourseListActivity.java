@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import cn.tihuxueyuan.basic.ActivityManager;
+import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.fragment.dashboard.DashboardFragment;
@@ -50,7 +51,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class CourseListActivity extends AppCompatActivity {
+public class CourseListActivity extends BaseActivity {
 
     final OkHttpClient client = new OkHttpClient();
     private android.widget.ListView lv;

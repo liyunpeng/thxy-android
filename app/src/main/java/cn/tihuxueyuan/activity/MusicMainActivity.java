@@ -10,11 +10,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.fragment.playing.PlayingFragment;
 //import com
 
-public class MusicMainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MusicMainActivity extends BaseActivity implements View.OnClickListener {
     private FrameLayout content;
     private TextView tv1, tv2;
     public FragmentManager fm;

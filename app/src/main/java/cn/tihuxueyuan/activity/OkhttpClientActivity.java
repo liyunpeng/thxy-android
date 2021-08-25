@@ -10,6 +10,8 @@ import android.widget.Button;
 //import  com.squareup.*;
 //
 import android.view.View;
+
+import cn.tihuxueyuan.basic.BaseActivity;
 import okhttp3.OkHttpClient;
 import okhttp3.FormBody;
 
@@ -23,7 +25,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class OkhttpClientActivity extends AppCompatActivity implements View.OnClickListener {
+public class OkhttpClientActivity extends BaseActivity implements View.OnClickListener {
 
     private Button bt_get;
     private Button bt_post;
@@ -44,9 +46,7 @@ public class OkhttpClientActivity extends AppCompatActivity implements View.OnCl
         String s = (String) getIntent().getStringExtra("course_id");
         Log.d("tag2", "onCreate: param: "+ s);
     }
-
-
-
+    
     @Override
     public void onClick(View view) {
         switch (view.getId()){

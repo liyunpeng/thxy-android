@@ -34,6 +34,7 @@ import java.io.IOException;
 import cn.tihuxueyuan.R;
 
 import cn.tihuxueyuan.basic.ActivityManager;
+import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.Data;
 import cn.tihuxueyuan.livedata.LiveDataBus;
@@ -42,20 +43,19 @@ import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.utils.Constant;
 
-public class Music_Activity extends AppCompatActivity implements View.OnClickListener {
+public class Music_Activity extends BaseActivity implements View.OnClickListener {
     private static SeekBar sb;
     private static TextView tv_progress, tv_total, name_song;
     private ObjectAnimator animator;
     private String title;
     public MusicService.MusicControl musicControl;
 
-    //    public MusicService musicService;
     String name;
     Intent intent1, intent2;
     MyServiceConn conn;
     String musicUrl;
 
-    private boolean isUnbind = false;//记录服务是否被解绑
+    private boolean isUnbind = false; //记录服务是否被解绑
     Data app;
 
     private LiveDataBus.BusMutableLiveData<String> notificationLiveData;
