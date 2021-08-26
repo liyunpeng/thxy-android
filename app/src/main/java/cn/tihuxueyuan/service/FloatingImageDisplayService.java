@@ -69,6 +69,14 @@ public class FloatingImageDisplayService extends Service {
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
 //            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
 
+        DisplayMetrics dm = new DisplayMetrics();
+        //取得窗口属性
+        windowManager.getDefaultDisplay().getMetrics(dm);
+        //窗口的宽度
+        int screenWidth = dm.widthPixels;
+        //窗口高度
+        int screenHeight = dm.heightPixels;
+        //以屏幕左上角为原点，设置x、y初始值，相对于gravity
 
 
         layoutParams.format = PixelFormat.RGBA_8888;
@@ -76,11 +84,15 @@ public class FloatingImageDisplayService extends Service {
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        layoutParams.x = outMetrics.widthPixels - WindowManager.LayoutParams.WRAP_CONTENT;
+        layoutParams.x = screenWidth - WindowManager.LayoutParams.WRAP_CONTENT ;
+        layoutParams.y = screenHeight - WindowManager.LayoutParams.WRAP_CONTENT - 24 ;
 //        layoutParams.y =   outMetrics.heightPixels - WindowManager.LayoutParams.WRAP_CONTENT- (outMetrics.heightPixels/480) * 24
 //
 //        ;
-        layoutParams.y =   outMetrics.heightPixels - (WindowManager.LayoutParams.WRAP_CONTENT + (outMetrics.heightPixels/480) * 24 )  ;
+
+
+
+//        layoutParams.y =   outMetrics.heightPixels - (WindowManager.LayoutParams.WRAP_CONTENT + (outMetrics.heightPixels/480) * 24 )  ;
 //        layoutParams.y =  (outSize.y/480) * 24; // outSize.y - WindowManager.LayoutParams.WRAP_CONTENT- (outSize.y/480) * 24   ;
 
         images = new int[]{
@@ -113,18 +125,27 @@ public class FloatingImageDisplayService extends Service {
             displayView = layoutInflater.inflate(R.layout.image_display, null);
             displayView.setOnTouchListener(new FloatingOnTouchListener());
             textView = displayView.findViewById(R.id.float_text);
-            textView.setText("12345");
+
             textView.setBackgroundResource(R.drawable.shape);
             windowManager.addView(displayView, layoutParams);
             displayView.setVisibility(View.GONE);
 
 //        changeImageHandler.sendEmptyMessageDelayed(0, 2000);
+
+//            windowManager.remo
 //        }
+        }
+        public void remove(  ){
+            windowManager.removeView(displayView);
+//            FloatWindowManager.createFloatWindow()
+//            textView.setText(s);
+//            displayView.g();
+//            ((TextView) displayView.findViewById(R.id.float_text)).setText(s);
         }
 
 
         public void setText( String s ){
-
+//            FloatWindowManager.createFloatWindow()
 //            textView.setText(s);
 //            displayView.g();
             ((TextView) displayView.findViewById(R.id.float_text)).setText(s);

@@ -129,7 +129,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     try {
                         Thread.sleep(1000);
                         musicControl.play();
-
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -143,7 +142,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             conn1 = new MyServiceConn();
             bindService(intent3, conn1, BIND_AUTO_CREATE);  //绑定服务
         }
-
     }
 
     @Override
