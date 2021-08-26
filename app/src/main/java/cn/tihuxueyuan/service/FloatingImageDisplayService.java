@@ -49,6 +49,7 @@ public class FloatingImageDisplayService extends Service {
         super.onCreate();
         isStarted = true;
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+//        getWindowManager()
         DisplayMetrics outMetrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getRealMetrics(outMetrics);
 //        outMetrics.heightPixels;
@@ -60,11 +61,22 @@ public class FloatingImageDisplayService extends Service {
 
         layoutParams = new WindowManager.LayoutParams();
         if (SDK_INT >= Build.VERSION_CODES.O) {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+//            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+
+//            String packname = context.getPackageName();
+//            PackageManager pm = context.getPackageManager();
+//            boolean permission = (PackageManager.PERMISSION_GRANTED == pm.checkPermission("android.permission.SYSTEM_ALERT_WINDOW", packname));
+//            if (permission) {
+//                wmParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+//            } else {
+//                wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+//            }
         } else {
             layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
 
+        layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
 
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
 //            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
