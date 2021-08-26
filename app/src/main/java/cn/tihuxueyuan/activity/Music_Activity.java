@@ -88,7 +88,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
         floatLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
 
-        String title;
+
         if (isNew == true) {
             bindMusicService();
 //            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
@@ -96,7 +96,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             title = getIntent().getStringExtra("title");
             app.musicTitle = title;
         } else {
-
 //            bootstrapReflect();
             title = app.musicTitle;
             musicControl.setText();
@@ -107,7 +106,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             }
         }
         setTitle(title);
-
+        if (Constant.floatingControl != null) {
+            Constant.floatingControl.setText(title);
+        }
 
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
 //            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
@@ -117,7 +118,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     }
 
     private void bindMusicService() {
-
         if (musicControl == null) {
             Constant.intent2 = new Intent(this, MusicService.class);//创建意图对象
             Constant.conn1 = new MyServiceConn();
@@ -128,16 +128,12 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 public void run() {
                     try {
                         Thread.sleep(1000);
-//                            musicControl.setText();
                         musicControl.play();
-//                        animator.start();
-//                        playPauseView.setImageResource(R.drawable.stop);
-//                        musicControl.updateNotify(app.currentPostion);
-//                        startFloatingImageDisplayService();
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-//                            handler.sendMessage();
+//                      handler.sendMessage();
                 }
             }).start();
         }
@@ -145,36 +141,10 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         if ( floatingControl == null){
             intent3 = new Intent(this, FloatingImageDisplayService.class);//创建意图对象
             conn1 = new MyServiceConn();
-            bindService(intent3, conn1, BIND_AUTO_CREATE); //绑定服务
+            bindService(intent3, conn1, BIND_AUTO_CREATE);  //绑定服务
         }
+
     }
-
-
-
-    /*
-    singleTask运行逻辑
-    1.activity1(singleTop)–>intent–>activity2(singleTask)，这个时候activity2位于栈顶，
-    activity1处理stop状态，并没有销毁，因为栈中activity1不在activity2的上层，不会销毁。
-
-    当直接finish掉activity2，activity1会执行onResume，不会重新创建。
-
-    当通过调用intent回到activity1时，因为activity1是singleTop模式，并且不是在栈顶。这个时候activity1会重新创建，执行onCreate。
-
-    2.当启动main activity1是singleTask模式时，通过activity1调用intent跳转到activity2，显示activity2界面，
-    这个时候按下home键回到桌面，再进入应用时，发现并没有显示activity2，而是显示activity1。
-    意思就是没有保存回到桌面时的界面状态，activity2被销毁了，此时activity1执行了onNewIntent。
-
-    结论是：当启动main activity1是singleTask模式时，不管此时显示哪一个activity，按下home键，重新进入应用，
-    都会执行activity1的onNewIntent方法，之前显示的activity将会销毁。
-
-    3.当启动main activity1是singleTop模式时，在显示activity1时按下home键回到桌面，
-    再进入应用时，此时activity1执行了onNewIntent。跳转到activity2(singTask)界面，
-    按下home键，再回到应用，会执行activity2的onResume，显示正常。
-
-    结论是：当启动main activity1是singleTop模式时，不管此时显示哪一个activity，按下home键，重新进入应用，
-    之前显示的activity将会执行onResume，显示正常。
-
-     */
 
     @Override
     protected void onStart() {
@@ -187,8 +157,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         Log.e("====", "onRestart()");
         super.onRestart();
     }
-
-
 
     private void init() {
         tv_progress = (TextView) findViewById(R.id.tv_progress);
@@ -387,11 +355,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                             Thread.sleep(1000);
 //                            musicControl.setText();
                             musicControl.play();
-//                        animator.start();
-//                            playPauseView.setImageResource(R.drawable.stop);
-//                            musicControl.updateNotify(app.currentPostion);
-//                            musicControl.uotify1();
-//                            startFloatingImageDisplayService();
+
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -403,6 +367,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
                 Constant.floatingControl.initFloatingWindow();
                 Constant.floatingControl.setVisibility(false);
+                Constant.floatingControl.setText(title);
+
                 Log.d(Constant.TAG, "floatingControl 初始化完成");
             }
         }

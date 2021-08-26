@@ -142,7 +142,6 @@ public class MusicService extends Service {
         PendingIntent closePendingIntent = PendingIntent.getBroadcast(this, 0, intentClose, 0);
         //为close控件注册事件
         remoteViews.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
-
     }
 
     /**
@@ -278,9 +277,7 @@ public class MusicService extends Service {
         public void UIControl(String state, String tag) {
             switch (state) {
                 case PLAY:
-//                    pauseOrContinueMusic();
                     play();
-                    Log.d(tag, PLAY + " or " + PAUSE);
                     break;
 //            case PREV:
 //
@@ -294,7 +291,6 @@ public class MusicService extends Service {
 //                break;
                 case CLOSE:
                     closeNotification();
-                    Log.d(tag, CLOSE);
                     break;
                 default:
                     break;
@@ -331,22 +327,14 @@ public class MusicService extends Service {
             setText();
         }
 
-
         public void play() {
-
-
             if (player.isPlaying()) {
                 player.pause();
                 activityLiveData.postValue(PAUSE);
             } else {
                 player.start();
-
                 addTimer();
                 activityLiveData.postValue(PLAY);
-
-//                if (Constant.floatingControl != null) {
-//                    Constant.floatingControl.setText("aaaaaa");
-//                }
             }
             updateNotificationShow(app.currentPostion);
         }
@@ -355,9 +343,6 @@ public class MusicService extends Service {
             player.pause();//暂停播放音乐
         }
 
-//        public void continuePlay() {
-//            player.start();//继续播放音乐
-//        }
 
         public boolean isPlaying() {
             return player.isPlaying();
@@ -365,8 +350,6 @@ public class MusicService extends Service {
 
         public void seekTo(int progress) {
             player.seekTo(progress);//设置音乐的播放位置
-
-
         }
     }
 
