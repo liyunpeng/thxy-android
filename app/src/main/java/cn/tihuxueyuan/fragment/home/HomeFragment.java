@@ -23,6 +23,7 @@ import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.databinding.FragmentHomeBinding;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
+import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.verticaltabrecycler.MainActivity;
 
@@ -35,7 +36,7 @@ public class HomeFragment extends Fragment {
     private android.widget.ListView lv;
     private android.widget.RelativeLayout activitymain;
 
-    private List<CourseTypeList.CourseType> mList = new ArrayList<>();
+    private List<CourseFileList.CourseFile> mList = new ArrayList<>();
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
@@ -88,10 +89,10 @@ public class HomeFragment extends Fragment {
     }
 
     public void refreshListView() {
-        lv.setAdapter(mAdapter = new CommonAdapter<CourseTypeList.CourseType>(this.getContext(), mList, R.layout.dashboard_item_layout) {
+        lv.setAdapter(mAdapter = new CommonAdapter<CourseFileList.CourseFile>(this.getContext(), mList, R.layout.dashboard_item_layout) {
             @Override
-            public void convertView(ViewHolder holder, CourseTypeList.CourseType contactsBean) {
-                holder.set(R.id.name, contactsBean.getName());
+            public void convertView(ViewHolder holder, CourseFileList.CourseFile contactsBean) {
+                holder.set(R.id.name, contactsBean.getTitle());
             }
         });
 
@@ -99,14 +100,14 @@ public class HomeFragment extends Fragment {
     }
 
     public void initCourseType() {
-        HttpClient.getCourseTypes("", new HttpCallback<CourseTypeList>() {
+        HttpClient.getLatest("", new HttpCallback<CourseFileList>() {
             @Override
-            public void onSuccess(CourseTypeList response) {
-                if (response == null || response.getCourseType() == null || response.getCourseType().isEmpty()) {
+            public void onSuccess(CourseFileList response) {
+                if (response == null || response.getCourseFileList() == null || response.getCourseFileList().isEmpty()) {
                     onFail(null);
                     return;
                 }
-                mList = response.getCourseType();
+                mList = response.getCourseFileList();
                 refreshListView();
             }
 
