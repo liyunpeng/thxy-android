@@ -1,41 +1,34 @@
 package cn.tihuxueyuan.service;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static cn.tihuxueyuan.utils.Constant.CLOSE;
-import static cn.tihuxueyuan.utils.Constant.NEXT;
+import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
-import static cn.tihuxueyuan.utils.Constant.PREV;
-import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.bootstrapReflect;
-//import static cn.tihuxueyuan.utils.Constant.musicReceiver;
-
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-
 import androidx.annotation.RequiresApi;
+import androidx.lifecycle.Observer;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.utils.Constant;
-import cn.tihuxueyuan.utils.SPUtils;
-
 
 public class FloatingImageDisplayService extends Service {
     public static boolean isStarted = false;
@@ -51,40 +44,51 @@ public class FloatingImageDisplayService extends Service {
     private Handler changeImageHandler;
 
 
-
-
-
-
-
     @Override
     public void onCreate() {
         super.onCreate();
         isStarted = true;
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getRealMetrics(outMetrics);
+//        outMetrics.heightPixels;
+
+//        Point outSize = new Point();
+//        windowManager.getDefaultDisplay().getRealSize(outSize);
+//        outSize.
+
+
         layoutParams = new WindowManager.LayoutParams();
         if (SDK_INT >= Build.VERSION_CODES.O) {
             layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
             layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
+
+
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
+//            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+
+
+
         layoutParams.format = PixelFormat.RGBA_8888;
         layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        layoutParams.width = 500;
-        layoutParams.height = 500;
-        layoutParams.x = 300;
-        layoutParams.y = 300;
+        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;;
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        layoutParams.x = outMetrics.widthPixels - WindowManager.LayoutParams.WRAP_CONTENT;
+//        layoutParams.y =   outMetrics.heightPixels - WindowManager.LayoutParams.WRAP_CONTENT- (outMetrics.heightPixels/480) * 24
+//
+//        ;
+        layoutParams.y =   outMetrics.heightPixels - (WindowManager.LayoutParams.WRAP_CONTENT + (outMetrics.heightPixels/480) * 24 )  ;
+//        layoutParams.y =  (outSize.y/480) * 24; // outSize.y - WindowManager.LayoutParams.WRAP_CONTENT- (outSize.y/480) * 24   ;
 
         images = new int[]{
                 R.drawable.image_01,
                 R.drawable.image_02,
         };
-
         changeImageHandler = new Handler(this.getMainLooper(), changeImageCallback);
-
-
     }
-
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -100,7 +104,7 @@ public class FloatingImageDisplayService extends Service {
     }
 
     public class FloatingControl extends Binder { //Binder是一种跨进程的通信方式
-
+        TextView textView;
         @RequiresApi(api = Build.VERSION_CODES.M)
         public void initFloatingWindow() {
 //        if (Settings.canDrawOverlays(this)) {
@@ -108,18 +112,22 @@ public class FloatingImageDisplayService extends Service {
             LayoutInflater layoutInflater = LayoutInflater.from(FloatingImageDisplayService.this);
             displayView = layoutInflater.inflate(R.layout.image_display, null);
             displayView.setOnTouchListener(new FloatingOnTouchListener());
-//            ImageView imageView = displayView.findViewById(R.id.image_display_imageview);
-//            imageView.setImageResource(images[imageIndex]);
-
-            TextView textView = displayView.findViewById(R.id.float_text);
+            textView = displayView.findViewById(R.id.float_text);
             textView.setText("12345");
-
-            textView.setBackgroundResource (R.drawable.shape);
+            textView.setBackgroundResource(R.drawable.shape);
             windowManager.addView(displayView, layoutParams);
             displayView.setVisibility(View.GONE);
 
 //        changeImageHandler.sendEmptyMessageDelayed(0, 2000);
 //        }
+        }
+
+
+        public void setText( String s ){
+
+//            textView.setText(s);
+//            displayView.g();
+            ((TextView) displayView.findViewById(R.id.float_text)).setText(s);
         }
 
         public void setVisibility(boolean visible) {

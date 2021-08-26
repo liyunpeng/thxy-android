@@ -54,23 +54,23 @@ public class HomeFragment extends Fragment {
 
 
         this.lv = (ListView) root.findViewById(R.id.lv);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (id == 1) {
-                    Intent intent = new Intent(HomeFragment.this.getContext(), MusicMainActivity.class);//创建Intent对象，启动check
-//                intent.putExtra("name",name[position]);
-//                intent.putExtra("position",String.valueOf(position));
-                    startActivity(intent);
-                } else if (id == 2) {
-                    Intent intent = new Intent(HomeFragment.this.getContext(), OkhttpClientActivity.class);//创建Intent对象，启动check
-                    startActivity(intent);
-                } else if ( id == 3){
-                    Intent intent = new Intent(HomeFragment.this.getContext(), MainActivity.class);//创建Intent对象，启动check
-                    startActivity(intent);
-                }
-            }
-        });
+//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                if (id == 1) {
+//                    Intent intent = new Intent(HomeFragment.this.getContext(), MusicMainActivity.class);//创建Intent对象，启动check
+////                intent.putExtra("name",name[position]);
+////                intent.putExtra("position",String.valueOf(position));
+//                    startActivity(intent);
+//                } else if (id == 2) {
+//                    Intent intent = new Intent(HomeFragment.this.getContext(), OkhttpClientActivity.class);//创建Intent对象，启动check
+//                    startActivity(intent);
+//                } else if ( id == 3){
+//                    Intent intent = new Intent(HomeFragment.this.getContext(), MainActivity.class);//创建Intent对象，启动check
+//                    startActivity(intent);
+//                }
+//            }
+//        });
         return root;
     }
 

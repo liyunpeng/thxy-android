@@ -1,18 +1,12 @@
 package cn.tihuxueyuan.receiver;
 
 import android.app.Activity;
-//import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import cn.tihuxueyuan.basic.ActivityManager;
-
-
-//import com.llw.goodmusic.basic.MyActivityManager;
-//import com.llw.goodmusic.utils.BLog;
-//
 
 /**
  * 通知点击广播接收器  跳转到栈顶的Activity ,而不是new 一个新的Activity

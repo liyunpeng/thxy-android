@@ -68,6 +68,7 @@ public class MusicService extends Service {
      * 通知管理器
      */
     private static NotificationManager manager;
+
     /**
      * 音乐广播接收器
      */
@@ -81,7 +82,9 @@ public class MusicService extends Service {
 
         return new MusicControl();
     }
+
     Data app;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
@@ -218,18 +221,6 @@ public class MusicService extends Service {
         manager.createNotificationChannel(channel);
     }
 
-    public void pauseOrContinueMusic() {
-        if (player.isPlaying()) {
-            player.pause();
-            activityLiveData.postValue(PAUSE);
-        } else {
-            player.start();
-            activityLiveData.postValue(PLAY);
-        }
-        //更改通知栏播放状态
-        updateNotificationShow(app.currentPostion);
-    }
-
     /**
      * 关闭音乐通知栏
      */
@@ -244,39 +235,6 @@ public class MusicService extends Service {
         activityLiveData.postValue(CLOSE);
     }
 
-
-    /**
-     * 页面的UI 控制 ，通过服务来控制页面和通知栏的UI
-     *
-     * @param state 状态码
-     * @param tag
-     */
-
-
-//    /**
-//     * 注册动态广播
-//     */
-//    private void registerMusicReceiver() {
-//        musicReceiver = new MusicReceiver();
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(PLAY);
-//        intentFilter.addAction(PREV);
-//        intentFilter.addAction(NEXT);
-//        intentFilter.addAction(CLOSE);
-//        registerReceiver(musicReceiver, intentFilter);
-//    }
-
-    /**
-     * 广播接收器 （内部类）
-     */
-//    public class MusicReceiver extends BroadcastReceiver {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            Log.d(TAG, "MusicReceiver onReceive : " + intent.toString());
-//            SPUtils.putBoolean(Constant.IS_CHANGE, true, context);
-////            UIControl(intent.getAction(), TAG);
-//        }
-//    }
 
     /**
      * Activity的观察者
@@ -320,8 +278,8 @@ public class MusicService extends Service {
         public void UIControl(String state, String tag) {
             switch (state) {
                 case PLAY:
-                    //暂停或继续
-                    pauseOrContinueMusic();
+//                    pauseOrContinueMusic();
+                    play();
                     Log.d(tag, PLAY + " or " + PAUSE);
                     break;
 //            case PREV:
@@ -357,12 +315,8 @@ public class MusicService extends Service {
             Music_Activity.handler.sendMessage(msg);
         }
 
-//        public void register1() {
-//            registerMusicReceiver();
-//        }
-
         public void init(String url) {
-            if ( player.isLooping()) {
+            if (player.isLooping()) {
                 player.stop();
                 player.release();
             }
@@ -377,28 +331,33 @@ public class MusicService extends Service {
             setText();
         }
 
-        public void updateNotify(int position) {
-            updateNotificationShow(position);
-        }
-
 
         public void play() {
-//                Uri uri=Uri.parse("android.resource://"+getPackageName()+"/raw/"+"music"+i);
-            try {
+
+
+            if (player.isPlaying()) {
+                player.pause();
+                activityLiveData.postValue(PAUSE);
+            } else {
                 player.start();
+
                 addTimer();
-            } catch (Exception e) {
-                e.printStackTrace();
+                activityLiveData.postValue(PLAY);
+
+//                if (Constant.floatingControl != null) {
+//                    Constant.floatingControl.setText("aaaaaa");
+//                }
             }
+            updateNotificationShow(app.currentPostion);
         }
 
         public void pausePlay() {
             player.pause();//暂停播放音乐
         }
 
-        public void continuePlay() {
-            player.start();//继续播放音乐
-        }
+//        public void continuePlay() {
+//            player.start();//继续播放音乐
+//        }
 
         public boolean isPlaying() {
             return player.isPlaying();

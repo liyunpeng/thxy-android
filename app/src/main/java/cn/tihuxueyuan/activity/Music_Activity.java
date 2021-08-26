@@ -24,8 +24,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -64,6 +66,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     Data app;
 
     private LiveDataBus.BusMutableLiveData<String> notificationLiveData;
+    private LiveDataBus.BusMutableLiveData<String> floatLiveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         notificationObserver();
         //控制通知栏
         notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
+        floatLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
 
         String title;
         if (isNew == true) {
@@ -103,8 +107,14 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             }
         }
         setTitle(title);
-    }
 
+
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
+//            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+
+//        floatLiveData = LiveDataBus.getInstance().with("float_control", String.class);
+//        floatLiveData.postValue(PLAY);
+    }
 
     private void bindMusicService() {
 
@@ -121,9 +131,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //                            musicControl.setText();
                         musicControl.play();
 //                        animator.start();
-                        playPauseView.setImageResource(R.drawable.stop);
-                        musicControl.updateNotify(app.currentPostion);
-                        startFloatingImageDisplayService();
+//                        playPauseView.setImageResource(R.drawable.stop);
+//                        musicControl.updateNotify(app.currentPostion);
+//                        startFloatingImageDisplayService();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -289,6 +299,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
 
     private LiveDataBus.BusMutableLiveData<String> activityLiveData;
+//    private LiveDataBus.BusMutableLiveData<String> floatLiveData;
 
     /**
      * 通知栏动作观察者
@@ -377,9 +388,10 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //                            musicControl.setText();
                             musicControl.play();
 //                        animator.start();
-                            playPauseView.setImageResource(R.drawable.stop);
-                            musicControl.updateNotify(app.currentPostion);
-                            startFloatingImageDisplayService();
+//                            playPauseView.setImageResource(R.drawable.stop);
+//                            musicControl.updateNotify(app.currentPostion);
+//                            musicControl.uotify1();
+//                            startFloatingImageDisplayService();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -462,7 +474,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //                break;
         }
 
-        musicControl.updateNotify(app.currentPostion);
+//        musicControl.updateNotify(app.currentPostion);
     }
 
     @Override
