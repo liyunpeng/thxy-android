@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.zhy.http.okhttp.callback.Callback;
 
 import java.io.IOException;
-
+import static cn.tihuxueyuan.utils.Constant.TAG;
 import okhttp3.Response;
 
 
@@ -23,7 +23,7 @@ public abstract class JsonCallback<T> extends Callback<T> {
     public T parseNetworkResponse(Response response, int id) throws IOException {
         try {
             String jsonString = response.body().string();
-            Log.d("tag1", "parseNetworkResponse: "  +  jsonString);
+            Log.d(TAG, "parseNetworkResponse: "  +  jsonString);
 
             return gson.fromJson(jsonString, clazz);
 

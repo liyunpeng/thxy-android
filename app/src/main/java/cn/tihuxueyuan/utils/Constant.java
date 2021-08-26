@@ -2,19 +2,26 @@ package cn.tihuxueyuan.utils;
 
 import static android.os.Build.VERSION.SDK_INT;
 
+import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
 import java.lang.reflect.Method;
 
+import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 
 public class Constant {
 
+    public static Music_Activity.MyServiceConn conn1;
+    private String name;
+    public static Intent intent1, intent2;
+
     public static FloatingImageDisplayService.FloatingControl floatingControl;
     public static MusicService.MusicControl musicControl;
-    public static final String Tag = "thxy";
+
+    public static final String TAG = "thxy";
     /**
      * 歌曲播放
      */
@@ -60,7 +67,7 @@ public class Constant {
             Object sVmRuntime = getRuntime.invoke(null);
             setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{new String[]{"L"}});
         } catch (Throwable e) {
-            Log.e(Constant.Tag, "reflect bootstrap failed:", e);
+            Log.e(Constant.TAG, "reflect bootstrap failed:", e);
         }
     }
 }

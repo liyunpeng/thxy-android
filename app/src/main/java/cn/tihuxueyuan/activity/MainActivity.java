@@ -1,5 +1,16 @@
 package cn.tihuxueyuan.activity;
 
+import static cn.tihuxueyuan.utils.Constant.CLOSE;
+import static cn.tihuxueyuan.utils.Constant.NEXT;
+import static cn.tihuxueyuan.utils.Constant.PLAY;
+import static cn.tihuxueyuan.utils.Constant.PREV;
+import static cn.tihuxueyuan.utils.Constant.TAG;
+//import static cn.tihuxueyuan.utils.Constant.musicReceiver;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import cn.tihuxueyuan.R;
@@ -10,8 +21,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
+import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.setting.AppConfig;
 import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.SPUtils;
 
 public class MainActivity extends BaseActivity {
 
@@ -40,7 +53,31 @@ public class MainActivity extends BaseActivity {
 
         String appId = "android_" + AppConfig.getVersionName(MainActivity.this) + "_" + AppConfig.getAppMetaData(MainActivity.this, "UMENG_CHANNEL");
 
-        Log.d(Constant.Tag, "onCreate: id:" + appId);
+        Log.d(Constant.TAG, "onCreate: id:" + appId);
+        registerMusicReceiver();
+    }
+
+    public static MusicReceiver musicReceiver;
+    public class MusicReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "MusicReceiver onReceive : " + intent.toString());
+            SPUtils.putBoolean(Constant.IS_CHANGE, true, context);
+            Constant.musicControl.UIControl(intent.getAction(), TAG);
+        }
+    }
+    /**
+     * 注册动态广播
+     * 动态广播不能放在服务里， 服务在ondestory后，服务就在存在了， 这是musicReceiver new 的服务 就会报错
+     */
+    private void registerMusicReceiver() {
+        musicReceiver = new MusicReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(PLAY);
+        intentFilter.addAction(PREV);
+        intentFilter.addAction(NEXT);
+        intentFilter.addAction(CLOSE);
+        registerReceiver(musicReceiver, intentFilter);
     }
 
 }

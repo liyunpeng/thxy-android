@@ -1,11 +1,12 @@
 package cn.tihuxueyuan.service;
 
-import static cn.tihuxueyuan.utils.Constant.Tag;
+import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.CLOSE;
 import static cn.tihuxueyuan.utils.Constant.NEXT;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.PREV;
+//import static cn.tihuxueyuan.utils.Constant.musicReceiver;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -70,13 +71,14 @@ public class MusicService extends Service {
     /**
      * 音乐广播接收器
      */
-    private MusicReceiver musicReceiver;
+
 
     public MusicService() {
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+
         return new MusicControl();
     }
     Data app;
@@ -84,10 +86,11 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "MusicService onCreate");
         initRemoteViews();
         initNotification();
         //注册动态广播
-        registerMusicReceiver();
+
         app = (Data) getApplication();
         player = new MediaPlayer();//创建音乐播放器对象
         activityLiveData = LiveDataBus.getInstance().with("activity_control", String.class);
@@ -248,56 +251,32 @@ public class MusicService extends Service {
      * @param state 状态码
      * @param tag
      */
-    private void UIControl(String state, String tag) {
-        switch (state) {
-            case PLAY:
-                //暂停或继续
-                pauseOrContinueMusic();
-                Log.d(tag, PLAY + " or " + PAUSE);
-                break;
-//            case PREV:
-//
-//                previousMusic();
-//                Log.d(tag, PREV);
-//                break;
-//            case NEXT:
-//
-//                nextMusic();
-//                Log.d(tag, NEXT);
-//                break;
-            case CLOSE:
-                closeNotification();
-                Log.d(tag, CLOSE);
-                break;
-            default:
-                break;
-        }
-    }
 
-    /**
-     * 注册动态广播
-     */
-    private void registerMusicReceiver() {
-        musicReceiver = new MusicReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(PLAY);
-        intentFilter.addAction(PREV);
-        intentFilter.addAction(NEXT);
-        intentFilter.addAction(CLOSE);
-        registerReceiver(musicReceiver, intentFilter);
-    }
+
+//    /**
+//     * 注册动态广播
+//     */
+//    private void registerMusicReceiver() {
+//        musicReceiver = new MusicReceiver();
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(PLAY);
+//        intentFilter.addAction(PREV);
+//        intentFilter.addAction(NEXT);
+//        intentFilter.addAction(CLOSE);
+//        registerReceiver(musicReceiver, intentFilter);
+//    }
 
     /**
      * 广播接收器 （内部类）
      */
-    public class MusicReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(Tag, "MusicReceiver onReceive : " + intent.toString());
-            SPUtils.putBoolean(Constant.IS_CHANGE, true, context);
-            UIControl(intent.getAction(), Tag);
-        }
-    }
+//    public class MusicReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Log.d(TAG, "MusicReceiver onReceive : " + intent.toString());
+//            SPUtils.putBoolean(Constant.IS_CHANGE, true, context);
+////            UIControl(intent.getAction(), TAG);
+//        }
+//    }
 
     /**
      * Activity的观察者
@@ -338,6 +317,32 @@ public class MusicService extends Service {
 
     public class MusicControl extends Binder { //Binder是一种跨进程的通信方式
 
+        public void UIControl(String state, String tag) {
+            switch (state) {
+                case PLAY:
+                    //暂停或继续
+                    pauseOrContinueMusic();
+                    Log.d(tag, PLAY + " or " + PAUSE);
+                    break;
+//            case PREV:
+//
+//                previousMusic();
+//                Log.d(tag, PREV);
+//                break;
+//            case NEXT:
+//
+//                nextMusic();
+//                Log.d(tag, NEXT);
+//                break;
+                case CLOSE:
+                    closeNotification();
+                    Log.d(tag, CLOSE);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         public void setText() {
             if (player == null) return;
             int duration = player.getDuration();//获取歌曲总时长
@@ -351,6 +356,10 @@ public class MusicService extends Service {
             //将消息发送到主线程的消息队列
             Music_Activity.handler.sendMessage(msg);
         }
+
+//        public void register1() {
+//            registerMusicReceiver();
+//        }
 
         public void init(String url) {
             if ( player.isLooping()) {
@@ -405,6 +414,7 @@ public class MusicService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "MusicService onDestroy");
 //        if (player == null) return;
 //        if (player.isPlaying()) player.stop();//停止播放音乐
 //        player.release();//释放占用的资源

@@ -12,7 +12,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         String className = this.getLocalClassName();
-        Log.d(Constant.Tag, " name ="+ this.getLocalClassName());
+        Log.d(Constant.TAG, " name ="+ this.getLocalClassName());
         if (Constant.floatingControl != null) {
             if (className.contains("Music")){
                 Constant.floatingControl.setVisibility(false);

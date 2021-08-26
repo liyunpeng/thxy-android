@@ -1,10 +1,19 @@
 package cn.tihuxueyuan.service;
 
 import static android.os.Build.VERSION.SDK_INT;
+import static cn.tihuxueyuan.utils.Constant.CLOSE;
+import static cn.tihuxueyuan.utils.Constant.NEXT;
+import static cn.tihuxueyuan.utils.Constant.PLAY;
+import static cn.tihuxueyuan.utils.Constant.PREV;
+import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.bootstrapReflect;
+//import static cn.tihuxueyuan.utils.Constant.musicReceiver;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.os.Binder;
 import android.os.Build;
@@ -18,14 +27,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
-import java.lang.reflect.Method;
+
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.SPUtils;
 
 
 public class FloatingImageDisplayService extends Service {
@@ -40,6 +49,12 @@ public class FloatingImageDisplayService extends Service {
     private int imageIndex = 0;
 
     private Handler changeImageHandler;
+
+
+
+
+
+
 
     @Override
     public void onCreate() {
@@ -66,6 +81,8 @@ public class FloatingImageDisplayService extends Service {
         };
 
         changeImageHandler = new Handler(this.getMainLooper(), changeImageCallback);
+
+
     }
 
 
@@ -77,7 +94,7 @@ public class FloatingImageDisplayService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(Constant.Tag, " 悬浮窗服务 onStartCommand  ");
+        Log.d(Constant.TAG, " 悬浮窗服务 onStartCommand  ");
         bootstrapReflect();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -118,7 +135,7 @@ public class FloatingImageDisplayService extends Service {
         @Override
         public boolean handleMessage(Message msg) {
             if (msg.what == 0) {
-                Log.d(Constant.Tag, "handleMessage: " + msg);
+                Log.d(Constant.TAG, "handleMessage: " + msg);
                 //获取栈顶的Activity
 //                Activity currentActivity = ActivityManager.getCurrentActivity();
 //                Intent intent = new Intent(Intent.ACTION_MAIN);

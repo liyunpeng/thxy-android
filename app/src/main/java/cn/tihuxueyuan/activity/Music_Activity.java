@@ -2,25 +2,29 @@ package cn.tihuxueyuan.activity;
 
 import static java.lang.Integer.parseInt;
 
+import static cn.tihuxueyuan.utils.Constant.CLOSE;
+import static cn.tihuxueyuan.utils.Constant.NEXT;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
-import static cn.tihuxueyuan.utils.Constant.bootstrapReflect;
+import static cn.tihuxueyuan.utils.Constant.PREV;
+import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.floatingControl;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
+//import static cn.tihuxueyuan.utils.Constant.musicReceiver;
 
 import android.animation.ObjectAnimator;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -40,6 +44,7 @@ import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.SPUtils;
 
 public class Music_Activity extends BaseActivity implements View.OnClickListener {
     private static SeekBar sb;
@@ -51,8 +56,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private Intent intent3;
     private MyServiceConn conn1;
     private String name;
-    private Intent intent1, intent2;
-    private MyServiceConn conn;
+    private Intent intent1;
+//    private MyServiceConn conn;
     private String musicUrl;
 
     private boolean isUnbind = false; //记录服务是否被解绑
@@ -63,7 +68,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(Constant.Tag, "Music Activity oncreate  ");
+        Log.d(Constant.TAG, "Music Activity oncreate  ");
         setContentView(R.layout.activity_music);
 //        todo :标题居中
 //        getSupportActionBar().
@@ -104,9 +109,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private void bindMusicService() {
 
         if (musicControl == null) {
-            intent2 = new Intent(this, MusicService.class);//创建意图对象
-            conn = new MyServiceConn();
-            bindService(intent2, conn, BIND_AUTO_CREATE); //绑定服务
+            Constant.intent2 = new Intent(this, MusicService.class);//创建意图对象
+            Constant.conn1 = new MyServiceConn();
+            bindService( Constant.intent2,  Constant.conn1, BIND_AUTO_CREATE); //绑定服务
         }else{
             musicControl.init(musicUrl);
             new Thread(new Runnable() {
@@ -354,18 +359,17 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         }
     }
 
-
-    class MyServiceConn implements ServiceConnection {//用于实现连接服务
+    public class MyServiceConn implements ServiceConnection {//用于实现连接服务
 
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d("tag1", "onServiceConnected: 服务连接成功, serrvice 类名：" + name.getShortClassName());
+            Log.d(TAG, "onServiceConnected: 服务连接成功, serrvice 类名：" + name.getShortClassName());
             String shortClassName = name.getShortClassName();
             if (shortClassName.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
                 musicControl.init(musicUrl);
-
+//                musicControl.register1();
                 new Thread(new Runnable() {
                     public void run() {
                         try {
@@ -382,12 +386,12 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //                            handler.sendMessage();
                     }
                 }).start();
-                Log.d(Constant.Tag, "musicControl 初始化完成 ");
+                Log.d(Constant.TAG, "musicControl 初始化完成 ");
             } else if (shortClassName.contains("FloatingImageDisplayService")) {
                 Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
                 Constant.floatingControl.initFloatingWindow();
                 Constant.floatingControl.setVisibility(false);
-                Log.d(Constant.Tag, "floatingControl 初始化完成");
+                Log.d(Constant.TAG, "floatingControl 初始化完成");
             }
         }
 
@@ -400,7 +404,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private void unbind(boolean isUnbind) {
         if (!isUnbind) {//判断服务是否被解绑
             musicControl.pausePlay();//暂停播放音乐
-            unbindService(conn);//解绑服务
+            unbindService(Constant.conn1);//解绑服务
         }
     }
 
@@ -464,7 +468,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(Constant.Tag, " Music activity onDestroy");
+        Log.d(Constant.TAG, " Music activity onDestroy");
 //        unbind(isUnbind);
 //        isUnbind = true;
 //        finish();
