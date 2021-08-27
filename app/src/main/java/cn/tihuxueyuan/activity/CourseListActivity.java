@@ -11,12 +11,11 @@ import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
-import cn.tihuxueyuan.globaldata.Data;
+import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
-import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.R;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class CourseListActivity extends BaseActivity {
     private String title;
     private CommonAdapter<CourseFile> mAdapter;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
-
+    private AppData appData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +38,7 @@ public class CourseListActivity extends BaseActivity {
         couseId = getIntent().getStringExtra("course_id");
         title = getIntent().getStringExtra("title");
         setTitle(title);
-        this.lv = (ListView) findViewById(R.id.courseList);
+        this.lv =  findViewById(R.id.courseList);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -53,8 +52,8 @@ public class CourseListActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+        appData = (AppData) getApplication();
         Log.d("tag2", "onCreate: param: " + couseId);
-
     }
 
 
@@ -136,11 +135,6 @@ D/tag1: parseNetworkResponse:
         Log.e("====", "onResume()");
         ActivityManager.setCurrentActivity(CourseListActivity.this);
         initCourseType();
-
-
-        if (Constant.floatingControl != null) {
-            Constant.floatingControl.setVisibility(true);
-        }
     }
 
     public void refreshListView() {
@@ -169,9 +163,7 @@ D/tag1: parseNetworkResponse:
                     return;
                 }
                 mList = response.getCourseFileList();
-
-                final Data app = (Data) getApplication();
-                app.mList = mList;
+                appData.mList = mList;
                 refreshListView();
             }
 

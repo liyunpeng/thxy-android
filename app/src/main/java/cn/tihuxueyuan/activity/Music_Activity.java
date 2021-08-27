@@ -2,32 +2,24 @@ package cn.tihuxueyuan.activity;
 
 import static java.lang.Integer.parseInt;
 
-import static cn.tihuxueyuan.utils.Constant.CLOSE;
-import static cn.tihuxueyuan.utils.Constant.NEXT;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
-import static cn.tihuxueyuan.utils.Constant.PREV;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.floatingControl;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
 //import static cn.tihuxueyuan.utils.Constant.musicReceiver;
 
 import android.animation.ObjectAnimator;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -40,13 +32,12 @@ import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.fragment.list.ListFragment;
-import cn.tihuxueyuan.globaldata.Data;
+import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.utils.Constant;
-import cn.tihuxueyuan.utils.SPUtils;
 
 public class Music_Activity extends BaseActivity implements View.OnClickListener {
     private static SeekBar sb;
@@ -63,7 +54,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private String musicUrl;
 
     private boolean isUnbind = false; //记录服务是否被解绑
-    Data app;
+    AppData app;
 
     private LiveDataBus.BusMutableLiveData<String> notificationLiveData;
     private LiveDataBus.BusMutableLiveData<String> floatLiveData;
@@ -78,7 +69,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
         musicUrl = getIntent().getStringExtra("music_url");
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
-        app = (Data) getApplication();
+        app = (AppData) getApplication();
 
         intent1 = getIntent();
         init();

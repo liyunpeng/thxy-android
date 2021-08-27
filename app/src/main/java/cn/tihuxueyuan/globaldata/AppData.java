@@ -7,7 +7,7 @@ import java.util.List;
 
 import cn.tihuxueyuan.model.CourseFileList;
 
-public class Data extends Application{
+public class AppData extends Application{
     private String b;
     public int currentPostion;
     public String musicTitle;

@@ -15,10 +15,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -27,7 +24,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -35,12 +31,10 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import cn.tihuxueyuan.activity.Music_Activity;
-import cn.tihuxueyuan.globaldata.Data;
+import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.receiver.NotificationClickReceiver;
 import cn.tihuxueyuan.R;
-import cn.tihuxueyuan.utils.Constant;
-import cn.tihuxueyuan.utils.SPUtils;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -85,7 +79,7 @@ public class MusicService extends Service {
         return new MusicControl();
     }
 
-    Data app;
+    AppData app;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -96,7 +90,7 @@ public class MusicService extends Service {
         initNotification();
         //注册动态广播
 
-        app = (Data) getApplication();
+        app = (AppData) getApplication();
         player = new MediaPlayer();//创建音乐播放器对象
         activityLiveData = LiveDataBus.getInstance().with("activity_control", String.class);
     }
@@ -178,7 +172,7 @@ public class MusicService extends Service {
 
     }
 
-    Data data;
+    AppData data;
 
     /**
      * 更改通知的信息和UI
@@ -195,7 +189,7 @@ public class MusicService extends Service {
         //封面专辑
 //        remoteViews.setImageViewBitmap(R.id.iv_album_cover, MusicUtils.getAlbumPicture(this, mList.get(position).getPath(), 0));
         //歌曲名
-        data = (Data) getApplication();
+        data = (AppData) getApplication();
 
         remoteViews.setTextViewText(R.id.tv_notification_song_name, data.mList.get(position).getTitle());
         //歌手名
@@ -364,7 +358,6 @@ public class MusicService extends Service {
         public void pausePlay() {
             player.pause();//暂停播放音乐
         }
-
 
         public boolean isPlaying() {
             return player.isPlaying();

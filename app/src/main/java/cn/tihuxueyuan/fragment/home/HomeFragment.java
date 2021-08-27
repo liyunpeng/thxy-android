@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -16,16 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.tihuxueyuan.R;
-import cn.tihuxueyuan.activity.MusicMainActivity;
-import cn.tihuxueyuan.activity.OkhttpClientActivity;
+import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.databinding.FragmentHomeBinding;
+import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.model.CourseFileList;
-import cn.tihuxueyuan.model.CourseTypeList;
-import cn.tihuxueyuan.verticaltabrecycler.MainActivity;
 
 public class HomeFragment extends Fragment {
 
@@ -35,7 +32,7 @@ public class HomeFragment extends Fragment {
     private CommonAdapter mAdapter;
     private android.widget.ListView lv;
     private android.widget.RelativeLayout activitymain;
-
+    private AppData appData;
     private List<CourseFileList.CourseFile> mList = new ArrayList<>();
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -53,11 +50,19 @@ public class HomeFragment extends Fragment {
 //            }
 //        });
 
+        this.lv =  root.findViewById(R.id.lv);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(HomeFragment.this.getActivity(), Music_Activity.class);//创建Intent对象，启动check
+                String musicUrl = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
+                intent.putExtra("music_url", musicUrl);
+                intent.putExtra("current_position", position);
+                intent.putExtra("is_new", true);
+                String titleArr[] = mList.get(position).getTitle().split("\\.");
+                intent.putExtra("title", titleArr[0]);
+                startActivity(intent);
 
-        this.lv = (ListView) root.findViewById(R.id.lv);
-//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                if (id == 1) {
 //                    Intent intent = new Intent(HomeFragment.this.getContext(), MusicMainActivity.class);//创建Intent对象，启动check
 ////                intent.putExtra("name",name[position]);
@@ -70,22 +75,22 @@ public class HomeFragment extends Fragment {
 //                    Intent intent = new Intent(HomeFragment.this.getContext(), MainActivity.class);//创建Intent对象，启动check
 //                    startActivity(intent);
 //                }
-//            }
-//        });
+            }
+        });
+        appData = (AppData) HomeFragment.this.getActivity().getApplication();
         return root;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
         binding = null;
     };
 
     @Override
     public void onResume() {
         super.onResume();
-        initCourseType();
+        getFilelist();
     }
 
     public void refreshListView() {
@@ -99,7 +104,7 @@ public class HomeFragment extends Fragment {
 //        mAdapter.notifyDataSetChanged();
     }
 
-    public void initCourseType() {
+    public void getFilelist() {
         HttpClient.getLatest("", new HttpCallback<CourseFileList>() {
             @Override
             public void onSuccess(CourseFileList response) {
@@ -109,6 +114,7 @@ public class HomeFragment extends Fragment {
                 }
                 mList = response.getCourseFileList();
                 refreshListView();
+                appData.mList = mList;
             }
 
             @Override
