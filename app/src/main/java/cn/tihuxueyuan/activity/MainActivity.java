@@ -10,9 +10,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+
 import cn.tihuxueyuan.R;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.lifecycle.Observer;
@@ -20,6 +25,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
 import cn.tihuxueyuan.livedata.LiveDataBus;
@@ -36,6 +42,16 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(getApplicationContext())) {
+                //启动Activity让用户授权
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 100);
+            }
+        }
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         getSupportActionBar().hide();
         setContentView(binding.getRoot());
@@ -58,6 +74,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public static MusicReceiver musicReceiver;
+
     public class MusicReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -66,6 +83,7 @@ public class MainActivity extends BaseActivity {
             Constant.musicControl.UIControl(intent.getAction(), TAG);
         }
     }
+
     /**
      * 注册动态广播
      * 动态广播不能放在服务里， 服务在ondestory后，服务就在存在了， 这是musicReceiver new 的服务 就会报错
@@ -82,6 +100,7 @@ public class MainActivity extends BaseActivity {
 
 
     private LiveDataBus.BusMutableLiveData<String> activityLiveData;
+
     /**
      * 通知栏动作观察者
      */

@@ -22,7 +22,7 @@ import android.widget.FrameLayout;
 
 import java.util.Arrays;
 
-import cn.tihuxueyuan.float_lib.R;
+import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.float_lib.util.DensityUtil;
 import cn.tihuxueyuan.float_lib.util.DeviceUtil;
 

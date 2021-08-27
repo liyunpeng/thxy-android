@@ -62,7 +62,7 @@ public class FloatingImageDisplayService extends Service {
         layoutParams = new WindowManager.LayoutParams();
         if (SDK_INT >= Build.VERSION_CODES.O) {
 //            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-            layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
 
 //            String packname = context.getPackageName();
 //            PackageManager pm = context.getPackageManager();
@@ -76,7 +76,7 @@ public class FloatingImageDisplayService extends Service {
             layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
 
-        layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+//        layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
 
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
 //            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
@@ -112,6 +112,8 @@ public class FloatingImageDisplayService extends Service {
                 R.drawable.image_02,
         };
         changeImageHandler = new Handler(this.getMainLooper(), changeImageCallback);
+
+        Log.d(Constant.TAG, "FloatingImageDisplayService oncreate ");
     }
 
     @Override
@@ -148,7 +150,7 @@ public class FloatingImageDisplayService extends Service {
 //        }
         }
         public void remove(  ){
-            windowManager.removeView(displayView);
+//            windowManager.removeView(displayView);
 //            FloatWindowManager.createFloatWindow()
 //            textView.setText(s);
 //            displayView.g();

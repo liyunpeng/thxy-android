@@ -22,11 +22,6 @@ import cn.tihuxueyuan.float_lib.permission.rom.MiuiUtils;
 import cn.tihuxueyuan.float_lib.permission.rom.QikuUtils;
 import cn.tihuxueyuan.float_lib.permission.rom.RomUtils;
 
-/**
- * Author:xishuang
- * Date:2017.08.01
- * Des:悬浮窗权限适配，很全的适配http://blog.csdn.net/self_study/article/details/52859790
- */
 
 public class FloatPermissionManager {
     private static final String TAG = "FloatPermissionManager";

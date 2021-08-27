@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import cn.tihuxueyuan.float_lib.FloatActionController;
-import cn.tihuxueyuan.float_lib.R;
+import cn.tihuxueyuan.R;
 
 /**
  * Author:xishuang

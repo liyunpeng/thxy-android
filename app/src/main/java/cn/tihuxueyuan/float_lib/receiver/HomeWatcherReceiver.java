@@ -7,12 +7,6 @@ import android.util.Log;
 
 import cn.tihuxueyuan.float_lib.FloatActionController;
 
-/**
- * Author:xishuang
- * Date:2017.08.01
- * Des:一些Home建与切换键的广播监听，需要动态注册
- */
-
 public class HomeWatcherReceiver extends BroadcastReceiver {
     private static final String TAG = "HomeWatcherReceiver";
     private static final String SYSTEM_DIALOG_FROM_KEY = "reason";

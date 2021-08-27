@@ -54,6 +54,7 @@ public class CourseListActivity extends BaseActivity {
             }
         });
         Log.d("tag2", "onCreate: param: " + couseId);
+
     }
 
 
