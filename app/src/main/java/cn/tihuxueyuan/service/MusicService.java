@@ -27,7 +27,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -173,6 +175,7 @@ public class MusicService extends Service {
                 .setOngoing(true)
                 .build();
 
+
     }
 
     Data data;
@@ -199,6 +202,7 @@ public class MusicService extends Service {
 //        remoteViews.setTextViewText(R.id.tv_notification_singer, mList.get(position).getSinger());
         //发送通知
         manager.notify(NOTIFICATION_ID, notification);
+
     }
 
     /**
@@ -249,6 +253,8 @@ public class MusicService extends Service {
 //            }
 //        });
 //    }
+
+
     public void addTimer() { //添加计时器用于设置音乐播放器中的播放进度条
         if (timer == null) {
             timer = new Timer();//创建计时器对象
@@ -273,8 +279,23 @@ public class MusicService extends Service {
         }
     }
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        Toast.makeText(MusicService.this, "App要退出了", Toast.LENGTH_SHORT).show();
+    }
+
     public class MusicControl extends Binder { //Binder是一种跨进程的通信方式
 
+
+        public void release () {
+            if (player == null) return;
+            if (player.isPlaying()) player.stop();//停止播放音乐
+            player.release();//释放占用的资源
+            player = null;//将player置为空
+
+            manager.cancel(NOTIFICATION_ID);
+        }
         public void UIControl(String state, String tag) {
             switch (state) {
                 case PLAY:
@@ -358,14 +379,6 @@ public class MusicService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "MusicService onDestroy");
-//        if (player == null) return;
-//        if (player.isPlaying()) player.stop();//停止播放音乐
-//        player.release();//释放占用的资源
-//        player = null;//将player置为空
-//
-//        if (musicReceiver != null) {
-//            //解除动态注册的广播
-//            unregisterReceiver(musicReceiver);
-//        }
+
     }
 }

@@ -150,7 +150,7 @@ public class FloatingImageDisplayService extends Service {
 //        }
         }
         public void remove(  ){
-//            windowManager.removeView(displayView);
+            windowManager.removeView(displayView);
 //            FloatWindowManager.createFloatWindow()
 //            textView.setText(s);
 //            displayView.g();
