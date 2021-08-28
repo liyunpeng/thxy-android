@@ -34,6 +34,7 @@ import java.util.Stack;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
 import cn.tihuxueyuan.livedata.LiveDataBus;
+import cn.tihuxueyuan.receiver.HomeReceiver;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.setting.AppConfig;
@@ -184,9 +185,12 @@ public class MainActivity extends BaseActivity {
                 lastBackTime = currentBackTime;
             }else{  //如果两次按下的时间差小于2秒，则退出程序
 //                MyApplication.getInstance().exit();
-                Constant.floatingControl.remove();
-
-                Constant.musicControl.release();
+                if ( Constant.floatingControl != null) {
+                    Constant.floatingControl.remove();
+                }
+                if (Constant.musicControl != null) {
+                    Constant.musicControl.release();
+                }
 
                 if (musicReceiver != null) {
                     //解除动态注册的广播
@@ -202,6 +206,8 @@ public class MainActivity extends BaseActivity {
                 intent.setPackage(getPackageName());
                 //Log.i("当前包", getPackageName());
                 stopService(intent);
+                onDestroy();
+                finish();
             }
             return true;
         }
@@ -223,8 +229,32 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private static HomeReceiver mHomeKeyReceiver = null;
+
+    private static void registerHomeKeyReceiver(Context context) {
+        Log.i(TAG, "registerHomeKeyReceiver");
+        mHomeKeyReceiver = new HomeReceiver();
+        final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+
+        context.registerReceiver(mHomeKeyReceiver, homeFilter);
+    }
+
+    private static void unregisterHomeKeyReceiver(Context context) {
+        Log.i(TAG, "unregisterHomeKeyReceiver");
+        if (null != mHomeKeyReceiver) {
+            context.unregisterReceiver(mHomeKeyReceiver);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerHomeKeyReceiver(this);
+    }
+
     @Override
     protected void onDestroy() {
+        unregisterHomeKeyReceiver(this);
         super.onDestroy();
 
     }

@@ -20,12 +20,11 @@ public class BaseActivity extends AppCompatActivity {
                 Constant.floatingControl.setVisibility(true);
             }
         }
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        Log.d(Constant.TAG, " onDestroy className ="+ this.getLocalClassName());
     }
 }
