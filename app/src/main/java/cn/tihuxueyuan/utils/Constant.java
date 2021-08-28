@@ -9,6 +9,7 @@ import android.util.Log;
 import java.lang.reflect.Method;
 
 import cn.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 
@@ -17,7 +18,7 @@ public class Constant {
     public static Music_Activity.MyServiceConn conn1;
     private String name;
     public static Intent intent1, intent2;
-
+    public static  AppData appData ;
     public static FloatingImageDisplayService.FloatingControl floatingControl;
     public static MusicService.MusicControl musicControl;
 

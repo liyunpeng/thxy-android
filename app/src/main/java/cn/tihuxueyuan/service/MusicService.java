@@ -6,6 +6,7 @@ import static cn.tihuxueyuan.utils.Constant.NEXT;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.PREV;
+import static cn.tihuxueyuan.utils.Constant.musicControl;
 //import static cn.tihuxueyuan.utils.Constant.musicReceiver;
 
 import android.annotation.SuppressLint;
@@ -35,6 +36,7 @@ import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.receiver.NotificationClickReceiver;
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.utils.SPUtils;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -86,7 +88,7 @@ public class MusicService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "MusicService onCreate");
-        initRemoteViews();
+        initNotificationRemoteViews();
         initNotification();
         //注册动态广播
 
@@ -111,7 +113,7 @@ public class MusicService extends Service {
     /**
      * 初始化自定义通知栏 的按钮点击事件
      */
-    private void initRemoteViews() {
+    private void initNotificationRemoteViews() {
         remoteViews = new RemoteViews(this.getPackageName(), R.layout.notification);
 
         //通知栏控制器上一首按钮广播操作
@@ -119,7 +121,6 @@ public class MusicService extends Service {
         PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, intentPrev, 0);
         //为prev控件注册事件
         remoteViews.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
-
 
         //通知栏控制器播放暂停按钮广播操作  //用于接收广播时过滤意图信息
         Intent intentPlay = new Intent(PLAY);
@@ -168,8 +169,6 @@ public class MusicService extends Service {
                 .setOnlyAlertOnce(true)
                 .setOngoing(true)
                 .build();
-
-
     }
 
     AppData data;
@@ -191,7 +190,7 @@ public class MusicService extends Service {
         //歌曲名
         data = (AppData) getApplication();
 
-        remoteViews.setTextViewText(R.id.tv_notification_song_name, data.mList.get(position).getTitle());
+        remoteViews.setTextViewText(R.id.tv_notification_song_name, SPUtils.getTitleFromName(data.mList.get(position).getFileName()));
         //歌手名
 //        remoteViews.setTextViewText(R.id.tv_notification_singer, mList.get(position).getSinger());
         //发送通知
@@ -247,8 +246,6 @@ public class MusicService extends Service {
 //            }
 //        });
 //    }
-
-
     public void addTimer() { //添加计时器用于设置音乐播放器中的播放进度条
         if (timer == null) {
             timer = new Timer();//创建计时器对象
@@ -280,31 +277,47 @@ public class MusicService extends Service {
     }
 
     public class MusicControl extends Binder { //Binder是一种跨进程的通信方式
-
-
-        public void release () {
+        public void release() {
             if (player == null) return;
             if (player.isPlaying()) player.stop();//停止播放音乐
             player.release();//释放占用的资源
             player = null;//将player置为空
-
             manager.cancel(NOTIFICATION_ID);
+        }
+
+        public  void playNew() {
+            String mp3url = SPUtils.getMp3Url(app.mList.get(app.currentPostion).getMp3FileName());
+            init(mp3url);
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(1000);
+                        play();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+//                      handler.sendMessage();
+                }
+            }).start();
         }
         public void UIControl(String state, String tag) {
             switch (state) {
                 case PLAY:
                     play();
                     break;
-//            case PREV:
+//                case PREV:
+//                    app.currentPostion--;
 //
-//                previousMusic();
-//                Log.d(tag, PREV);
-//                break;
-//            case NEXT:
+//                    break;
+//                case NEXT:
+//                    app.currentPostion++;
+//                    String mp3url = SPUtils.getMp3Url(app.mList.get(app.currentPostion).getMp3FileName());
+//                    init(mp3url);
+//                    play();
 //
-//                nextMusic();
-//                Log.d(tag, NEXT);
-//                break;
+//                    Log.d(tag, NEXT);
+//                    break;
                 case CLOSE:
                     closeNotification();
                     break;
@@ -332,7 +345,6 @@ public class MusicService extends Service {
                 player.stop();
                 player.release();
             }
-
             player.reset();
             try {
                 player.setDataSource(url);
@@ -372,6 +384,5 @@ public class MusicService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "MusicService onDestroy");
-
     }
 }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.view.View;
-import android.widget.ListView;
 
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
@@ -17,6 +16,7 @@ import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.utils.SPUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +43,12 @@ public class CourseListActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
-                String musicUrl = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
+//                String musicUrll = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
+                String musicUrl = SPUtils.getMp3Url(mList.get(position).getMp3FileName());
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
                 intent.putExtra("is_new", true);
-                String titleArr[] = mList.get(position).getTitle().split("\\.");
-                intent.putExtra("title", titleArr[0]);
+                intent.putExtra("title", SPUtils.getTitleFromName(mList.get(position).getFileName()));
                 startActivity(intent);
             }
         });
@@ -134,7 +134,7 @@ D/tag1: parseNetworkResponse:
         super.onResume();
         Log.e("====", "onResume()");
         ActivityManager.setCurrentActivity(CourseListActivity.this);
-        initCourseType();
+        getCourseFiles();
     }
 
     public void refreshListView() {
@@ -146,7 +146,7 @@ D/tag1: parseNetworkResponse:
 所以想要使用 | ，必须用 \ 来进行转义，而在java字符串中，\ 也是个已经被使用的特殊符号，也需要使用 \ 来转义。
 所以应为：String[] all=str.split(("\\.")
                  */
-                String titleArr[] = courseFile.getTitle().split("\\.");
+                String titleArr[] = courseFile.getFileName().split("\\.");
                 holder.set(R.id.name, titleArr[0]);
             }
         });
@@ -154,7 +154,7 @@ D/tag1: parseNetworkResponse:
 //        mAdapter.notifyDataSetChanged();
     }
 
-    public void initCourseType() {
+    public void getCourseFiles() {
         HttpClient.getCourseFilesByCourseId(couseId, new HttpCallback<CourseFileList>() {
             @Override
             public void onSuccess(CourseFileList response) {
@@ -165,6 +165,7 @@ D/tag1: parseNetworkResponse:
                 mList = response.getCourseFileList();
                 appData.mList = mList;
                 refreshListView();
+
             }
 
             @Override

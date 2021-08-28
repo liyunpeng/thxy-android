@@ -24,29 +24,28 @@ public class CourseFileList {
     }
 
     public static class CourseFile {
-        @SerializedName("title")
-        private String title;
+//        @SerializedName("title")
+//        private String title;
         @SerializedName("id")
         private String id;
-        @SerializedName("mp3_url")
-        private String mp3_url;
+//        @SerializedName("mp3_url")
+//        private String mp3_url;
         @SerializedName("mp3_file_name")
         private String mp3_file_name;
         @SerializedName("img_src")
         private String img_src;
 
-
-        public String getTitle() {
-            return title;
+        public String getFileName() {
+            return mp3_file_name;
         }
 
-        public void setTitle(String title) {
-            this.title = title;
-        }
+//        public void setTitle(String title) {
+//            this.title = title;
+//        }
 
-        public String getMp3url() {
-            return mp3_url;
-        }
+//        public String getMp3url() {
+//            return mp3_url;
+//        }
 //
 //        public void setArtistname(String artistname) {
 //            this.artistname = artistname;

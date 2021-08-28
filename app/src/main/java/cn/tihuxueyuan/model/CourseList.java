@@ -21,9 +21,15 @@ public class CourseList {
         private String title;
         @SerializedName("id")
         private String id;
+        @SerializedName("store_path")
+        private String storePath;
 
         public String getTitle() {
             return title;
+        }
+
+        public String getStorePath() {
+            return storePath;
         }
 
         public void setTitle(String title) {

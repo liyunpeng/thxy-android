@@ -3,11 +3,8 @@ package cn.tihuxueyuan.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/**
- * sharepref工具类
- *
- * @author llw
- */
+import cn.tihuxueyuan.globaldata.AppData;
+
 public class SPUtils {
     private static final String NAME = "config";
 
@@ -58,5 +55,18 @@ public class SPUtils {
         sp.edit().remove(key).commit();
     }
 
+    /*
+    输入：测试(21)课程.mp3
+    输出：测试(21)课程
+     */
+    public static String getTitleFromName( String fileName ) {
+        String titleArr[] = fileName.split("\\.");
+        return titleArr[0];
+    }
 
+    public static String getMp3Url(String fileName) {
+        AppData appData = Constant.appData;
+        String mp3Url = appData.baseUrl + appData.mp3SourceRouter +  appData.courseStorePath +  "?fileName=" + fileName;
+        return  mp3Url;
+    }
 }

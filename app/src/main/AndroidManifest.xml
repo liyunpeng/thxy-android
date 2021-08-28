@@ -32,6 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication33"
         android:usesCleartextTraffic="true"
+        android:taskAffinity=":finish"
         android:name="cn.tihuxueyuan.globaldata.AppData"
         >
         <activity

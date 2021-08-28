@@ -34,7 +34,6 @@ import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
-import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.utils.Constant;
@@ -62,12 +61,13 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(Constant.TAG, "Music Activity oncreate  ");
+
         setContentView(R.layout.activity_music);
 //        todo :标题居中
 //        getSupportActionBar().
 
         musicUrl = getIntent().getStringExtra("music_url");
+        Log.d(Constant.TAG, "Music Activity oncreate  musicUrl= " + musicUrl);
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
         app = (AppData) getApplication();
 
@@ -398,8 +398,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     app.currentPostion = 0;
                 } else {
                     app.currentPostion--;
-                    playNextPrevious();
-                    setTitle(app.mList.get(app.currentPostion).getTitle().split("\\.")[0]);
+                    musicControl.playNew();
+                    setTitle(app.mList.get(app.currentPostion).getFileName().split("\\.")[0]);
                 }
 
                 break;
@@ -408,12 +408,11 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     app.currentPostion = (app.mList.size() - 1);
                 } else {
                     app.currentPostion++;
-                    playNextPrevious();
-                    setTitle(app.mList.get(app.currentPostion).getTitle().split("\\.")[0]);
+                    musicControl.playNew();
+                    setTitle(app.mList.get(app.currentPostion).getFileName().split("\\.")[0]);
                 }
 
                 break;
-
 
 //            case R.id.btn_pause://暂停按钮点击事件
 //
@@ -441,27 +440,27 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //        finish();
     }
 
-    private void playNextPrevious() {
-
-        CourseFileList.CourseFile c = app.mList.get(app.currentPostion);
-        String musicUrl = c.getMp3url() + "?fileName=" + c.getMp3FileName();
-        musicControl.init(musicUrl);
-
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                    musicControl.setText();
-                    musicControl.play();
-//                        animator.start();
-                    playPauseView.setImageResource(R.drawable.stop);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+//    private void playNextPrevious() {
+//
+//        CourseFileList.CourseFile c = app.mList.get(app.currentPostion);
+//        String musicUrl = c.getMp3url() + "?fileName=" + c.getMp3FileName();
+//        musicControl.init(musicUrl);
+//
+//        new Thread(new Runnable() {
+//            public void run() {
+//                try {
+//                    Thread.sleep(1000);
+//                    musicControl.setText();
+//                    musicControl.play();
+////                        animator.start();
+//                    playPauseView.setImageResource(R.drawable.stop);
+//
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+//    }
 }
 
 

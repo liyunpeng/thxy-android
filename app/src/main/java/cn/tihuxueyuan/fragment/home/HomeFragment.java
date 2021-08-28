@@ -22,7 +22,10 @@ import cn.tihuxueyuan.databinding.FragmentHomeBinding;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
+import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.SPUtils;
 
 public class HomeFragment extends Fragment {
 
@@ -55,11 +58,13 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(HomeFragment.this.getActivity(), Music_Activity.class);//创建Intent对象，启动check
-                String musicUrl = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
+//                String musicUrl = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
+                String musicUrl = SPUtils.getMp3Url( mList.get(position).getMp3FileName());
+
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
                 intent.putExtra("is_new", true);
-                String titleArr[] = mList.get(position).getTitle().split("\\.");
+                String titleArr[] = mList.get(position).getFileName().split("\\.");
                 intent.putExtra("title", titleArr[0]);
                 startActivity(intent);
 
@@ -91,13 +96,14 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         getFilelist();
+        getConfig();
     }
 
     public void refreshListView() {
         lv.setAdapter(mAdapter = new CommonAdapter<CourseFileList.CourseFile>(this.getContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFileList.CourseFile contactsBean) {
-                holder.set(R.id.name, contactsBean.getTitle());
+                holder.set(R.id.name, contactsBean.getFileName());
             }
         });
 
@@ -115,6 +121,27 @@ public class HomeFragment extends Fragment {
                 mList = response.getCourseFileList();
                 refreshListView();
                 appData.mList = mList;
+            }
+
+            @Override
+            public void onFail(Exception e) {
+
+            }
+        });
+    }
+
+    public void getConfig() {
+        HttpClient.getConfig("", new HttpCallback<Config>() {
+            @Override
+            public void onSuccess(Config response) {
+                if (response == null || response.getBaseUrl() == null ) {
+                    onFail(null);
+                    return;
+                }
+                Constant.appData.baseUrl = response.getBaseUrl();
+                Constant.appData.mp3SourceRouter = response.getMp3SourceRouter();
+//                refreshListView();
+//                appData.mList = mList;
             }
 
             @Override

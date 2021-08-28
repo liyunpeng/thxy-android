@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseFileList;
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -120,6 +121,29 @@ public class HttpClient {
                     }
                 });
     }
+
+
+    public static void getConfig(String keyword, final HttpCallback<Config> callback) {
+        OkHttpUtils.post().url(BASE_URL + "getConfig")
+                .build()
+                .execute(new JsonCallback<Config>(Config.class) {
+                    @Override
+                    public void onResponse(Config response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
 
     public static void getCourseFilesByCourseId(String courseId, final HttpCallback<CourseFileList> callback) {
         Map<String, String> params = new HashMap<>();

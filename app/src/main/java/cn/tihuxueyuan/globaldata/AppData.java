@@ -11,6 +11,9 @@ public class AppData extends Application{
     private String b;
     public int currentPostion;
     public String musicTitle;
+    public String baseUrl;
+    public String mp3SourceRouter;
+    public String courseStorePath;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
 
     public String getB(){

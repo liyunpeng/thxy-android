@@ -35,6 +35,7 @@ import cn.tihuxueyuan.model.SearchMusic;
 import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.adapter.GridRecycleAdapter;
 import cn.tihuxueyuan.model.CourseTypeList.CourseType;
+import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.verticaltabrecycler.TestData;
 import q.rorbin.verticaltablayout.VerticalTabLayout;
 import q.rorbin.verticaltablayout.widget.TabView;
@@ -104,7 +105,7 @@ public class DashboardFragment extends Fragment {
                         Intent intent =new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseListActivity.class);//创建意图对象
                         intent.putExtra("course_id", courseList.get(position).getId());
                         intent.putExtra("title", courseList.get(position).getTitle());
-
+                        Constant.appData.courseStorePath = courseList.get(position).getStorePath();
                         startActivity(intent);
                     }
 

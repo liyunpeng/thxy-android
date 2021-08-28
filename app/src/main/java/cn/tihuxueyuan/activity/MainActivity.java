@@ -33,6 +33,7 @@ import java.util.Stack;
 
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
+import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.receiver.HomeReceiver;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
@@ -44,7 +45,7 @@ import cn.tihuxueyuan.utils.SPUtils;
 public class MainActivity extends BaseActivity {
 
     public ActivityMainBinding binding;
-
+    private LiveDataBus.BusMutableLiveData<String> activityLiveData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +59,6 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(intent, 100);
             }
         }
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         getSupportActionBar().hide();
         setContentView(binding.getRoot());
@@ -71,13 +71,11 @@ public class MainActivity extends BaseActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-
         String appId = "android_" + AppConfig.getVersionName(MainActivity.this) + "_" + AppConfig.getAppMetaData(MainActivity.this, "UMENG_CHANNEL");
 
         Log.d(Constant.TAG, "onCreate: id:" + appId);
-        registerMusicReceiver();
 
-        notificationObserver();
+        Constant.appData   = (AppData) getApplication();
     }
 
     public static MusicReceiver musicReceiver;
@@ -106,8 +104,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private LiveDataBus.BusMutableLiveData<String> activityLiveData;
-
     /**
      * 通知栏动作观察者
      */
@@ -119,11 +115,9 @@ public class MainActivity extends BaseActivity {
                 Log.d("tag2", "float onChanged state = " + state);
                 Constant.floatingControl.setText("aaaaaa");
                 switch (state) {
-
                     default:
                         break;
                 }
-
             }
         });
     }
@@ -206,6 +200,7 @@ public class MainActivity extends BaseActivity {
                 intent.setPackage(getPackageName());
                 //Log.i("当前包", getPackageName());
                 stopService(intent);
+
                 onDestroy();
                 finish();
             }
@@ -217,6 +212,7 @@ public class MainActivity extends BaseActivity {
 //退出栈中所有Activity
 
     public void popAllActivityExceptOne(Class cls) {
+
         while (true) {
             Activity activity = currentActivity();
             if (activity == null) {
@@ -250,6 +246,10 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         registerHomeKeyReceiver(this);
+
+        registerMusicReceiver();
+
+        notificationObserver();
     }
 
     @Override
