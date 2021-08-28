@@ -34,6 +34,8 @@ import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.AppData;
+import cn.tihuxueyuan.http.HttpClient;
+import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
@@ -257,6 +259,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 switch (state) {
                     case PAUSE:
                         playPauseView.setImageResource(R.drawable.start);
+                        JsonPost a = new JsonPost();
+                        a.saveSettingMsg();
+
                         break;
                     case PLAY:
                         playPauseView.setImageResource(R.drawable.stop);

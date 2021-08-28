@@ -168,8 +168,6 @@ public class MusicService extends Service {
                 .build();
     }
 
-
-
     /**
      * 更改通知的信息和UI
      *

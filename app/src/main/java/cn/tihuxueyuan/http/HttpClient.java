@@ -56,10 +56,8 @@ public class HttpClient {
     }
 
     public static void searchMusic(String keyword, final HttpCallback<SearchMusic> callback) {
-//        OkHttpUtils.get().url(BASE_URL)
         OkHttpUtils.post().url("http://10.0.2.2:8082/api/findCourseFileByCourseIdOk")
                 .addParams("id", "1")
-//                .addParams(PARAM_QUERY, keyword)
                 .build()
 
                 .execute(new JsonCallback<SearchMusic>(SearchMusic.class) {
@@ -143,6 +141,36 @@ public class HttpClient {
                     }
                 });
     }
+
+    public static void updateUserListenedFiles(String code,  String  courseId, String courseFileId, String listenedPercent,  final HttpCallback<Config> callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("code", code);
+        params.put("course_id", courseId);
+        params.put("course_file_id", courseFileId);
+        params.put("listened_percent", listenedPercent);
+
+        OkHttpUtils.post().url(BASE_URL + "updateUserListenedFiles")
+                .params(params)
+                .build()
+                .execute(new JsonCallback<Config>(Config.class) {
+                    @Override
+                    public void onResponse(Config response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+
 
 
     public static void getCourseFilesByCourseId(String courseId, final HttpCallback<CourseFileList> callback) {
