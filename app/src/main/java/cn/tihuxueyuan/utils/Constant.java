@@ -17,6 +17,7 @@ public class Constant {
 
     public static Music_Activity.MyServiceConn conn1;
     private String name;
+    public static String MusicLiveDataObserverTag = "music_activity_observer";
     public static Intent intent1, intent2;
     public static  AppData appData ;
     public static FloatingImageDisplayService.FloatingControl floatingControl;
@@ -27,6 +28,7 @@ public class Constant {
      * 歌曲播放
      */
     public static final String PLAY = "play";
+    public static final String NEWPLAY = "new_play";
     /**
      * 歌曲暂停
      */

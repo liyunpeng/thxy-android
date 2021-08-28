@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.service;
 
+import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.CLOSE;
 import static cn.tihuxueyuan.utils.Constant.NEXT;
@@ -35,6 +36,7 @@ import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.receiver.NotificationClickReceiver;
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
 
 import java.io.IOException;
@@ -88,8 +90,9 @@ public class MusicService extends Service {
         initNotification();
         appData = (AppData) getApplication();
         player = new MediaPlayer();
-        musicActivityLiveData = LiveDataBus.getInstance().with("activity_control", String.class);
+        musicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
     }
+
     /**
      * Activity的观察者
      */
@@ -173,7 +176,6 @@ public class MusicService extends Service {
      * @param position
      */
     public void updateNotificationShow(int position) {
-        //播放状态判断
         if (player.isPlaying()) {
             remoteViews.setImageViewResource(R.id.btn_notification_play, R.drawable.pause_black);
         } else {
@@ -181,15 +183,13 @@ public class MusicService extends Service {
         }
         //封面专辑
 //        remoteViews.setImageViewBitmap(R.id.iv_album_cover, MusicUtils.getAlbumPicture(this, mList.get(position).getPath(), 0));
-        //歌曲名
         appData = (AppData) getApplication();
-
         remoteViews.setTextViewText(R.id.tv_notification_song_name, SPUtils.getTitleFromName(appData.mList.get(position).getFileName()));
+
         //歌手名
 //        remoteViews.setTextViewText(R.id.tv_notification_singer, mList.get(position).getSinger());
         //发送通知
         manager.notify(NOTIFICATION_ID, notification);
-
     }
 
     /**
@@ -279,7 +279,7 @@ public class MusicService extends Service {
             manager.cancel(NOTIFICATION_ID);
         }
 
-        public  void playNew() {
+        public void playNew() {
             String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
             init(mp3url);
 
@@ -294,7 +294,10 @@ public class MusicService extends Service {
 //                      handler.sendMessage();
                 }
             }).start();
+
+            musicActivityLiveData.postValue(NEWPLAY);
         }
+
         public void UIControl(String state, String tag) {
             switch (state) {
                 case PLAY:
@@ -359,10 +362,6 @@ public class MusicService extends Service {
                 musicActivityLiveData.postValue(PLAY);
             }
             updateNotificationShow(appData.currentPostion);
-        }
-
-        public void pausePlay() {
-            player.pause();//暂停播放音乐
         }
 
         public boolean isPlaying() {

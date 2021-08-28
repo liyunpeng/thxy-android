@@ -2,6 +2,7 @@ package cn.tihuxueyuan.activity;
 
 import static java.lang.Integer.parseInt;
 
+import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.TAG;
@@ -37,6 +38,7 @@ import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.SPUtils;
 
 public class Music_Activity extends BaseActivity implements View.OnClickListener {
     private static SeekBar sb;
@@ -50,9 +52,10 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private Intent intent1;
     private String musicUrl;
     private boolean isUnbind = false; //记录服务是否被解绑
-    AppData app;
-    private LiveDataBus.BusMutableLiveData<String> notificationLiveData;
-    private LiveDataBus.BusMutableLiveData<String> floatLiveData;
+    private AppData appData;
+    private LiveDataBus.BusMutableLiveData<String> musicActivityLiveData;
+//    private LiveDataBus.BusMutableLiveData<String> notificationLiveData;
+//    private LiveDataBus.BusMutableLiveData<String> floatLiveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,29 +68,28 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         musicUrl = getIntent().getStringExtra("music_url");
         Log.d(Constant.TAG, "Music Activity oncreate  musicUrl= " + musicUrl);
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
-        app = (AppData) getApplication();
+        appData = (AppData) getApplication();
 
         intent1 = getIntent();
         init();
         //通知栏的观察者
-        notificationObserver();
+        musicActivityObserver();
         //控制通知栏
-        notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
-        floatLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
+//        notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
+//        floatLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
 
         if (isNew == true) {
             bindMusicService();
 //            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
-            app.currentPostion = getIntent().getIntExtra("current_position", 0);
+            appData.currentPostion = getIntent().getIntExtra("current_position", 0);
             title = getIntent().getStringExtra("title");
-            app.musicTitle = title;
         } else {
 //            bootstrapReflect();
-            title = app.musicTitle;
+            title =  SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
             musicControl.setText();
-            if ( musicControl.isPlaying()) {
+            if (musicControl.isPlaying()) {
                 playPauseView.setImageResource(R.drawable.stop);
-            }else{
+            } else {
                 playPauseView.setImageResource(R.drawable.start);
             }
         }
@@ -107,8 +109,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         if (musicControl == null) {
             Constant.intent2 = new Intent(this, MusicService.class);//创建意图对象
             Constant.conn1 = new MyServiceConn();
-            bindService( Constant.intent2,  Constant.conn1, BIND_AUTO_CREATE); //绑定服务
-        }else{
+            bindService(Constant.intent2, Constant.conn1, BIND_AUTO_CREATE); //绑定服务
+        } else {
             musicControl.init(musicUrl);
             new Thread(new Runnable() {
                 public void run() {
@@ -123,7 +125,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             }).start();
         }
 
-        if ( floatingControl == null){
+        if (floatingControl == null) {
             intent3 = new Intent(this, FloatingImageDisplayService.class);//创建意图对象
             conn1 = new MyServiceConn();
             bindService(intent3, conn1, BIND_AUTO_CREATE);  //绑定服务
@@ -246,40 +248,24 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         }
     };
 
-
-    private LiveDataBus.BusMutableLiveData<String> activityLiveData;
-//    private LiveDataBus.BusMutableLiveData<String> floatLiveData;
-
-    /**
-     * 通知栏动作观察者
-     */
-    private void notificationObserver() {
-        activityLiveData = LiveDataBus.getInstance().with("activity_control", String.class);
-        activityLiveData.observe(Music_Activity.this, true, new Observer<String>() {
+    private void musicActivityObserver() {
+        musicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
+        musicActivityLiveData.observe(Music_Activity.this, true, new Observer<String>() {
             @Override
             public void onChanged(String state) {
-                Log.d("tag2", " onChanged state = " + state);
+                Log.d(TAG, " 观察者监控到消息 = " + state);
                 switch (state) {
                     case PAUSE:
                         playPauseView.setImageResource(R.drawable.start);
                         break;
                     case PLAY:
-//                    case PAUSE:
-//                        btnPlay.setIcon(getDrawable(R.mipmap.icon_pause));
-//                        btnPlay.setIconTint(getColorStateList(R.color.gold_color));
-//                        BLog.d(TAG,state);
-//                        changeUI(musicService.getPlayPosition());
-//                        if (musicControl.isPlaying() != true) {
-//                            musicControl.play();
-//                   animator.start();
                         playPauseView.setImageResource(R.drawable.stop);
-//                        } else {
-////                            musicControl.pausePlay();
-////                    animator.pause();
-//                            playPauseView.setImageResource(R.drawable.start);
-//                        }
                         break;
-
+                    case NEWPLAY:
+                        title = SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
+                        setTitle(title);
+                        floatingControl.setText(title);
+                        break;
 //                    case CLOSE:
 //                        btnPlay.setIcon(getDrawable(R.mipmap.icon_play));
 //                        btnPlay.setIconTint(getColorStateList(R.color.white));
@@ -362,7 +348,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
     private void unbind(boolean isUnbind) {
         if (!isUnbind) {//判断服务是否被解绑
-            musicControl.pausePlay();//暂停播放音乐
             unbindService(Constant.conn1);//解绑服务
         }
     }
@@ -371,37 +356,24 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.play_pause://播放按钮点击事件
-//                if (musicControl.isPlaying() != true) {
-//                    musicControl.playOrPause();
-////                   animator.start();
-//                    playPauseView.setImageResource(R.drawable.stop);
-//                } else {
-//                    musicControl.pausePlay();
-////                    animator.pause();
-//                    playPauseView.setImageResource(R.drawable.start);
-//                }
+            case R.id.play_pause:
                 musicControl.playOrPause();
                 break;
             case R.id.play_previous:
-                if (app.currentPostion <= 0) {
-                    app.currentPostion = 0;
+                if (appData.currentPostion <= 0) {
+                    appData.currentPostion = 0;
                 } else {
-                    app.currentPostion--;
+                    appData.currentPostion--;
                     musicControl.playNew();
-                    setTitle(app.mList.get(app.currentPostion).getFileName().split("\\.")[0]);
                 }
-
                 break;
             case R.id.play_next:
-                if (app.currentPostion >= (app.mList.size() - 1)) {
-                    app.currentPostion = (app.mList.size() - 1);
+                if (appData.currentPostion >= (appData.mList.size() - 1)) {
+                    appData.currentPostion = (appData.mList.size() - 1);
                 } else {
-                    app.currentPostion++;
+                    appData.currentPostion++;
                     musicControl.playNew();
-                    setTitle(app.mList.get(app.currentPostion).getFileName().split("\\.")[0]);
                 }
-
                 break;
 
 //            case R.id.btn_pause://暂停按钮点击事件

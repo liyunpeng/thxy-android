@@ -104,26 +104,8 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    /**
-     * 通知栏动作观察者
-     */
-    private void notificationObserver() {
-        floatLiveData = LiveDataBus.getInstance().with("float_control", String.class);
-        floatLiveData.observe(MainActivity.this, true, new Observer<String>() {
-            @Override
-            public void onChanged(String state) {
-                Log.d("tag2", "float onChanged state = " + state);
-                Constant.floatingControl.setText("aaaaaa");
-                switch (state) {
-                    default:
-                        break;
-                }
-            }
-        });
-    }
 
     //退出栈顶Activity
-
     public void popActivity(Activity activity) {
         if (activity != null) {
             activity.finish();
@@ -246,10 +228,7 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         registerHomeKeyReceiver(this);
-
         registerMusicReceiver();
-
-        notificationObserver();
     }
 
     @Override

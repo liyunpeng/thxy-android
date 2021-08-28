@@ -11,11 +11,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * liveData管道总线
- *
- * @author llw
- */
+
 public class LiveDataBus {
     /**
      * LiveData集合
@@ -50,7 +46,6 @@ public class LiveDataBus {
     public static class BusMutableLiveData<T> extends MutableLiveData<T> {
         //是否需要粘性事件
         private boolean isHad = false;
-
 
         //重写observe的方法
         public void observe(@NonNull LifecycleOwner owner, boolean isHad,@NonNull Observer<? super T> observer) {
