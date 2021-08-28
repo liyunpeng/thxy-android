@@ -190,6 +190,8 @@ public class MusicService extends Service {
 //        remoteViews.setTextViewText(R.id.tv_notification_singer, mList.get(position).getSinger());
         //发送通知
         manager.notify(NOTIFICATION_ID, notification);
+
+        Log.d(TAG, "updateNotificationShow  ");
     }
 
     /**

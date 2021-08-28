@@ -20,7 +20,7 @@ public class HomeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         Log.i(LOG_TAG, "onReceive: action: " + action);
-        Constant.floatingControl.setVisibility(false);
+
         if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
             // android.intent.action.CLOSE_SYSTEM_DIALOGS
             String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
@@ -29,7 +29,7 @@ public class HomeReceiver extends BroadcastReceiver {
             if (SYSTEM_DIALOG_REASON_HOME_KEY.equals(reason)) {
                 // 短按Home键
                 Log.i(LOG_TAG, "homekey");
-
+                Constant.floatingControl.setVisibility(false);
             }
             else if (SYSTEM_DIALOG_REASON_RECENT_APPS.equals(reason)) {
                 // 长按Home键 或者 activity切换键

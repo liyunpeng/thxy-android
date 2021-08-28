@@ -22,13 +22,13 @@ public class FloatMonkService extends Service implements FloatCallBack {
     @Override
     public void onCreate() {
         super.onCreate();
-        FloatActionController.getInstance().registerCallLittleMonk(this);
-        //注册广播接收者
-        mHomeKeyReceiver = new HomeWatcherReceiver();
-        final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        registerReceiver(mHomeKeyReceiver, homeFilter);
-        //初始化悬浮窗UI
-        initWindowData();
+//        FloatActionController.getInstance().registerCallLittleMonk(this);
+//        //注册广播接收者
+//        mHomeKeyReceiver = new HomeWatcherReceiver();
+//        final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+//        registerReceiver(mHomeKeyReceiver, homeFilter);
+//        //初始化悬浮窗UI
+//        initWindowData();
     }
 
     @Override
