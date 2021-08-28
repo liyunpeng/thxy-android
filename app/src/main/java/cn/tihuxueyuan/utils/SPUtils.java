@@ -59,14 +59,19 @@ public class SPUtils {
     输入：测试(21)课程.mp3
     输出：测试(21)课程
      */
-    public static String getTitleFromName( String fileName ) {
+    public static String getTitleFromName(String fileName) {
+        /*在正则表达式中是个已经被使用的特殊符号（"."、"|"、"^"等字符）
+所以想要使用 | ，必须用 \ 来进行转义，而在java字符串中，\ 也是个已经被使用的特殊符号，也需要使用 \ 来转义。
+所以应为：
+ String titleArr[] = courseFile.getFileName().split("\\.");
+         */
         String titleArr[] = fileName.split("\\.");
         return titleArr[0];
     }
 
     public static String getMp3Url(String fileName) {
         AppData appData = Constant.appData;
-        String mp3Url = appData.baseUrl + appData.mp3SourceRouter +  appData.courseStorePath +  "?fileName=" + fileName;
-        return  mp3Url;
+        String mp3Url = appData.baseUrl + appData.mp3SourceRouter + appData.courseStorePath + "?fileName=" + fileName;
+        return mp3Url;
     }
 }

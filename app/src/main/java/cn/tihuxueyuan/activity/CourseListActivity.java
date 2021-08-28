@@ -17,6 +17,7 @@ import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.utils.SPUtils;
+import okhttp3.internal.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,13 +142,9 @@ D/tag1: parseNetworkResponse:
         lv.setAdapter(mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
-                /*
-                在正则表达式中是个已经被使用的特殊符号（"."、"|"、"^"等字符）
-所以想要使用 | ，必须用 \ 来进行转义，而在java字符串中，\ 也是个已经被使用的特殊符号，也需要使用 \ 来转义。
-所以应为：String[] all=str.split(("\\.")
-                 */
-                String titleArr[] = courseFile.getFileName().split("\\.");
-                holder.set(R.id.name, titleArr[0]);
+
+                holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()));
+                holder.set(R.id.number, courseFile.getNumber());
             }
         });
 

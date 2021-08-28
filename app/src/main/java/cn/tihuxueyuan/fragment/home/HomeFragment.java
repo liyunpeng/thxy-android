@@ -120,6 +120,7 @@ public class HomeFragment extends Fragment {
                 }
                 mList = response.getCourseFileList();
                 refreshListView();
+
                 appData.mList = mList;
             }
 
@@ -149,5 +150,10 @@ public class HomeFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
