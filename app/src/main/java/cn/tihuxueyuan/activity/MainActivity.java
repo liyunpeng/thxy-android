@@ -45,7 +45,7 @@ import cn.tihuxueyuan.utils.SPUtils;
 public class MainActivity extends BaseActivity {
 
     public ActivityMainBinding binding;
-    private LiveDataBus.BusMutableLiveData<String> activityLiveData;
+    private LiveDataBus.BusMutableLiveData<String> floatLiveData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,8 +108,8 @@ public class MainActivity extends BaseActivity {
      * 通知栏动作观察者
      */
     private void notificationObserver() {
-        activityLiveData = LiveDataBus.getInstance().with("float_control", String.class);
-        activityLiveData.observe(MainActivity.this, true, new Observer<String>() {
+        floatLiveData = LiveDataBus.getInstance().with("float_control", String.class);
+        floatLiveData.observe(MainActivity.this, true, new Observer<String>() {
             @Override
             public void onChanged(String state) {
                 Log.d("tag2", "float onChanged state = " + state);

@@ -44,17 +44,13 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private ImageView playPauseView;
     private ObjectAnimator animator;
     private String title;
-
     private Intent intent3;
     private MyServiceConn conn1;
     private String name;
     private Intent intent1;
-//    private MyServiceConn conn;
     private String musicUrl;
-
     private boolean isUnbind = false; //记录服务是否被解绑
     AppData app;
-
     private LiveDataBus.BusMutableLiveData<String> notificationLiveData;
     private LiveDataBus.BusMutableLiveData<String> floatLiveData;
 
@@ -78,7 +74,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         //控制通知栏
         notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
         floatLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
-
 
         if (isNew == true) {
             bindMusicService();
@@ -119,7 +114,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 public void run() {
                     try {
                         Thread.sleep(1000);
-                        musicControl.play();
+                        musicControl.playOrPause();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -184,7 +179,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 int progress = seekBar.getProgress();//获取seekBar的进度
                 musicControl.seekTo(progress);//改变播放进度
                 if (musicControl.isPlaying() != true) {
-                    musicControl.play();
+                    musicControl.playOrPause();
                     playPauseView.setImageResource(R.drawable.stop);
                 }
 
@@ -200,10 +195,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         animator.setDuration(10000);//动画旋转一周的时间为10秒
         animator.setInterpolator(new LinearInterpolator());//匀速
         animator.setRepeatCount(-1);//-1表示设置动画无限循环
-
-
     }
-
 
     @Override
     protected void onResume() {
@@ -343,7 +335,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                         try {
                             Thread.sleep(1000);
 //                            musicControl.setText();
-                            musicControl.play();
+                            musicControl.playOrPause();
 
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -380,18 +372,16 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_pause://播放按钮点击事件
-//                String position=intent1.getStringExtra("position");
-//                int i=parseInt(position);
-//                musicControl.play(i);
-                if (musicControl.isPlaying() != true) {
-                    musicControl.play();
-//                   animator.start();
-                    playPauseView.setImageResource(R.drawable.stop);
-                } else {
-                    musicControl.pausePlay();
-//                    animator.pause();
-                    playPauseView.setImageResource(R.drawable.start);
-                }
+//                if (musicControl.isPlaying() != true) {
+//                    musicControl.playOrPause();
+////                   animator.start();
+//                    playPauseView.setImageResource(R.drawable.stop);
+//                } else {
+//                    musicControl.pausePlay();
+////                    animator.pause();
+//                    playPauseView.setImageResource(R.drawable.start);
+//                }
+                musicControl.playOrPause();
                 break;
             case R.id.play_previous:
                 if (app.currentPostion <= 0) {

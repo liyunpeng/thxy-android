@@ -6,7 +6,6 @@ import static cn.tihuxueyuan.utils.Constant.NEXT;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.PREV;
-import static cn.tihuxueyuan.utils.Constant.musicControl;
 //import static cn.tihuxueyuan.utils.Constant.musicReceiver;
 
 import android.annotation.SuppressLint;
@@ -49,7 +48,7 @@ public class MusicService extends Service {
     /**
      * 通知栏控制Activity页面UI
      */
-    private LiveDataBus.BusMutableLiveData<String> activityLiveData;
+    private LiveDataBus.BusMutableLiveData<String> musicActivityLiveData;
     /**
      * 通知
      */
@@ -70,18 +69,15 @@ public class MusicService extends Service {
     /**
      * 音乐广播接收器
      */
-
-
     public MusicService() {
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-
         return new MusicControl();
     }
 
-    AppData app;
+    private AppData appData;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -90,11 +86,9 @@ public class MusicService extends Service {
         Log.d(TAG, "MusicService onCreate");
         initNotificationRemoteViews();
         initNotification();
-        //注册动态广播
-
-        app = (AppData) getApplication();
-        player = new MediaPlayer();//创建音乐播放器对象
-        activityLiveData = LiveDataBus.getInstance().with("activity_control", String.class);
+        appData = (AppData) getApplication();
+        player = new MediaPlayer();
+        musicActivityLiveData = LiveDataBus.getInstance().with("activity_control", String.class);
     }
     /**
      * Activity的观察者
@@ -171,7 +165,7 @@ public class MusicService extends Service {
                 .build();
     }
 
-    AppData data;
+
 
     /**
      * 更改通知的信息和UI
@@ -188,9 +182,9 @@ public class MusicService extends Service {
         //封面专辑
 //        remoteViews.setImageViewBitmap(R.id.iv_album_cover, MusicUtils.getAlbumPicture(this, mList.get(position).getPath(), 0));
         //歌曲名
-        data = (AppData) getApplication();
+        appData = (AppData) getApplication();
 
-        remoteViews.setTextViewText(R.id.tv_notification_song_name, SPUtils.getTitleFromName(data.mList.get(position).getFileName()));
+        remoteViews.setTextViewText(R.id.tv_notification_song_name, SPUtils.getTitleFromName(appData.mList.get(position).getFileName()));
         //歌手名
 //        remoteViews.setTextViewText(R.id.tv_notification_singer, mList.get(position).getSinger());
         //发送通知
@@ -229,7 +223,7 @@ public class MusicService extends Service {
         }
         manager.cancel(NOTIFICATION_ID);
 
-        activityLiveData.postValue(CLOSE);
+        musicActivityLiveData.postValue(CLOSE);
     }
 
 
@@ -286,14 +280,14 @@ public class MusicService extends Service {
         }
 
         public  void playNew() {
-            String mp3url = SPUtils.getMp3Url(app.mList.get(app.currentPostion).getMp3FileName());
+            String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
             init(mp3url);
 
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         Thread.sleep(1000);
-                        play();
+                        playOrPause();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -304,7 +298,7 @@ public class MusicService extends Service {
         public void UIControl(String state, String tag) {
             switch (state) {
                 case PLAY:
-                    play();
+                    playOrPause();
                     break;
 //                case PREV:
 //                    app.currentPostion--;
@@ -355,16 +349,16 @@ public class MusicService extends Service {
             setText();
         }
 
-        public void play() {
+        public void playOrPause() {
             if (player.isPlaying()) {
                 player.pause();
-                activityLiveData.postValue(PAUSE);
+                musicActivityLiveData.postValue(PAUSE);
             } else {
                 player.start();
                 addTimer();
-                activityLiveData.postValue(PLAY);
+                musicActivityLiveData.postValue(PLAY);
             }
-            updateNotificationShow(app.currentPostion);
+            updateNotificationShow(appData.currentPostion);
         }
 
         public void pausePlay() {
