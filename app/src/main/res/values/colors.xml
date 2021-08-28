@@ -8,6 +8,8 @@
 
 
     <color name="colorPrimary">#26252B</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="darkBlue">#061042</color>
     <color name="colorPrimaryDark">#26252B</color>
     <color name="colorAccent">#D81B60</color>
 

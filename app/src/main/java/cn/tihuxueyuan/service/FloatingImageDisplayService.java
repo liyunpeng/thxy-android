@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.service;
 
+import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION.SDK_INT;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
@@ -32,38 +33,28 @@ import cn.tihuxueyuan.utils.Constant;
 
 public class FloatingImageDisplayService extends Service {
     public static boolean isStarted = false;
-
     private WindowManager windowManager;
     private WindowManager.LayoutParams layoutParams;
-
     private View displayView;
-
     private int[] images;
     private int imageIndex = 0;
-
     private Handler changeImageHandler;
-
 
     @Override
     public void onCreate() {
         super.onCreate();
         isStarted = true;
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-//        getWindowManager()
         DisplayMetrics outMetrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getRealMetrics(outMetrics);
-//        outMetrics.heightPixels;
 
-//        Point outSize = new Point();
-//        windowManager.getDefaultDisplay().getRealSize(outSize);
-//        outSize.
-
+        Point outSize = new Point();
+        windowManager.getDefaultDisplay().getRealSize(outSize);
+        Log.d(TAG, "onCreate: outSize.y =" + outSize.y);
 
         layoutParams = new WindowManager.LayoutParams();
         if (SDK_INT >= Build.VERSION_CODES.O) {
-//            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
             layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-
 //            String packname = context.getPackageName();
 //            PackageManager pm = context.getPackageManager();
 //            boolean permission = (PackageManager.PERMISSION_GRANTED == pm.checkPermission("android.permission.SYSTEM_ALERT_WINDOW", packname));
@@ -76,43 +67,38 @@ public class FloatingImageDisplayService extends Service {
             layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
 
-//        layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
-
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
-//            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
-
         DisplayMetrics dm = new DisplayMetrics();
         //取得窗口属性
         windowManager.getDefaultDisplay().getMetrics(dm);
         //窗口的宽度
-        int screenWidth = dm.widthPixels;
+        int screenWidth = outSize.x;
         //窗口高度
-        int screenHeight = dm.heightPixels;
+        int screenHeight = outSize.y;
         //以屏幕左上角为原点，设置x、y初始值，相对于gravity
-
-
         layoutParams.format = PixelFormat.RGBA_8888;
         layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         layoutParams.x = screenWidth - WindowManager.LayoutParams.WRAP_CONTENT ;
-        layoutParams.y = screenHeight - WindowManager.LayoutParams.WRAP_CONTENT - 24 ;
-//        layoutParams.y =   outMetrics.heightPixels - WindowManager.LayoutParams.WRAP_CONTENT- (outMetrics.heightPixels/480) * 24
-//
-//        ;
 
-
-
-//        layoutParams.y =   outMetrics.heightPixels - (WindowManager.LayoutParams.WRAP_CONTENT + (outMetrics.heightPixels/480) * 24 )  ;
-//        layoutParams.y =  (outSize.y/480) * 24; // outSize.y - WindowManager.LayoutParams.WRAP_CONTENT- (outSize.y/480) * 24   ;
+        float dipRatio = 1;
+        if (screenHeight == 1920 ) {
+            dipRatio = 4;
+        }else if (screenHeight == 1280 ){
+            dipRatio = 3;
+        }else if (screenHeight == 1280 ){
+            dipRatio = 2;
+        }
+        int contentHeight = (int) (120 * dipRatio);
+        layoutParams.y = outMetrics.heightPixels - contentHeight  ;
+        Log.d(TAG, "onCreate: layoutParams.y = "+ layoutParams.y + ", screenHeight = "+ screenHeight + ", dipRatio=" + dipRatio);
 
         images = new int[]{
                 R.drawable.image_01,
                 R.drawable.image_02,
         };
         changeImageHandler = new Handler(this.getMainLooper(), changeImageCallback);
-
         Log.d(Constant.TAG, "FloatingImageDisplayService oncreate ");
     }
 
@@ -140,7 +126,7 @@ public class FloatingImageDisplayService extends Service {
             displayView.setOnTouchListener(new FloatingOnTouchListener());
             textView = displayView.findViewById(R.id.float_text);
 
-            textView.setBackgroundResource(R.drawable.shape);
+//            textView.setBackgroundResource(R.drawable.shape);
             windowManager.addView(displayView, layoutParams);
             displayView.setVisibility(View.GONE);
 
