@@ -144,7 +144,7 @@ D/tag1: parseNetworkResponse:
 
                 holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()));
                 holder.set(R.id.number, courseFile.getNumber());
-                holder.set(R.id.percent,  "已听" + Float.toString(courseFile.getListenedPercent()) + "%");
+                holder.set(R.id.percent,  "已听" + Integer.toString(courseFile.getListenedPercent()) + "%");
             }
         });
 

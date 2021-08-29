@@ -27,7 +27,7 @@ public class CourseFileList {
         private int courseId;
         @SerializedName("listened_percent")
         private int listenedPercent;
-        
+
         public int getCourseId() { return  courseId;}
         public String getFileName() {
             return mp3_file_name;
