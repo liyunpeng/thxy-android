@@ -322,11 +322,11 @@ public class MusicService extends Service {
             }
         }
 
-        public float getListenedPercent() {
+        public int getListenedPercent() {
             if (player == null) return 0;
-            float duration = player.getDuration();//获取歌曲总时长
-            float currentPosition = player.getCurrentPosition();//获取播放进度
-            return currentPosition/duration;
+            int duration = player.getDuration();//获取歌曲总时长
+            int currentPosition = player.getCurrentPosition();//获取播放进度
+            return  (currentPosition*100/duration);
         }
         public void setText() {
             if (player == null) return;

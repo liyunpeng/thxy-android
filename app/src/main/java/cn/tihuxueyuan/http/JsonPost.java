@@ -69,7 +69,7 @@ public class JsonPost{
         @SerializedName("cfi") // cfi 为 course_file_id 简写
         public int CourseFileId;
         @SerializedName("pc")  // pc 为percent 简写
-        public float ListenedPercent;
+        public int ListenedPercent;
 
 
 

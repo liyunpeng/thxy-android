@@ -26,14 +26,13 @@ public class CourseFileList {
         @SerializedName("course_id")
         private int courseId;
         @SerializedName("listened_percent")
-        private float listenedPercent;
-
-
+        private int listenedPercent;
+        
         public int getCourseId() { return  courseId;}
         public String getFileName() {
             return mp3_file_name;
         }
-        public float getListenedPercent() {
+        public int getListenedPercent() {
             return listenedPercent;
         }
 
