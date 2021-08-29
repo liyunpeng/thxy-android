@@ -1,10 +1,12 @@
 package cn.tihuxueyuan.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.view.View;
+import android.widget.TextView;
 
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
@@ -126,8 +128,6 @@ E/====: onRestart()
 E/====: onStart()
 E/====: onResume()
 D/tag1: parseNetworkResponse:
-
-
      */
     @Override
     public void onResume() {
@@ -142,9 +142,22 @@ D/tag1: parseNetworkResponse:
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
 
-                holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()));
-                holder.set(R.id.number, courseFile.getNumber());
-                holder.set(R.id.percent,  "已听" + Integer.toString(courseFile.getListenedPercent()) + "%");
+                int percent = courseFile.getListenedPercent();
+                int color;
+                if (percent > 0 ) {
+                    color =  Color.parseColor("#777777");
+                    holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
+                    holder.set(R.id.number, courseFile.getNumber(), color);
+                    holder.set(R.id.percent,  "已听" + percent + "%", color);
+                }else{
+                    color =  Color.parseColor("#000000");
+                    holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
+                    holder.set(R.id.number, courseFile.getNumber(), color);
+                    holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
+                }
+
+
+
             }
         });
 
@@ -162,7 +175,6 @@ D/tag1: parseNetworkResponse:
                 mList = response.getCourseFileList();
                 appData.mList = mList;
                 refreshListView();
-
             }
 
             @Override

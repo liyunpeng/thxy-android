@@ -1,6 +1,7 @@
 package cn.tihuxueyuan.commonlistview;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,10 +60,11 @@ public class ViewHolder {
      * @param content 要适配的内容(文字字符串/图片url)
      * @return
      */
-    public ViewHolder set(int viewId,String content){
+    public ViewHolder set(int viewId, String content, int c){
         View view=getView(viewId);
         if (view instanceof TextView){
             ((TextView) view).setText(content);
+            ((TextView) view).setTextColor(c);
         }else if (view instanceof ImageView){
 //            Picasso.with(mContext).load(content).into((ImageView) view);
         }

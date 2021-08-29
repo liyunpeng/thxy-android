@@ -3,6 +3,7 @@ package cn.tihuxueyuan.fragment.home;
 import static cn.tihuxueyuan.utils.Constant.appData;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -106,7 +107,7 @@ public class HomeFragment extends Fragment {
         lv.setAdapter(mAdapter = new CommonAdapter<CourseFileList.CourseFile>(this.getContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFileList.CourseFile contactsBean) {
-                holder.set(R.id.name, contactsBean.getFileName());
+                holder.set(R.id.name, contactsBean.getFileName(),  Color.parseColor("#000000"));
             }
         });
 
