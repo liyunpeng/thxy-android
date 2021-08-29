@@ -13,6 +13,7 @@ public class AppData extends Application{
     public String baseUrl;
     public String mp3SourceRouter;
     public String courseStorePath = "";
+    public String UserCode = "";
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
 
     public String getB(){

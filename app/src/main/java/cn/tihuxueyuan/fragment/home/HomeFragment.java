@@ -1,5 +1,7 @@
 package cn.tihuxueyuan.fragment.home;
 
+import static cn.tihuxueyuan.utils.Constant.appData;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -95,6 +97,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        appData.UserCode = "7899000";  // 记录在本地文件里
         getFilelist();
         getConfig();
     }

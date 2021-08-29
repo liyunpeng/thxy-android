@@ -5,6 +5,7 @@ import static cn.tihuxueyuan.utils.Constant.NEXT;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.PREV;
 import static cn.tihuxueyuan.utils.Constant.TAG;
+import static cn.tihuxueyuan.utils.Constant.appData;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

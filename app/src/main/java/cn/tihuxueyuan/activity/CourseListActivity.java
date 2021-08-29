@@ -24,7 +24,6 @@ import java.util.List;
 
 
 public class CourseListActivity extends BaseActivity {
-
     private android.widget.ListView lv;
     private String couseId;
     private String title;
@@ -145,6 +144,7 @@ D/tag1: parseNetworkResponse:
 
                 holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()));
                 holder.set(R.id.number, courseFile.getNumber());
+                holder.set(R.id.percent,  "已听" + Float.toString(courseFile.getListenedPercent()) + "%");
             }
         });
 

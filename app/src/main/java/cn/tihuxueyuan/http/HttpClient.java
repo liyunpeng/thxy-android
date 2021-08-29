@@ -14,8 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.utils.Constant;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -170,13 +172,10 @@ public class HttpClient {
                 });
     }
 
-
-
-
     public static void getCourseFilesByCourseId(String courseId, final HttpCallback<CourseFileList> callback) {
         Map<String, String> params = new HashMap<>();
         params.put("course_id", courseId);
-
+        params.put("user_code", Constant.appData.UserCode);
         OkHttpUtils.post().url(BASE_URL + "findCourseFileByCourseIdOk")
                 .params(params)
                 .build()
