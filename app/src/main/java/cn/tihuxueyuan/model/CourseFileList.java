@@ -23,7 +23,11 @@ public class CourseFileList {
         private String img_src;
         @SerializedName("number")
         private String number;
+        @SerializedName("course_id")
+        private int courseId;
 
+
+        public int getCourseId() { return  courseId;}
         public String getFileName() {
             return mp3_file_name;
         }

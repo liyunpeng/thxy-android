@@ -294,7 +294,6 @@ public class MusicService extends Service {
 //                      handler.sendMessage();
                 }
             }).start();
-
             musicActivityLiveData.postValue(NEWPLAY);
         }
 
@@ -323,6 +322,12 @@ public class MusicService extends Service {
             }
         }
 
+        public float getListenedPercent() {
+            if (player == null) return 0;
+            float duration = player.getDuration();//获取歌曲总时长
+            float currentPosition = player.getCurrentPosition();//获取播放进度
+            return currentPosition/duration;
+        }
         public void setText() {
             if (player == null) return;
             int duration = player.getDuration();//获取歌曲总时长

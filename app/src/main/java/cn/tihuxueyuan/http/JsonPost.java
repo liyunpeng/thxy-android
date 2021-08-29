@@ -22,30 +22,18 @@ public class JsonPost{
 
     private int id;
 
-    Gson gson = new Gson();
-
     //自己的回调接口
-    private ReturnHttpResult returnHttpResult;
+    private static ReturnHttpResult returnHttpResult;
 
-    OkHttpClient client = new OkHttpClient();
+    static  OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public void HttpToSettingClassified(int id) {
         this.id= id;
     }
 
-    public void saveSettingMsg() {
-        ListenedFile a = new ListenedFile();
-        a.CourseFileId = 11;
-        a.ListenedPercent = (float) 12.34;
-
-        Map map = new HashMap<>();
-        map.put("code", "123456");
-        map.put("course_id", 12); // id 为 course_file_id 简写
-        map.put("listened_file", a);  // pc 为percent 简写
-        String param= gson.toJson(map);
-
-        RequestBody requestBody = RequestBody.create(JSON, param);
+    public static void postListenedPercent(String jsonStr) {
+        RequestBody requestBody = RequestBody.create(JSON, jsonStr);
         Request request = new Request.Builder()
                 .post(requestBody)
                 .url(Constant.appData.baseUrl+"updateUserListenedFiles")
@@ -54,14 +42,14 @@ public class JsonPost{
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                returnHttpResult.clickReturnHttpResult(e.getMessage());
+//                returnHttpResult.clickReturnHttpResult(e.getMessage());
                 Log.d(Constant.TAG, "onFailure: 失败");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-                returnHttpResult.clickReturnHttpResult(result);
+//                returnHttpResult.clickReturnHttpResult(result);
                 Log.d(Constant.TAG, "onResponse: " + result);
             }
         });
@@ -77,16 +65,13 @@ public class JsonPost{
         }
     }
 
-    //        type ListenedFile struct {
-//            CourseFileId    int     `json:"course_file_id"`
-//            ListenedPercent float32 `json:"listened_percent"`
-//        }
-
-    private class ListenedFile {
-        @SerializedName("cfi")
+    public static class ListenedFile {
+        @SerializedName("cfi") // cfi 为 course_file_id 简写
         public int CourseFileId;
-        @SerializedName("pc")
+        @SerializedName("pc")  // pc 为percent 简写
         public float ListenedPercent;
+
+
 
     }
 }

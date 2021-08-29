@@ -29,12 +29,16 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
 
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.AppData;
-import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
@@ -259,8 +263,17 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 switch (state) {
                     case PAUSE:
                         playPauseView.setImageResource(R.drawable.start);
-                        JsonPost a = new JsonPost();
-                        a.saveSettingMsg();
+                        JsonPost.ListenedFile listenedFile = new JsonPost.ListenedFile();
+                        listenedFile.CourseFileId = Integer.parseInt(Constant.appData.mList.get(Constant.appData.currentPostion).getId());
+                        listenedFile.ListenedPercent = musicControl.getListenedPercent();
+                        Log.d(TAG, "listenedFile.ListenedPercent = " + listenedFile.ListenedPercent);
+                        Map map = new HashMap<>();
+                        map.put("code", "7899000");
+                        map.put("course_id", Constant.appData.mList.get(Constant.appData.currentPostion).getCourseId());
+                        map.put("listened_file", listenedFile);
+                        Gson gson = new Gson();
+                        String param= gson.toJson(map);
+                        JsonPost.postListenedPercent(param);
 
                         break;
                     case PLAY:
