@@ -68,7 +68,6 @@ public class DashboardFragment extends Fragment {
         tabLayout = root.findViewById(R.id.tab_layout);
         recyclerView = root.findViewById(R.id.recycler_view);
 
-
         initRecycleView();
         initCourseType();
         return root;

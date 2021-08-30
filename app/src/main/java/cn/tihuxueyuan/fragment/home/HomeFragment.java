@@ -108,6 +108,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void convertView(ViewHolder holder, CourseFileList.CourseFile contactsBean) {
                 holder.set(R.id.name, contactsBean.getFileName(),  Color.parseColor("#000000"));
+                holder.getView(R.id.number).setVisibility(View.INVISIBLE);
+                holder.getView(R.id.percent).setVisibility(View.GONE);
             }
         });
 

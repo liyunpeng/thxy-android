@@ -143,21 +143,21 @@ D/tag1: parseNetworkResponse:
             public void convertView(ViewHolder holder, CourseFile courseFile) {
 
                 int percent = courseFile.getListenedPercent();
+                String duration = SPUtils.getTimeStrFromSecond(courseFile.getDuration());
                 int color;
                 if (percent > 0 ) {
                     color =  Color.parseColor("#777777");
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);
                     holder.set(R.id.percent,  "已听" + percent + "%", color);
+                    holder.set(R.id.duration,  "时长" + duration, color);
                 }else{
                     color =  Color.parseColor("#000000");
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);
+                    holder.set(R.id.duration,  "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
-
-
-
             }
         });
 

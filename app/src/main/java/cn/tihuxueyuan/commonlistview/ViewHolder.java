@@ -13,7 +13,6 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class ViewHolder {
     private View mConvertView;
     private Map<Integer,View> mViewMap;

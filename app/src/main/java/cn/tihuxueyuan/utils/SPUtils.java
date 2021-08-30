@@ -49,6 +49,12 @@ public class SPUtils {
         return sp.getInt(key, defValue);
     }
 
+    public static String getTimeStrFromSecond( int seconds) {
+        int minute = seconds / 60;
+        int second = seconds % 60;
+        return minute + ":" + second;
+    }
+
     public static void remove(String key, Context context) {
         SharedPreferences sp = context.getSharedPreferences(NAME,
                 Context.MODE_PRIVATE);
