@@ -52,7 +52,12 @@ public class SPUtils {
     public static String getTimeStrFromSecond( int seconds) {
         int minute = seconds / 60;
         int second = seconds % 60;
-        return minute + ":" + second;
+
+        if (second == 0) {
+            return minute + ":00";
+        }else{
+            return minute + ":" + second;
+        }
     }
 
     public static void remove(String key, Context context) {
