@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import cn.tihuxueyuan.basic.ActivityManager;
@@ -20,11 +21,13 @@ import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
+import cn.tihuxueyuan.verticaltabrecycler.MainActivity;
+import cn.tihuxueyuan.verticaltabrecycler.RecyclerActivity;
 import okhttp3.internal.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 
 public class CourseListActivity extends BaseActivity {
     private android.widget.ListView lv;
@@ -34,22 +37,22 @@ public class CourseListActivity extends BaseActivity {
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
     private AppData appData;
     TextView lp;
+    Button bt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.course_list_activity);
 
         couseId = getIntent().getStringExtra("course_id");
-
-
         title = getIntent().getStringExtra("title");
         setTitle(title);
         this.lv =  findViewById(R.id.courseList);
         this.lp =  findViewById(R.id.last_play);
-
+        bt = findViewById(R.id.reverse);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
 //                String musicUrll = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
                 String musicUrl = SPUtils.getMp3Url(mList.get(position).getMp3FileName());
@@ -143,18 +146,52 @@ D/tag1: parseNetworkResponse:
     }
 
     public void refreshListView() {
+
+        bt.setOnClickListener( new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Collections.reverse(mList);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
         lp.setText("上次播放:" + lastListenedCourseFileId);
+        lp.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
+//                String musicUrll = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
+                int position;
+                CourseFile c = null;
+                for ( CourseFile c1 : mList) {
+                    if (c1.getCourseId() == lastListenedCourseFileId) {
+                        c = c1;
+                        break;
+                    }
+                }
+
+                if (c != null ){
+                    String musicUrl = SPUtils.getMp3Url(c.getFileName());
+                    intent.putExtra("music_url", musicUrl);
+                    intent.putExtra("current_position", lastListenedCourseFileId+1);
+                    intent.putExtra("is_new", true);
+                    intent.putExtra("title", SPUtils.getTitleFromName(c.getFileName()));
+                    startActivity(intent);
+                }
+
+//                startActivity(new Intent(CourseListActivity.this, Music_Activity.class));
+
+            }
+        });
         lv.setAdapter(mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
-
                 int percent = courseFile.getListenedPercent();
 //                String duration = SPUtils.getTimeStrFromSecond(courseFile.getDuration());
                 String duration =courseFile.getDuration();
 
 //                courseFile.getLastListenedCourseFileId();
                 int color;
-
                 if  ( appData.currentPostion >=0  &&  Constant.appData.mList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
                     color =  Color.parseColor("#FF0000");
                 }else {
@@ -194,7 +231,6 @@ D/tag1: parseNetworkResponse:
                 appData.mList = mList;
                 lastListenedCourseFileId = response.getLastListenedCourseFileId();
                 refreshListView();
-
             }
 
             @Override
