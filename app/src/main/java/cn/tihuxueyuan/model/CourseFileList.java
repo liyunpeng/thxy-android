@@ -7,6 +7,11 @@ import java.util.List;
 public class CourseFileList {
     @SerializedName("courseFileList")
     private List<CourseFile> courseFileList;
+
+    @SerializedName("last_listened_course_file_id")
+    private int LastListenedCourseFileId;
+    public int getLastListenedCourseFileId() { return  LastListenedCourseFileId;}
+
     public List<CourseFile> getCourseFileList() {
         return courseFileList;
     }
@@ -29,6 +34,7 @@ public class CourseFileList {
         private int listenedPercent;
         @SerializedName("duration")
         private String duration;
+
 
         public int getCourseId() { return  courseId;}
         public String getFileName() {

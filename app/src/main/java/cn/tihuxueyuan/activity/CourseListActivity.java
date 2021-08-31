@@ -33,15 +33,20 @@ public class CourseListActivity extends BaseActivity {
     private CommonAdapter<CourseFile> mAdapter;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
     private AppData appData;
+    TextView lp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.course_list_activity);
 
         couseId = getIntent().getStringExtra("course_id");
+
+
         title = getIntent().getStringExtra("title");
         setTitle(title);
         this.lv =  findViewById(R.id.courseList);
+        this.lp =  findViewById(R.id.last_play);
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -58,7 +63,6 @@ public class CourseListActivity extends BaseActivity {
         appData = (AppData) getApplication();
         Log.d("tag2", "onCreate: param: " + couseId);
     }
-
 
 //        @Override
 //    public void onBackPressed() {
@@ -139,6 +143,7 @@ D/tag1: parseNetworkResponse:
     }
 
     public void refreshListView() {
+        lp.setText("上次播放:" + lastListenedCourseFileId);
         lv.setAdapter(mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
@@ -146,6 +151,8 @@ D/tag1: parseNetworkResponse:
                 int percent = courseFile.getListenedPercent();
 //                String duration = SPUtils.getTimeStrFromSecond(courseFile.getDuration());
                 String duration =courseFile.getDuration();
+
+//                courseFile.getLastListenedCourseFileId();
                 int color;
 
                 if  ( appData.currentPostion >=0  &&  Constant.appData.mList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
@@ -169,14 +176,12 @@ D/tag1: parseNetworkResponse:
                     holder.set(R.id.duration,  "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
-
-
             }
         });
 
 //        mAdapter.notifyDataSetChanged();
     }
-
+    int lastListenedCourseFileId;
     public void getCourseFiles() {
         HttpClient.getCourseFilesByCourseId(couseId, new HttpCallback<CourseFileList>() {
             @Override
@@ -187,7 +192,9 @@ D/tag1: parseNetworkResponse:
                 }
                 mList = response.getCourseFileList();
                 appData.mList = mList;
+                lastListenedCourseFileId = response.getLastListenedCourseFileId();
                 refreshListView();
+
             }
 
             @Override
