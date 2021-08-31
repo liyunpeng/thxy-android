@@ -143,7 +143,8 @@ D/tag1: parseNetworkResponse:
             public void convertView(ViewHolder holder, CourseFile courseFile) {
 
                 int percent = courseFile.getListenedPercent();
-                String duration = SPUtils.getTimeStrFromSecond(courseFile.getDuration());
+//                String duration = SPUtils.getTimeStrFromSecond(courseFile.getDuration());
+                String duration =courseFile.getDuration();
                 int color;
                 if (percent > 0 ) {
                     color =  Color.parseColor("#777777");

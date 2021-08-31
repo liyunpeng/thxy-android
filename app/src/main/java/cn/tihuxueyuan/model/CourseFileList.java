@@ -28,7 +28,7 @@ public class CourseFileList {
         @SerializedName("listened_percent")
         private int listenedPercent;
         @SerializedName("duration")
-        private int duration;
+        private String duration;
 
         public int getCourseId() { return  courseId;}
         public String getFileName() {
@@ -38,7 +38,7 @@ public class CourseFileList {
         public int getListenedPercent() {
             return listenedPercent;
         }
-        public int getDuration() {
+        public String getDuration() {
             return duration;
         }
 
