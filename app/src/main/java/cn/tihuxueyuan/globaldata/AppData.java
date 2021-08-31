@@ -9,7 +9,7 @@ import cn.tihuxueyuan.model.CourseFileList;
 
 public class AppData extends Application{
     private String b;
-    public int currentPostion;
+    public int currentPostion = -1;
     public String baseUrl;
     public String mp3SourceRouter;
     public String courseStorePath = "";

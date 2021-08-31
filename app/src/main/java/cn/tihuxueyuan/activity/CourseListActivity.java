@@ -18,6 +18,7 @@ import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
 import okhttp3.internal.Util;
 
@@ -146,19 +147,30 @@ D/tag1: parseNetworkResponse:
 //                String duration = SPUtils.getTimeStrFromSecond(courseFile.getDuration());
                 String duration =courseFile.getDuration();
                 int color;
+
+                if  ( appData.currentPostion >=0  &&  Constant.appData.mList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
+                    color =  Color.parseColor("#FF0000");
+                }else {
+                    if (percent > 0 ) {
+                        color =  Color.parseColor("#777777");
+                    }else{
+                        color =  Color.parseColor("#000000");
+                    }
+                }
+
                 if (percent > 0 ) {
-                    color =  Color.parseColor("#777777");
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);
                     holder.set(R.id.percent,  "已听" + percent + "%", color);
                     holder.set(R.id.duration,  "时长" + duration, color);
                 }else{
-                    color =  Color.parseColor("#000000");
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);
                     holder.set(R.id.duration,  "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
+
+
             }
         });
 
