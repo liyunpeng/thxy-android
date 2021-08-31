@@ -168,9 +168,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 //进度条改变时，会调用此方法
-                if (progress == seekBar.getMax()) {//当滑动条到末端时，结束动画
-                    animator.pause();//停止播放动画
-                }
+//                if (progress == seekBar.getMax()) {//当滑动条到末端时，结束动画
+//                    animator.pause();//停止播放动画
+//                }
             }
 
             @Override
@@ -193,16 +193,19 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
             }
         });
-        ImageView iv_music = (ImageView) findViewById(R.id.iv_music);
-//        String position= intent1.getStringExtra("position");
-        String position = "1";
-        int i = parseInt(position);
-        iv_music.setImageResource(ListFragment.icons[i]);
+//        ImageView iv_music = (ImageView) findViewById(R.id.iv_music);
+////        String position= intent1.getStringExtra("position");
+//        String position = "1";
+//        int i = parseInt(position);
+//        iv_music.setImageResource(ListFragment.icons[i]);
 
+        /*
         animator = ObjectAnimator.ofFloat(iv_music, "rotation", 0f, 360.0f);
         animator.setDuration(10000);//动画旋转一周的时间为10秒
         animator.setInterpolator(new LinearInterpolator());//匀速
         animator.setRepeatCount(-1);//-1表示设置动画无限循环
+
+         */
     }
 
     @Override
