@@ -44,17 +44,14 @@ public class DashboardFragment extends Fragment {
 
     private DashboardViewModel dashboardViewModel;
     private FragmentDashboardBinding binding;
-
     private List<CourseType> courseTypeList = new ArrayList<>();
     private List<Course> courseList = new ArrayList<>();
     //    private List<CourseType> courseTypeList = new ArrayList<>();
     private TextView tvName;
     private VerticalTabLayout tabLayout;
     private RecyclerView recyclerView;
-    List<TestData> recyclelist;
-
+    private List<TestData> recyclelist;
     private GridRecycleAdapter recycleAdapter;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -99,8 +96,6 @@ public class DashboardFragment extends Fragment {
                 new RecyclerViewClickListener2.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-//                        Toast.makeText(DashboardFragment.this.getActivity().getBaseContext(), "Click " + courseList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-
                         Intent intent =new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseListActivity.class);//创建意图对象
                         intent.putExtra("course_id", courseList.get(position).getId());
                         intent.putExtra("title", courseList.get(position).getTitle());
@@ -128,6 +123,9 @@ public class DashboardFragment extends Fragment {
         TabAdapterA ta = new TabAdapterA();
         ta.titles = courseTypeList;
         tabLayout.setTabAdapter(ta);
+//        tabLayout.
+//        tabLayout.set
+        tabLayout.setBackgroundResource(R.drawable.btn_nor_down);
 
         tabLayout.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
             @Override

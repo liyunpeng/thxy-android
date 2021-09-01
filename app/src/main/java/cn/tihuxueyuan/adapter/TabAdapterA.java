@@ -3,6 +3,7 @@ package cn.tihuxueyuan.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.model.CourseTypeList.CourseType;
 import q.rorbin.verticaltablayout.adapter.TabAdapter;
 import q.rorbin.verticaltablayout.widget.QTabView;
@@ -14,16 +15,6 @@ public class TabAdapterA implements TabAdapter {
 
     {
         titles = new ArrayList<>();
-//        titles.add("头条");
-//        titles.add("社会");
-//        titles.add("国际");
-//        titles.add("娱乐");
-//        titles.add("体育");
-//        titles.add("军事");
-//        titles.add("科技");
-//        titles.add("财经");
-//        titles.add("时尚");
-//                Collections.addAll(titles);
     }
     @Override
     public int getCount() {
@@ -43,7 +34,7 @@ public class TabAdapterA implements TabAdapter {
     @Override
     public QTabView.TabTitle getTitle(int position) {
         return new QTabView.TabTitle.Builder()
-                .setContent(titles.get(position).getName())
+                .setContent(titles.get(position).getName()).setTextColor(0xFF757575, 0xFFff0000).setTextSize(20)
 //                        .setTextColor(Color.BLUE, Color.BLACK)
                 .build();
     }

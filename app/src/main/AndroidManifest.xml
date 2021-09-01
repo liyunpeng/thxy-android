@@ -36,7 +36,7 @@
         android:name="cn.tihuxueyuan.globaldata.AppData"
         >
         <activity
-            android:name="cn.tihuxueyuan.activity.WXMainActivity"
+            android:name="cn.tihuxueyuan.activity.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
 
