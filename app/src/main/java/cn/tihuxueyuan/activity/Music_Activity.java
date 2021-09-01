@@ -267,7 +267,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     case PAUSE:
                         playPauseView.setImageResource(R.drawable.start);
                         JsonPost.ListenedFile listenedFile = new JsonPost.ListenedFile();
-                        listenedFile.CourseFileId = Integer.parseInt(Constant.appData.mList.get(Constant.appData.currentPostion).getId());
+                        listenedFile.CourseFileId = Constant.appData.mList.get(Constant.appData.currentPostion).getId();
                         listenedFile.ListenedPercent = musicControl.getListenedPercent();
                         Log.d(TAG, "listenedFile.ListenedPercent = " + listenedFile.ListenedPercent);
                         Map map = new HashMap<>();

@@ -164,7 +164,8 @@ D/tag1: parseNetworkResponse:
                 int position;
                 CourseFile c = null;
                 for ( CourseFile c1 : mList) {
-                    if (c1.getCourseId() == lastListenedCourseFileId) {
+                    int i = c1.getId();
+                    if (i == lastListenedCourseFileId) {
                         c = c1;
                         break;
                     }

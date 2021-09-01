@@ -21,7 +21,7 @@ public class CourseFileList {
 
     public static class CourseFile {
         @SerializedName("id")
-        private String id;
+        private int id;
         @SerializedName("mp3_file_name")
         private String mp3_file_name;
         @SerializedName("img_src")
@@ -56,7 +56,7 @@ public class CourseFileList {
             return mp3_file_name;
         }
 
-        public String getId() {
+        public int getId() {
             return id;
         }
 
