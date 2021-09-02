@@ -5,32 +5,45 @@
     android:layout_height="match_parent"
     android:layout_alignParentBottom="true"
     android:background="@drawable/yuzhou"
-    android:gravity="bottom"
+
     android:orientation="vertical"
     tools:context="cn.tihuxueyuan.activity.Music_Activity">
-<!--        <ImageView-->
-<!--            android:id="@+id/iv_music"-->
-<!--            android:layout_width="240dp"-->
-<!--            android:layout_height="240dp"-->
-<!--            android:layout_gravity="center_horizontal"-->
-<!--            android:layout_margin="15dp"-->
-<!--            android:src="@drawable/tihuxueyuan"/>-->
+    <!--        <ImageView-->
+    <!--            android:id="@+id/iv_music"-->
+    <!--            android:layout_width="240dp"-->
+    <!--            android:layout_height="240dp"-->
+    <!--            android:layout_gravity="center_horizontal"-->
+    <!--            android:layout_margin="15dp"-->
+    <!--            android:src="@drawable/tihuxueyuan"/>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:orientation="vertical"
-        android:layout_gravity="center"
         >
         <TextView
             android:id="@+id/song_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="top"
+            android:layout_margin="10dp"
+            android:gravity="center"
             android:text="歌曲名"
+            android:textColor="@color/yellow"
             android:textSize="20sp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
 
         <SeekBar
-            android:id="@+id/sb"
+            android:id="@+id/seek_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

@@ -21,23 +21,17 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
-
 import com.google.gson.Gson;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
-import cn.tihuxueyuan.fragment.list.ListFragment;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.livedata.LiveDataBus;
@@ -47,51 +41,44 @@ import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
 
 public class Music_Activity extends BaseActivity implements View.OnClickListener {
-    private static SeekBar sb;
+    private static SeekBar seekBar;
     private static TextView tv_progress, tv_total, name_song;
     private ImageView playPauseView;
     private ObjectAnimator animator;
-    private String title;
+    private String musicTitle;
     private Intent intent3;
     private MyServiceConn conn1;
     private String name;
-    private Intent intent1;
+
     private String musicUrl;
     private boolean isUnbind = false; //记录服务是否被解绑
     private AppData appData;
     private LiveDataBus.BusMutableLiveData<String> musicActivityLiveData;
-//    private LiveDataBus.BusMutableLiveData<String> notificationLiveData;
-//    private LiveDataBus.BusMutableLiveData<String> floatLiveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_music);
-//        todo :标题居中
-//        getSupportActionBar().
-
         musicUrl = getIntent().getStringExtra("music_url");
         Log.d(Constant.TAG, "Music Activity oncreate  musicUrl= " + musicUrl);
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
         appData = (AppData) getApplication();
 
-        intent1 = getIntent();
-        init();
+
         //通知栏的观察者
         musicActivityObserver();
         //控制通知栏
 //        notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
 //        floatLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
-
+        init();
         if (isNew == true) {
             bindMusicService();
 //            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
             appData.currentPostion = getIntent().getIntExtra("current_position", 0);
-            title = getIntent().getStringExtra("title");
+            musicTitle = getIntent().getStringExtra("title");
         } else {
 //            bootstrapReflect();
-            title =  SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
+            musicTitle =  SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
             musicControl.setText();
             if (musicControl.isPlaying()) {
                 playPauseView.setImageResource(R.drawable.stop);
@@ -99,16 +86,36 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 playPauseView.setImageResource(R.drawable.start);
             }
         }
-        setTitle(title);
+
+        name_song.setText( musicTitle);
+//        setTitle(musicTitle);
         if (Constant.floatingControl != null) {
-            Constant.floatingControl.setText(title);
+            Constant.floatingControl.setText(musicTitle);
         }
+
 
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
 //            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
 
 //        floatLiveData = LiveDataBus.getInstance().with("float_control", String.class);
 //        floatLiveData.postValue(PLAY);
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        JsonPost.ListenedFile listenedFile = new JsonPost.ListenedFile();
+        listenedFile.CourseFileId = Constant.appData.mList.get(Constant.appData.currentPostion).getId();
+        listenedFile.ListenedPercent = musicControl.getListenedPercent();
+        Log.d(TAG, "listenedFile.ListenedPercent = " + listenedFile.ListenedPercent);
+        Map map = new HashMap<>();
+        map.put("code", "7899000");
+        map.put("course_id", Constant.appData.mList.get(Constant.appData.currentPostion).getCourseId());
+        map.put("listened_file", listenedFile);
+        Gson gson = new Gson();
+        String param= gson.toJson(map);
+        JsonPost.postListenedPercent(param);
     }
 
     private void bindMusicService() {
@@ -150,21 +157,18 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         super.onRestart();
     }
 
-
     private void init() {
         tv_progress = (TextView) findViewById(R.id.tv_progress);
         tv_total = (TextView) findViewById(R.id.tv_total);
-        sb = (SeekBar) findViewById(R.id.sb);
+        seekBar = (SeekBar) findViewById(R.id.seek_bar);
         name_song = (TextView) findViewById(R.id.song_name);
         playPauseView = findViewById(R.id.play_pause);
         playPauseView.setOnClickListener(this);
         findViewById(R.id.play_previous).setOnClickListener(this);
         findViewById(R.id.play_next).setOnClickListener(this);
-        name = intent1.getStringExtra("name");
-        name_song.setText(name);
 
         //为滑动条添加事件监听
-        sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -191,9 +195,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     musicControl.playOrPause();
                     playPauseView.setImageResource(R.drawable.stop);
                 }
-
             }
         });
+
 //        ImageView iv_music = (ImageView) findViewById(R.id.iv_music);
 ////        String position= intent1.getStringExtra("position");
 //        String position = "1";
@@ -223,8 +227,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             Bundle bundle = msg.getData();//获取从子线程发送过来的音乐播放进度
             int duration = bundle.getInt("duration");
             int currentPosition = bundle.getInt("currentPosition");
-            sb.setMax(duration);
-            sb.setProgress(currentPosition);
+            seekBar.setMax(duration);
+            seekBar.setProgress(currentPosition);
             //歌曲总时长
             int minute = duration / 1000 / 60;
             int second = duration / 1000 % 60;
@@ -267,26 +271,14 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 switch (state) {
                     case PAUSE:
                         playPauseView.setImageResource(R.drawable.start);
-                        JsonPost.ListenedFile listenedFile = new JsonPost.ListenedFile();
-                        listenedFile.CourseFileId = Constant.appData.mList.get(Constant.appData.currentPostion).getId();
-                        listenedFile.ListenedPercent = musicControl.getListenedPercent();
-                        Log.d(TAG, "listenedFile.ListenedPercent = " + listenedFile.ListenedPercent);
-                        Map map = new HashMap<>();
-                        map.put("code", "7899000");
-                        map.put("course_id", Constant.appData.mList.get(Constant.appData.currentPostion).getCourseId());
-                        map.put("listened_file", listenedFile);
-                        Gson gson = new Gson();
-                        String param= gson.toJson(map);
-                        JsonPost.postListenedPercent(param);
-
                         break;
                     case PLAY:
                         playPauseView.setImageResource(R.drawable.stop);
                         break;
                     case NEWPLAY:
-                        title = SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
-                        setTitle(title);
-                        floatingControl.setText(title);
+                        musicTitle = SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
+                        name_song.setText(musicTitle);
+                        floatingControl.setText(musicTitle);
                         break;
 //                    case CLOSE:
 //                        btnPlay.setIcon(getDrawable(R.mipmap.icon_play));
@@ -356,7 +348,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
                 Constant.floatingControl.initFloatingWindow();
                 Constant.floatingControl.setVisibility(false);
-                Constant.floatingControl.setText(title);
+                Constant.floatingControl.setText(musicTitle);
 
                 Log.d(Constant.TAG, "floatingControl 初始化完成");
             }
