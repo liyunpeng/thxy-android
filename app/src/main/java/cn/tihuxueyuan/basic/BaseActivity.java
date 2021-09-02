@@ -1,12 +1,26 @@
 package cn.tihuxueyuan.basic;
 
+import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import cn.tihuxueyuan.utils.Constant;
 
 public class BaseActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     protected void onResume() {

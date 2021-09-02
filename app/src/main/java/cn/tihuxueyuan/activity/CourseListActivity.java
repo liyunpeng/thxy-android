@@ -38,6 +38,7 @@ public class CourseListActivity extends BaseActivity {
     private AppData appData;
     TextView lp;
     Button bt;
+    TextView titleView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +46,9 @@ public class CourseListActivity extends BaseActivity {
 
         couseId = getIntent().getStringExtra("course_id");
         title = getIntent().getStringExtra("title");
-        setTitle(title);
+
+        this.titleView =  findViewById(R.id.course_title);
+        titleView.setText(title);
         this.lv =  findViewById(R.id.courseList);
         this.lp =  findViewById(R.id.last_play);
         bt = findViewById(R.id.reverse);
