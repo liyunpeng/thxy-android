@@ -21,9 +21,6 @@ import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
-import cn.tihuxueyuan.verticaltabrecycler.MainActivity;
-import cn.tihuxueyuan.verticaltabrecycler.RecyclerActivity;
-import okhttp3.internal.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +35,7 @@ public class CourseListActivity extends BaseActivity {
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
     private AppData appData;
     TextView lp;
-    Button bt;
+    TextView reverseButton;
     TextView titleView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +49,8 @@ public class CourseListActivity extends BaseActivity {
         titleView.setText(title);
         this.lv =  findViewById(R.id.courseList);
         this.lp =  findViewById(R.id.last_play);
-        bt = findViewById(R.id.reverse);
+        reverseButton = findViewById(R.id.reverse);
+//        lp.setText();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -151,7 +149,7 @@ D/tag1: parseNetworkResponse:
 
     public void refreshListView() {
 
-        bt.setOnClickListener( new View.OnClickListener(){
+        reverseButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Collections.reverse(mList);
@@ -160,31 +158,33 @@ D/tag1: parseNetworkResponse:
         });
 
         String lastTitle = SPUtils.getTitleFromName(appData.mListMap.get(  lastListenedCourseFileId).getFileName());
+
+
         lp.setText("上次播放:" + lastTitle);
         lp.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
-//                String musicUrll = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
-                int position;
-                CourseFile c = null;
-                for ( CourseFile c1 : mList) {
-                    int i = c1.getId();
-                    if (i == lastListenedCourseFileId) {
-                        c = c1;
-                        break;
-                    }
-                }
+////                String musicUrll = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
+//                int position;
+//                CourseFile c = null;
+//                for ( CourseFile c1 : mList) {
+//                    int i = c1.getId();
+//                    if (i == lastListenedCourseFileId) {
+//                        c = c1;
+//                        break;
+//                    }
+//                }
 
 
-
-                if (c != null ){
-                    String musicUrl = SPUtils.getMp3Url(c.getFileName());
+                CourseFile cc = appData.mListMap.get(  lastListenedCourseFileId);
+                if (cc != null ){
+                    String musicUrl = SPUtils.getMp3Url(cc.getFileName());
                     intent.putExtra("music_url", musicUrl);
                     intent.putExtra("current_position", lastListenedCourseFileId+1);
                     intent.putExtra("is_new", true);
-                    intent.putExtra("title", SPUtils.getTitleFromName(c.getFileName()));
+                    intent.putExtra("title", SPUtils.getTitleFromName(cc.getFileName()));
                     startActivity(intent);
                 }
 

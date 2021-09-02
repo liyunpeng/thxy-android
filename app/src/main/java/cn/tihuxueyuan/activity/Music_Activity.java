@@ -116,6 +116,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         Gson gson = new Gson();
         String param= gson.toJson(map);
         JsonPost.postListenedPercent(param);
+        Log.d(TAG, "Musicactivity onStop ");
     }
 
     private void bindMusicService() {
