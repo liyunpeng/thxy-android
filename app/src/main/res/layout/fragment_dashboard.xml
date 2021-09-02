@@ -13,12 +13,12 @@
 
         <q.rorbin.verticaltablayout.VerticalTabLayout
             android:id="@+id/tab_layout"
-            android:layout_width="100dp"
+            android:layout_width="90dp"
             android:layout_height="match_parent"
-            android:background="#EDEDED"
-            app:indicator_color="#FFFFFF"
+
+            app:indicator_color="#6186E4"
             app:indicator_gravity="fill"
-            app:tab_height="50dp"
+            app:tab_height="40dp"
             app:tab_mode="scrollable" />
 
         <LinearLayout

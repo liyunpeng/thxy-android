@@ -150,6 +150,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         super.onRestart();
     }
 
+
     private void init() {
         tv_progress = (TextView) findViewById(R.id.tv_progress);
         tv_total = (TextView) findViewById(R.id.tv_total);

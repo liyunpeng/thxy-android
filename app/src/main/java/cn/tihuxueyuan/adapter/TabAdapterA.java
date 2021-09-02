@@ -1,5 +1,7 @@
 package cn.tihuxueyuan.adapter;
 
+import android.graphics.Color;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +36,9 @@ public class TabAdapterA implements TabAdapter {
     @Override
     public QTabView.TabTitle getTitle(int position) {
         return new QTabView.TabTitle.Builder()
-                .setContent(titles.get(position).getName()).setTextColor(0xFF757575, 0xFFff0000).setTextSize(20)
-//                        .setTextColor(Color.BLUE, Color.BLACK)
+                .setContent(titles.get(position).getName())
+//                .setTextSize(20)
+                        .setTextColor(Color.YELLOW, Color.GRAY)
                 .build();
     }
 

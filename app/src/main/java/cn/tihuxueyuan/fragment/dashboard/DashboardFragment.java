@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.fragment.dashboard;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -118,6 +119,7 @@ public class DashboardFragment extends Fragment {
 
     }
 
+//    @SuppressLint("ResourceAsColor")
     public void refreshView() {
 
         TabAdapterA ta = new TabAdapterA();
@@ -125,7 +127,8 @@ public class DashboardFragment extends Fragment {
         tabLayout.setTabAdapter(ta);
 //        tabLayout.
 //        tabLayout.set
-        tabLayout.setBackgroundResource(R.drawable.btn_nor_down);
+        tabLayout.setBackgroundResource(R.drawable.tab_background);
+//        tabLayout.setBackgroundColor(R.color.darkBlue);
 
         tabLayout.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
             @Override
