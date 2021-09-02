@@ -28,6 +28,7 @@ import okhttp3.internal.Util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class CourseListActivity extends BaseActivity {
     private android.widget.ListView lv;
@@ -157,7 +158,9 @@ D/tag1: parseNetworkResponse:
                 mAdapter.notifyDataSetChanged();
             }
         });
-        lp.setText("上次播放:" + lastListenedCourseFileId);
+
+        String lastTitle = SPUtils.getTitleFromName(appData.mListMap.get(  lastListenedCourseFileId).getFileName());
+        lp.setText("上次播放:" + lastTitle);
         lp.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,6 +176,8 @@ D/tag1: parseNetworkResponse:
                         break;
                     }
                 }
+
+
 
                 if (c != null ){
                     String musicUrl = SPUtils.getMp3Url(c.getFileName());
@@ -233,6 +238,19 @@ D/tag1: parseNetworkResponse:
                 }
                 mList = response.getCourseFileList();
                 appData.mList = mList;
+                Map<Integer, CourseFile> m = appData.mListMap;
+                m.clear();
+//                mListMap
+                for ( CourseFile c1 : mList) {
+                    int i = c1.getId();
+                    m.put(i, c1);
+//                    if m[i]
+//                    if (i == lastListenedCourseFileId) {
+//                        c = c1;
+//                        break;
+//                    }
+                }
+
                 lastListenedCourseFileId = response.getLastListenedCourseFileId();
                 refreshListView();
             }

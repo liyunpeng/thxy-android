@@ -16,12 +16,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -34,6 +28,12 @@ public class BaseActivity extends AppCompatActivity {
                 Constant.floatingControl.setVisibility(true);
             }
         }
+    }
+
+    //
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

@@ -3,7 +3,9 @@ package cn.tihuxueyuan.globaldata;
 import android.app.Application;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.tihuxueyuan.model.CourseFileList;
 
@@ -16,7 +18,8 @@ public class AppData extends Application{
     public int direction = 1;
     public String UserCode = "";
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
-
+//    public List<CourseFileList.CourseFile> mList = new ArrayList<>();
+    public Map<Integer, CourseFileList.CourseFile> mListMap = new HashMap<>();
     public String getB(){
         return this.b;
     }
