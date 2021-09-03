@@ -17,8 +17,8 @@
 
             <ImageView
                 android:id="@+id/course_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_margin="5dp"
                 android:src="@drawable/thxy"
                 />
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="5dp"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="标题"
                 android:textColor="#ff000000"
                 android:textSize="20dp"
@@ -48,9 +48,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/border_line_while"
+                android:paddingLeft="9dp"
+                android:paddingRight="9dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp"
                 android:gravity="left"
-                android:textSize="18sp"
-                android:text="123456" />
+                android:textSize="16sp"
+                android:text="123456"
+
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -59,14 +65,14 @@
 
                 <TextView
                     android:id="@+id/reverse"
-
-                    android:layout_height="match_parent"
+                    android:layout_height="40dp"
                     android:layout_width="wrap_content"
                     android:layout_gravity="center"
-
-                    android:background="@drawable/border_line_while"
-
-                    android:text="反序" />
+                    android:gravity="center"
+                    android:text="反序"
+                    android:textSize="15sp"
+                    android:layout_marginRight="5dp"
+                    />
 
                 <Button
                     android:id="@+id/download"
