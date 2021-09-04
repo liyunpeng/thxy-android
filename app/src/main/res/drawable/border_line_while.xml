@@ -8,15 +8,15 @@
         android:bottom="1dip"/>
 
     <stroke android:width="1dip"
-        android:color="@color/theme_red"
+        android:color="#00BCD4"
         />
     <!--边框宽度-->
     <size android:width="15dip"
         android:height="15dip"
         />
-    <corners android:topLeftRadius="15dip"
-        android:topRightRadius="15dip"
-        android:bottomRightRadius="15dip"
-        android:bottomLeftRadius="15dip" />
+    <corners android:topLeftRadius="18dip"
+        android:topRightRadius="18dip"
+        android:bottomRightRadius="18dip"
+        android:bottomLeftRadius="18dip" />
     <!--边框-->
 </shape>

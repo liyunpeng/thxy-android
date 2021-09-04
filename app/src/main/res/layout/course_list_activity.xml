@@ -48,13 +48,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/border_line_while"
-                android:paddingLeft="9dp"
-                android:paddingRight="9dp"
-                android:paddingTop="7dp"
-                android:paddingBottom="7dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:gravity="left"
                 android:textSize="16sp"
                 android:text="123456"
+                android:visibility="invisible"
+                android:textColor="#ff000000"
 
                 />
 

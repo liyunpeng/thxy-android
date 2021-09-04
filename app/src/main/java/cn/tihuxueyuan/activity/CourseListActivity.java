@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import cn.tihuxueyuan.basic.ActivityManager;
@@ -28,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CourseListActivity extends BaseActivity {
-    private android.widget.ListView lv;
-    private String couseId;
+    private android.widget.ListView courseListView;
+    private String currentCouseId;
     private String title;
     private CommonAdapter<CourseFile> mAdapter;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
@@ -37,21 +36,23 @@ public class CourseListActivity extends BaseActivity {
     TextView lp;
     TextView reverseButton;
     TextView titleView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.course_list_activity);
 
-        couseId = getIntent().getStringExtra("course_id");
+        currentCouseId = getIntent().getStringExtra("course_id");
+
         title = getIntent().getStringExtra("title");
 
         this.titleView =  findViewById(R.id.course_title);
         titleView.setText(title);
-        this.lv =  findViewById(R.id.courseList);
+        this.courseListView =  findViewById(R.id.courseList);
         this.lp =  findViewById(R.id.last_play);
         reverseButton = findViewById(R.id.reverse);
 //        lp.setText();
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -66,7 +67,7 @@ public class CourseListActivity extends BaseActivity {
             }
         });
         appData = (AppData) getApplication();
-        Log.d("tag2", "onCreate: param: " + couseId);
+        Log.d("tag2", "onCreate: param: " + currentCouseId);
     }
 
 //        @Override
@@ -91,7 +92,13 @@ public class CourseListActivity extends BaseActivity {
         super.onStart();
     }
 
-//    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    protected void onStop() {
+        super.onStop();
+        appData.lastCourseId = Integer.parseInt(currentCouseId);
+    }
+
+    //    @RequiresApi(api = Build.VERSION_CODES.M)
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
@@ -159,8 +166,14 @@ D/tag1: parseNetworkResponse:
 
         String lastTitle = SPUtils.getTitleFromName(appData.mListMap.get(  lastListenedCourseFileId).getFileName());
 
+        if (appData.lastCourseId != Integer.parseInt(currentCouseId )){
+//            Date curDate = new Date(System.currentTimeMillis());
+            lp.setText("上次播放: " + lastTitle);
+            lp.setVisibility(View.VISIBLE);
+        }else{
+            lp.setVisibility(View.INVISIBLE);
+        }
 
-        lp.setText("上次播放:" + lastTitle);
         lp.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,14 +190,13 @@ D/tag1: parseNetworkResponse:
 //                    }
 //                }
 
-
-                CourseFile cc = appData.mListMap.get(  lastListenedCourseFileId);
-                if (cc != null ){
-                    String musicUrl = SPUtils.getMp3Url(cc.getFileName());
+                CourseFile courseFile = appData.mListMap.get(  lastListenedCourseFileId);
+                if (courseFile != null ){
+                    String musicUrl = SPUtils.getMp3Url(courseFile.getFileName());
                     intent.putExtra("music_url", musicUrl);
                     intent.putExtra("current_position", lastListenedCourseFileId+1);
                     intent.putExtra("is_new", true);
-                    intent.putExtra("title", SPUtils.getTitleFromName(cc.getFileName()));
+                    intent.putExtra("title", SPUtils.getTitleFromName(courseFile.getFileName()));
                     startActivity(intent);
                 }
 
@@ -192,7 +204,7 @@ D/tag1: parseNetworkResponse:
 
             }
         });
-        lv.setAdapter(mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
+        courseListView.setAdapter(mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
                 int percent = courseFile.getListenedPercent();
@@ -216,9 +228,11 @@ D/tag1: parseNetworkResponse:
                     holder.set(R.id.number, courseFile.getNumber(), color);
                     holder.set(R.id.percent,  "已听" + percent + "%", color);
                     holder.set(R.id.duration,  "时长" + duration, color);
+                    holder.getView(R.id.percent).setVisibility(View.VISIBLE);
                 }else{
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);
+                    holder.set(R.id.percent,  "", color);
                     holder.set(R.id.duration,  "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
@@ -229,7 +243,7 @@ D/tag1: parseNetworkResponse:
     }
     int lastListenedCourseFileId;
     public void getCourseFiles() {
-        HttpClient.getCourseFilesByCourseId(couseId, new HttpCallback<CourseFileList>() {
+        HttpClient.getCourseFilesByCourseId(currentCouseId, new HttpCallback<CourseFileList>() {
             @Override
             public void onSuccess(CourseFileList response) {
                 if (response == null || response.getCourseFileList() == null || response.getCourseFileList().isEmpty()) {
@@ -238,17 +252,12 @@ D/tag1: parseNetworkResponse:
                 }
                 mList = response.getCourseFileList();
                 appData.mList = mList;
+                // list 转 map
                 Map<Integer, CourseFile> m = appData.mListMap;
                 m.clear();
-//                mListMap
                 for ( CourseFile c1 : mList) {
                     int i = c1.getId();
                     m.put(i, c1);
-//                    if m[i]
-//                    if (i == lastListenedCourseFileId) {
-//                        c = c1;
-//                        break;
-//                    }
                 }
 
                 lastListenedCourseFileId = response.getLastListenedCourseFileId();
