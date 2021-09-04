@@ -88,9 +88,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             musicTitle = SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
             musicControl.setText();
             if (musicControl.isPlaying()) {
-                playPauseView.setImageResource(R.drawable.stop);
+                playPauseView.setImageResource(R.drawable.pause_dark);
             } else {
-                playPauseView.setImageResource(R.drawable.start);
+                playPauseView.setImageResource(R.drawable.play_dark);
             }
         }
 
@@ -285,10 +285,10 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 Log.d(TAG, " 观察者监控到消息 = " + state);
                 switch (state) {
                     case PAUSE:
-                        playPauseView.setImageResource(R.drawable.start);
+                        playPauseView.setImageResource(R.drawable.play_dark);
                         break;
                     case PLAY:
-                        playPauseView.setImageResource(R.drawable.stop);
+                        playPauseView.setImageResource(R.drawable.pause_dark);
                         break;
                     case NEWPLAY:
                         musicTitle = SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());

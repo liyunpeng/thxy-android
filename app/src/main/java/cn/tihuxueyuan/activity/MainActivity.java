@@ -137,19 +137,15 @@ public class MainActivity extends BaseActivity {
     public void pushActivity(Activity activity) {
         if (activityStack == null) {
             activityStack = new Stack();
-
         }
 
         activityStack.add(activity);
-
     }
 
     //上次按下返回键的系统时间
     private long lastBackTime = 0;
     //当前按下返回键的系统时间
     private long currentBackTime = 0;
-
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //捕获返回键按下的事件
@@ -182,7 +178,7 @@ public class MainActivity extends BaseActivity {
 
                 intent = new Intent(this, MusicService.class);//创建意图对象
                 intent.setPackage(getPackageName());
-                //Log.i("当前包", getPackageName());
+                Log.i("当前包", getPackageName());
                 stopService(intent);
 
                 onDestroy();

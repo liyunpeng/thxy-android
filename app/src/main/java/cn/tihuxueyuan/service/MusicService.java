@@ -299,7 +299,7 @@ public class MusicService extends Service {
         }
 
         public void playNew() {
-            Log.d(TAG, " playNew 调用, ");
+            Log.d(TAG, " playNew 调用");
             String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
             init(mp3url);
 
