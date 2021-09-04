@@ -177,11 +177,6 @@ public class MusicService extends Service {
                 .build();
     }
 
-    /**
-     * 更改通知的信息和UI
-     *
-     * @param position
-     */
     public void updateNotificationShow(int position) {
         if (player.isPlaying()) {
             remoteViews.setImageViewResource(R.id.btn_notification_play, R.drawable.pause_black);
@@ -198,16 +193,9 @@ public class MusicService extends Service {
         //发送通知
         manager.notify(NOTIFICATION_ID, notification);
 
-        Log.d(TAG, "updateNotificationShow  ");
+        Log.d(TAG, "显示通知栏完成  ");
     }
 
-    /**
-     * 创建通知渠道
-     *
-     * @param channelId   渠道id
-     * @param channelName 渠道名称
-     * @param importance  渠道重要性
-     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @TargetApi(Build.VERSION_CODES.O)
     private void createNotificationChannel(String channelId, String channelName, int importance) {
@@ -300,17 +288,17 @@ public class MusicService extends Service {
                 String fileName = appData.mListMap.get(appData.currentCourseFileId).getFileName();
 
                 if (pos > 0) {
-                    Log.d(TAG, "播放器 文件名=" + fileName +"  percent=" + percent + ",  seek to 的位置 = " + pos);
+                    Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
                     player.seekTo(pos);
                 }
                 player.start();
                 addTimer();
             }
             musicActivityLiveData.postValue(PLAY);
+            updateNotificationShow(appData.currentPostion);
         }
 
         public void playNew() {
-
             Log.d(TAG, " playNew 调用, ");
             String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
             init(mp3url);
@@ -368,20 +356,16 @@ public class MusicService extends Service {
 
             float duration = player.getDuration();//获取歌曲总时长
             float currentPosition = player.getCurrentPosition();//获取播放进度
-
             float percentFloat = (currentPosition / duration);
-
             int percentInt;
             if (percentFloat > 0 && percentFloat <= 0.01) {
-                percentInt=1;
+                percentInt = 1;
             } else {
-                percentInt = (int) (percentFloat*100);
+                percentInt = (int) (percentFloat * 100);
             }
-
-            Log.d(TAG, " 计算已听百分比, 小数点百分比="+percentFloat + ", 整数百分比=" + percentInt);
+            Log.d(TAG, " 计算已听百分比, 小数点百分比=" + percentFloat + ", 整数百分比=" + percentInt);
             return percentInt;
         }
-
 
         public void setText() {
             if (player == null) return;
@@ -399,11 +383,11 @@ public class MusicService extends Service {
 
         public void init(String url) {
             if (appData.lastCourseFileId == appData.currentCourseFileId) {
-                Log.d( TAG, " musicControl init 调用， 因为appData.lastCourseFileId == appData.currentCourseFileId， play不需要reset 和 setDataSource");
+                Log.d(TAG, " musicControl init 调用， 因为appData.lastCourseFileId == appData.currentCourseFileId， play不需要reset 和 setDataSource");
                 return;
             }
 
-            Log.d( TAG, "musicControl init 调用， 执行player.reset ");
+            Log.d(TAG, "musicControl init 调用， 执行player.reset()");
             if (player.isLooping()) {
                 player.stop();
                 player.release();

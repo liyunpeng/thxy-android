@@ -24,11 +24,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
+
 import com.google.gson.Gson;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
@@ -49,7 +53,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private Intent intent3;
     private MyServiceConn conn1;
     private String name;
-
     private String musicUrl;
     private boolean isUnbind = false; //记录服务是否被解绑
     private AppData appData;
@@ -72,18 +75,17 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //        floatLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
         init();
         if (isNew == true) {
-
 //            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
             appData.currentPostion = getIntent().getIntExtra("current_position", 0);
             musicTitle = getIntent().getStringExtra("title");
 
             appData.currentCourseFileId = appData.mList.get(appData.currentPostion).getId();
 
-                bindMusicService();
+            bindMusicService();
 
         } else {
 //            bootstrapReflect();
-            musicTitle =  SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
+            musicTitle = SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
             musicControl.setText();
             if (musicControl.isPlaying()) {
                 playPauseView.setImageResource(R.drawable.stop);
@@ -92,11 +94,10 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             }
         }
 
-        name_song.setText( musicTitle);
+        name_song.setText(musicTitle);
         if (Constant.floatingControl != null) {
             Constant.floatingControl.setText(musicTitle);
         }
-
 
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
 //            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
@@ -123,7 +124,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         map.put("course_id", Constant.appData.mList.get(Constant.appData.currentPostion).getCourseId());
         map.put("listened_file", listenedFile);
         Gson gson = new Gson();
-        String param= gson.toJson(map);
+        String param = gson.toJson(map);
         JsonPost.postListenedPercent(param);
         Log.d(TAG, "Musicactivity onStop ");
 
@@ -136,10 +137,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             Constant.conn1 = new MyServiceConn();
             bindService(Constant.intent2, Constant.conn1, BIND_AUTO_CREATE); //绑定服务
         } else {
-
             musicControl.init(musicUrl);
-
-
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -351,13 +349,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                         try {
                             if (appData.currentCourseFileId == appData.lastCourseFileId) {
                                 musicControl.play();
-                            }else{
+                            } else {
                                 Thread.sleep(1000);
-//                            musicControl.setText();
-                                /*
-                                 player.prepareAsync();
-            setText();
-                                 */
                                 musicControl.playNew();
                             }
 
@@ -373,7 +366,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 Constant.floatingControl.initFloatingWindow();
                 Constant.floatingControl.setVisibility(false);
                 Constant.floatingControl.setText(musicTitle);
-
                 Log.d(Constant.TAG, "floatingControl 初始化完成");
             }
         }

@@ -18,9 +18,11 @@ public class AppData extends Application{
     public int direction = 1;
     public String UserCode = "7899000";
     public int lastCourseId = -1;
-    public int lastCourseFileId = -1;
-    public int currentCourseFileId = -1;
     public int currentMusicCourseId = -3;
+
+    public int lastCourseFileId = -1;
+    public int currentCourseFileId = -2;
+
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
 //    public List<CourseFileList.CourseFile> mList = new ArrayList<>();
     public Map<Integer, CourseFileList.CourseFile> mListMap = new HashMap<>();
