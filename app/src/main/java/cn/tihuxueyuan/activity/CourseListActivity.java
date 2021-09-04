@@ -33,7 +33,7 @@ public class CourseListActivity extends BaseActivity {
     private CommonAdapter<CourseFile> mAdapter;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
     private AppData appData;
-    TextView lp;
+    TextView lastPlayTextView;
     TextView reverseButton;
     TextView titleView;
 
@@ -49,7 +49,7 @@ public class CourseListActivity extends BaseActivity {
         this.titleView =  findViewById(R.id.course_title);
         titleView.setText(title);
         this.courseListView =  findViewById(R.id.courseList);
-        this.lp =  findViewById(R.id.last_play);
+        this.lastPlayTextView =  findViewById(R.id.last_play);
         reverseButton = findViewById(R.id.reverse);
 //        lp.setText();
         courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -67,7 +67,7 @@ public class CourseListActivity extends BaseActivity {
             }
         });
         appData = (AppData) getApplication();
-        Log.d("tag2", "onCreate: param: " + currentCouseId);
+        Log.d("tag2", "onCreate: currentCouseId: " + currentCouseId);
     }
 
 //        @Override
@@ -164,17 +164,18 @@ D/tag1: parseNetworkResponse:
             }
         });
 
-        String lastTitle = SPUtils.getTitleFromName(appData.mListMap.get(  lastListenedCourseFileId).getFileName());
 
-        if (appData.lastCourseId != Integer.parseInt(currentCouseId )){
+
+        if (appData.lastCourseId != -1 && appData.lastCourseId != Integer.parseInt(currentCouseId )){
 //            Date curDate = new Date(System.currentTimeMillis());
-            lp.setText("上次播放: " + lastTitle);
-            lp.setVisibility(View.VISIBLE);
+            String lastTitle = SPUtils.getTitleFromName(appData.mListMap.get(  lastListenedCourseFileId).getFileName());
+            lastPlayTextView.setText("上次播放: " + lastTitle);
+            lastPlayTextView.setVisibility(View.VISIBLE);
         }else{
-            lp.setVisibility(View.INVISIBLE);
+            lastPlayTextView.setVisibility(View.INVISIBLE);
         }
 
-        lp.setOnClickListener( new View.OnClickListener() {
+        lastPlayTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
