@@ -332,6 +332,7 @@ public class MusicService extends Service {
         public void UIControl(String state, String tag) {
             switch (state) {
                 case PLAY:
+                case PAUSE:
                     playOrPause();
                     break;
 //                case PREV:
