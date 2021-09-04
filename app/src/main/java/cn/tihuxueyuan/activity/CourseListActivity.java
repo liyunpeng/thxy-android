@@ -165,7 +165,7 @@ D/tag1: parseNetworkResponse:
         });
 
 
-        if (appData.lastCourseId != -1 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
+        if (appData.lastCourseId != -1 && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId) ) {
 //            Date curDate = new Date(System.currentTimeMillis());
             String lastTitle = SPUtils.getTitleFromName(appData.mListMap.get(lastListenedCourseFileId).getFileName());
             lastPlayTextView.setText("上次播放: " + lastTitle);
@@ -198,7 +198,9 @@ D/tag1: parseNetworkResponse:
 
 //                courseFile.getLastListenedCourseFileId();
                 int color;
-                if (appData.currentPostion >= 0 && Constant.appData.mList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
+                if (  Integer.parseInt(currentCouseId) == appData.currentMusicCourseId &&
+                        appData.currentPostion >= 0 && Constant.appData.currentPostion <  Constant.appData.mList.size() &&
+                        Constant.appData.mList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
                     color = Color.parseColor("#FF0000");
                 } else {
                     if (percent > 0) {

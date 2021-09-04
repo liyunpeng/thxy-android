@@ -64,7 +64,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
         appData = (AppData) getApplication();
 
-
+        appData.currentMusicCourseId = appData.mList.get(0).getCourseId();
         //通知栏的观察者
         musicActivityObserver();
         //控制通知栏
