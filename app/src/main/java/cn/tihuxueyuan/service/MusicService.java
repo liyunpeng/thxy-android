@@ -7,6 +7,7 @@ import static cn.tihuxueyuan.utils.Constant.NEXT;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.PREV;
+import static cn.tihuxueyuan.utils.Constant.musicControl;
 //import static cn.tihuxueyuan.utils.Constant.musicReceiver;
 
 import android.annotation.SuppressLint;
@@ -90,6 +91,14 @@ public class MusicService extends Service {
         initNotification();
         appData = (AppData) getApplication();
         player = new MediaPlayer();
+        player.setOnCompletionListener(
+                new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        Log.d(TAG, "音乐回调函数 onCompletion 调用");
+                    }
+                }
+        );
         musicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
     }
 
@@ -279,7 +288,29 @@ public class MusicService extends Service {
             manager.cancel(NOTIFICATION_ID);
         }
 
+        public void play() {
+            boolean isPlaying = player.isPlaying();
+            Log.d(TAG, "播放器是否在播放 isPlaying = " + isPlaying);
+            if (isPlaying && appData.lastCourseFileId == appData.currentCourseFileId) {
+//                player.pause();
+//                musicActivityLiveData.postValue(PAUSE);
+            } else {
+                int pos = appData.mListMap.get(appData.currentCourseFileId).getListenedPosition();
+                int percent = appData.mListMap.get(appData.currentCourseFileId).getListenedPercent();
+
+                if (pos > 0) {
+                    Log.d(TAG, "播放器 percent=" + percent + ",  seek to 的位置 = " + pos);
+                    player.seekTo(pos);
+                }
+                player.start();
+                addTimer();
+            }
+            musicActivityLiveData.postValue(PLAY);
+        }
+
         public void playNew() {
+
+            Log.d(TAG, " playNew 调用, ");
             String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
             init(mp3url);
 
@@ -287,7 +318,7 @@ public class MusicService extends Service {
                 public void run() {
                     try {
                         Thread.sleep(1000);
-                        playOrPause();
+                        play();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -328,14 +359,15 @@ public class MusicService extends Service {
 
         public int getListenedPercent() {
             if (player == null) return 0;
+
             float duration = player.getDuration();//获取歌曲总时长
             float currentPosition = player.getCurrentPosition();//获取播放进度]
 
-            float ret = (currentPosition*100/duration);
+            float ret = (currentPosition / duration);
             if (ret > 0 && ret <= 0.01) {
                 return 1;
-            }else {
-                return  (int)ret;
+            } else {
+                return (int) ret*100;
             }
         }
 
@@ -355,6 +387,12 @@ public class MusicService extends Service {
         }
 
         public void init(String url) {
+            if (appData.lastCourseFileId == appData.currentCourseFileId) {
+                Log.d( TAG, " musicControl init 调用， 因为appData.lastCourseFileId == appData.currentCourseFileId， play不需要reset 和 setDataSource");
+                return;
+            }
+
+            Log.d( TAG, "musicControl init 调用， 执行player.reset ");
             if (player.isLooping()) {
                 player.stop();
                 player.release();

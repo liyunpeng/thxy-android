@@ -72,10 +72,15 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //        floatLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
         init();
         if (isNew == true) {
-            bindMusicService();
+
 //            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
             appData.currentPostion = getIntent().getIntExtra("current_position", 0);
             musicTitle = getIntent().getStringExtra("title");
+
+            appData.currentCourseFileId = appData.mList.get(appData.currentPostion).getId();
+
+                bindMusicService();
+
         } else {
 //            bootstrapReflect();
             musicTitle =  SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
@@ -88,7 +93,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         }
 
         name_song.setText( musicTitle);
-//        setTitle(musicTitle);
         if (Constant.floatingControl != null) {
             Constant.floatingControl.setText(musicTitle);
         }
@@ -118,6 +122,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         String param= gson.toJson(map);
         JsonPost.postListenedPercent(param);
         Log.d(TAG, "Musicactivity onStop ");
+
+        appData.lastCourseFileId = appData.currentCourseFileId;
     }
 
     private void bindMusicService() {
@@ -126,12 +132,15 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             Constant.conn1 = new MyServiceConn();
             bindService(Constant.intent2, Constant.conn1, BIND_AUTO_CREATE); //绑定服务
         } else {
-            musicControl.init(musicUrl);
+
+                musicControl.init(musicUrl);
+
+
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         Thread.sleep(1000);
-                        musicControl.playOrPause();
+                        musicControl.play();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -192,6 +201,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             public void onStopTrackingTouch(SeekBar seekBar) {//滑动条停止滑动时调用
                 //根据拖动的进度改变音乐播放进度
                 int progress = seekBar.getProgress();//获取seekBar的进度
+                Log.d(TAG, " 改变播放进度 progress=" + progress);
+
                 musicControl.seekTo(progress);//改变播放进度
                 if (musicControl.isPlaying() != true) {
                     musicControl.playOrPause();
@@ -331,13 +342,20 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             if (shortClassName.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
                 musicControl.init(musicUrl);
-//                musicControl.register1();
                 new Thread(new Runnable() {
                     public void run() {
                         try {
-                            Thread.sleep(1000);
+                            if (appData.currentCourseFileId == appData.lastCourseFileId) {
+                                musicControl.play();
+                            }else{
+                                Thread.sleep(1000);
 //                            musicControl.setText();
-                            musicControl.playOrPause();
+                                /*
+                                 player.prepareAsync();
+            setText();
+                                 */
+                                musicControl.playNew();
+                            }
 
                         } catch (InterruptedException e) {
                             e.printStackTrace();
