@@ -297,9 +297,10 @@ public class MusicService extends Service {
             } else {
                 int pos = appData.mListMap.get(appData.currentCourseFileId).getListenedPosition();
                 int percent = appData.mListMap.get(appData.currentCourseFileId).getListenedPercent();
+                String fileName = appData.mListMap.get(appData.currentCourseFileId).getFileName();
 
                 if (pos > 0) {
-                    Log.d(TAG, "播放器 percent=" + percent + ",  seek to 的位置 = " + pos);
+                    Log.d(TAG, "播放器 文件名=" + fileName +"  percent=" + percent + ",  seek to 的位置 = " + pos);
                     player.seekTo(pos);
                 }
                 player.start();
@@ -357,18 +358,27 @@ public class MusicService extends Service {
             return player.getCurrentPosition();
         }
 
+        public int getDuration() {
+            return player.getDuration();
+        }
+
         public int getListenedPercent() {
             if (player == null) return 0;
 
             float duration = player.getDuration();//获取歌曲总时长
-            float currentPosition = player.getCurrentPosition();//获取播放进度]
+            float currentPosition = player.getCurrentPosition();//获取播放进度
 
-            float ret = (currentPosition / duration);
-            if (ret > 0 && ret <= 0.01) {
-                return 1;
+            float percentFloat = (currentPosition / duration);
+
+            int percentInt;
+            if (percentFloat > 0 && percentFloat <= 0.01) {
+                percentInt=1;
             } else {
-                return (int) ret*100;
+                percentInt = (int) (percentFloat*100);
             }
+
+            Log.d(TAG, " 计算已听百分比, 小数点百分比="+percentFloat + ", 整数百分比=" + percentInt);
+            return percentInt;
         }
 
 

@@ -72,8 +72,5 @@ public class JsonPost{
         public int ListenedPercent;
         @SerializedName("pos")  // pc 为percent 简写
         public int Position;
-
-
-
     }
 }

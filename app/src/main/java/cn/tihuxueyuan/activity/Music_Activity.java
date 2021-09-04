@@ -113,7 +113,11 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         listenedFile.CourseFileId = Constant.appData.mList.get(Constant.appData.currentPostion).getId();
         listenedFile.ListenedPercent = musicControl.getListenedPercent();
         listenedFile.Position = musicControl.getPosition();
-        Log.d(TAG, "listenedFile.ListenedPercent = " + listenedFile.ListenedPercent);
+        Log.d(TAG, "调jsonpost网络接口， 写入已听数据" +
+                ", 文件名= " + appData.mList.get(Constant.appData.currentPostion).getFileName() +
+                ", ListenedPercent = " + listenedFile.ListenedPercent +
+                ", Position=" + listenedFile.Position +
+                ", duration=" + musicControl.getDuration());
         Map map = new HashMap<>();
         map.put("code", "7899000");
         map.put("course_id", Constant.appData.mList.get(Constant.appData.currentPostion).getCourseId());
@@ -133,7 +137,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             bindService(Constant.intent2, Constant.conn1, BIND_AUTO_CREATE); //绑定服务
         } else {
 
-                musicControl.init(musicUrl);
+            musicControl.init(musicUrl);
 
 
             new Thread(new Runnable() {

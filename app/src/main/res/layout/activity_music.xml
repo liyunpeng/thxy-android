@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:layout_alignParentBottom="true"
     android:background="@drawable/yuzhou"
-
     android:orientation="vertical"
     tools:context="cn.tihuxueyuan.activity.Music_Activity">
     <!--        <ImageView-->
@@ -49,7 +48,6 @@
             android:max="100"
             android:maxHeight="3.4dp"
             android:minHeight="3.4dp"
-
             android:progress="50"
             android:splitTrack="false"
             android:progressDrawable="@drawable/bg_adjust_seek_bar"

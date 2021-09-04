@@ -1,12 +1,17 @@
 package cn.tihuxueyuan.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.BitmapCallback;
 
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
@@ -20,6 +25,7 @@ import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
+import okhttp3.Call;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +42,28 @@ public class CourseListActivity extends BaseActivity {
     TextView lastPlayTextView;
     TextView reverseButton;
     TextView titleView;
+    ImageView imageView;
+
+    private void setIamge()
+    {
+        String url = "http://10.0.2.2:8082/api/fileDownload?fileName=tihuxueyuan.png";
+        OkHttpUtils.get().url(url).tag(this)
+                .build()
+                .connTimeOut(20000).readTimeOut(20000).writeTimeOut(20000)
+                .execute(new BitmapCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        Log.d(Constant.TAG, "加载网络图片失败, 图片url=" + url);
+                    }
+
+                    @Override
+                    public void onResponse(Bitmap bitmap, int id) {
+                        Log.d(Constant.TAG, "加载网络图片成功"+ url);
+                        imageView.setImageBitmap(bitmap);
+                    }
+                });
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +75,21 @@ public class CourseListActivity extends BaseActivity {
         title = getIntent().getStringExtra("title");
 
         this.titleView = findViewById(R.id.course_title);
+
+        this.imageView = findViewById(R.id.course_image);
+
+        setIamge();
         titleView.setText(title);
         this.courseListView = findViewById(R.id.courseList);
         this.lastPlayTextView = findViewById(R.id.last_play);
         reverseButton = findViewById(R.id.reverse);
+
+//        BitmapUtils bitmapUtils = new BitmapUtils(this);
+//        // 加载网络图片
+//        bitmapUtils.display(imageView,
+//                "https://img-my.csdn.net/uploads/201407/26/1406383290_9329.jpg");
+
+
 //        lp.setText();
         courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
