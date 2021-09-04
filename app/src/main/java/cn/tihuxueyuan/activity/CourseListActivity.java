@@ -46,10 +46,10 @@ public class CourseListActivity extends BaseActivity {
 
         title = getIntent().getStringExtra("title");
 
-        this.titleView =  findViewById(R.id.course_title);
+        this.titleView = findViewById(R.id.course_title);
         titleView.setText(title);
-        this.courseListView =  findViewById(R.id.courseList);
-        this.lastPlayTextView =  findViewById(R.id.last_play);
+        this.courseListView = findViewById(R.id.courseList);
+        this.lastPlayTextView = findViewById(R.id.last_play);
         reverseButton = findViewById(R.id.reverse);
 //        lp.setText();
         courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -156,7 +156,7 @@ D/tag1: parseNetworkResponse:
 
     public void refreshListView() {
 
-        reverseButton.setOnClickListener(new View.OnClickListener(){
+        reverseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Collections.reverse(mList);
@@ -165,44 +165,28 @@ D/tag1: parseNetworkResponse:
         });
 
 
-
-        if (appData.lastCourseId != -1 && appData.lastCourseId != Integer.parseInt(currentCouseId )){
+        if (appData.lastCourseId != -1 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
 //            Date curDate = new Date(System.currentTimeMillis());
-            String lastTitle = SPUtils.getTitleFromName(appData.mListMap.get(  lastListenedCourseFileId).getFileName());
+            String lastTitle = SPUtils.getTitleFromName(appData.mListMap.get(lastListenedCourseFileId).getFileName());
             lastPlayTextView.setText("上次播放: " + lastTitle);
             lastPlayTextView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             lastPlayTextView.setVisibility(View.INVISIBLE);
         }
 
         lastPlayTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
-////                String musicUrll = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
-//                int position;
-//                CourseFile c = null;
-//                for ( CourseFile c1 : mList) {
-//                    int i = c1.getId();
-//                    if (i == lastListenedCourseFileId) {
-//                        c = c1;
-//                        break;
-//                    }
-//                }
-
-                CourseFile courseFile = appData.mListMap.get(  lastListenedCourseFileId);
-                if (courseFile != null ){
+                CourseFile courseFile = appData.mListMap.get(lastListenedCourseFileId);
+                if (courseFile != null) {
+                    Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
                     String musicUrl = SPUtils.getMp3Url(courseFile.getFileName());
                     intent.putExtra("music_url", musicUrl);
-                    intent.putExtra("current_position", lastListenedCourseFileId+1);
+                    intent.putExtra("current_position", lastListenedCourseFileId + 1);
                     intent.putExtra("is_new", true);
                     intent.putExtra("title", SPUtils.getTitleFromName(courseFile.getFileName()));
                     startActivity(intent);
                 }
-
-//                startActivity(new Intent(CourseListActivity.this, Music_Activity.class));
-
             }
         });
         courseListView.setAdapter(mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
@@ -210,31 +194,31 @@ D/tag1: parseNetworkResponse:
             public void convertView(ViewHolder holder, CourseFile courseFile) {
                 int percent = courseFile.getListenedPercent();
 //                String duration = SPUtils.getTimeStrFromSecond(courseFile.getDuration());
-                String duration =courseFile.getDuration();
+                String duration = courseFile.getDuration();
 
 //                courseFile.getLastListenedCourseFileId();
                 int color;
-                if  ( appData.currentPostion >=0  &&  Constant.appData.mList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
-                    color =  Color.parseColor("#FF0000");
-                }else {
-                    if (percent > 0 ) {
-                        color =  Color.parseColor("#777777");
-                    }else{
-                        color =  Color.parseColor("#000000");
+                if (appData.currentPostion >= 0 && Constant.appData.mList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
+                    color = Color.parseColor("#FF0000");
+                } else {
+                    if (percent > 0) {
+                        color = Color.parseColor("#777777");
+                    } else {
+                        color = Color.parseColor("#000000");
                     }
                 }
 
-                if (percent > 0 ) {
+                if (percent > 0) {
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);
-                    holder.set(R.id.percent,  "已听" + percent + "%", color);
-                    holder.set(R.id.duration,  "时长" + duration, color);
+                    holder.set(R.id.percent, "已听" + percent + "%", color);
+                    holder.set(R.id.duration, "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);
-                    holder.set(R.id.percent,  "", color);
-                    holder.set(R.id.duration,  "时长" + duration, color);
+                    holder.set(R.id.percent, "", color);
+                    holder.set(R.id.duration, "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
             }
@@ -242,7 +226,9 @@ D/tag1: parseNetworkResponse:
 
 //        mAdapter.notifyDataSetChanged();
     }
+
     int lastListenedCourseFileId;
+
     public void getCourseFiles() {
         HttpClient.getCourseFilesByCourseId(currentCouseId, new HttpCallback<CourseFileList>() {
             @Override
@@ -256,7 +242,7 @@ D/tag1: parseNetworkResponse:
                 // list 转 map
                 Map<Integer, CourseFile> m = appData.mListMap;
                 m.clear();
-                for ( CourseFile c1 : mList) {
+                for (CourseFile c1 : mList) {
                     int i = c1.getId();
                     m.put(i, c1);
                 }

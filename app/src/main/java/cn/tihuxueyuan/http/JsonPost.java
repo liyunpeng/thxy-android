@@ -70,6 +70,8 @@ public class JsonPost{
         public int CourseFileId;
         @SerializedName("pc")  // pc 为percent 简写
         public int ListenedPercent;
+        @SerializedName("pos")  // pc 为percent 简写
+        public int Position;
 
 
 

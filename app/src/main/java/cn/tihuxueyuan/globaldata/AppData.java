@@ -16,7 +16,7 @@ public class AppData extends Application{
     public String mp3SourceRouter;
     public String courseStorePath = "";
     public int direction = 1;
-    public String UserCode = "";
+    public String UserCode = "7899000";
     public int lastCourseId = -1;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
 //    public List<CourseFileList.CourseFile> mList = new ArrayList<>();

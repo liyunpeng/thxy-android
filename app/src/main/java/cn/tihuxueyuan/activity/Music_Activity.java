@@ -108,6 +108,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         JsonPost.ListenedFile listenedFile = new JsonPost.ListenedFile();
         listenedFile.CourseFileId = Constant.appData.mList.get(Constant.appData.currentPostion).getId();
         listenedFile.ListenedPercent = musicControl.getListenedPercent();
+        listenedFile.Position = musicControl.getPosition();
         Log.d(TAG, "listenedFile.ListenedPercent = " + listenedFile.ListenedPercent);
         Map map = new HashMap<>();
         map.put("code", "7899000");
