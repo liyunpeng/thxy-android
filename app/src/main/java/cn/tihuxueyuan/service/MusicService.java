@@ -276,46 +276,64 @@ public class MusicService extends Service {
             manager.cancel(NOTIFICATION_ID);
         }
 
-        public void play() {
+        public void playListened( String action ) {
             boolean isPlaying = player.isPlaying();
             Log.d(TAG, "播放器是否在播放 isPlaying = " + isPlaying);
-            if (isPlaying && appData.lastCourseFileId == appData.currentCourseFileId) {
+            if ( (action == PLAY || action == PAUSE) &&  isPlaying && appData.lastCourseFileId == appData.currentCourseFileId) {
 //                player.pause();
 //                musicActivityLiveData.postValue(PAUSE);
             } else {
+                if (action == NEWPLAY) {
+                    String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
+                    init(mp3url);
+                }
+
                 int pos = appData.mListMap.get(appData.currentCourseFileId).getListenedPosition();
                 int percent = appData.mListMap.get(appData.currentCourseFileId).getListenedPercent();
                 String fileName = appData.mListMap.get(appData.currentCourseFileId).getFileName();
 
-                if (pos > 0) {
-                    Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
-                    player.seekTo(pos);
-                }
-                player.start();
-                addTimer();
-            }
-            musicActivityLiveData.postValue(PLAY);
-            updateNotificationShow(appData.currentPostion);
-        }
-
-        public void playNew() {
-            Log.d(TAG, " playNew 调用");
-            String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
-            init(mp3url);
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                        play();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            Thread.sleep(1000);
+                            if (pos > 0) {
+                                Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
+                                player.seekTo(pos);
+                            }
+                            player.start();
+                            addTimer();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 //                      handler.sendMessage();
-                }
-            }).start();
-            musicActivityLiveData.postValue(NEWPLAY);
+                    }
+                }).start();
+            }
+            updateNotificationShow(appData.currentPostion);
+            musicActivityLiveData.postValue(action);
         }
+
+//        // 适用于 next previous
+//        public void playNew() {
+//            Log.d(TAG, " playNew 调用");
+//            String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
+//            init(mp3url);
+//
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        Thread.sleep(1000);
+//                        player.start();
+//                        addTimer();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+////                      handler.sendMessage();
+//                }
+//            }).start();
+//            updateNotificationShow(appData.currentPostion);
+//            musicActivityLiveData.postValue(NEWPLAY);
+//        }
 
         public void UIControl(String state, String tag) {
             switch (state) {

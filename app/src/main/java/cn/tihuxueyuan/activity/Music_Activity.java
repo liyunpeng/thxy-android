@@ -138,17 +138,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             bindService(Constant.intent2, Constant.conn1, BIND_AUTO_CREATE); //绑定服务
         } else {
             musicControl.init(musicUrl);
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Thread.sleep(1000);
-                        musicControl.play();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-//                      handler.sendMessage();
-                }
-            }).start();
+            musicControl.playListened(PLAY);
+
         }
 
         if (floatingControl == null) {
@@ -344,22 +335,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             if (shortClassName.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
                 musicControl.init(musicUrl);
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            if (appData.currentCourseFileId == appData.lastCourseFileId) {
-                                musicControl.play();
-                            } else {
-                                Thread.sleep(1000);
-                                musicControl.playNew();
-                            }
+                musicControl.playListened(PLAY);
 
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-//                            handler.sendMessage();
-                    }
-                }).start();
                 Log.d(Constant.TAG, "musicControl 初始化完成 ");
             } else if (shortClassName.contains("FloatingImageDisplayService")) {
                 Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
@@ -394,7 +371,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     appData.currentPostion = 0;
                 } else {
                     appData.currentPostion--;
-                    musicControl.playNew();
+                    appData.currentCourseFileId = appData.mList.get(appData.currentPostion).getId();
+                    musicControl.playListened(NEWPLAY );
                 }
                 break;
             case R.id.play_next:
@@ -402,7 +380,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     appData.currentPostion = (appData.mList.size() - 1);
                 } else {
                     appData.currentPostion++;
-                    musicControl.playNew();
+                    appData.currentCourseFileId = appData.mList.get(appData.currentPostion).getId();
+                    musicControl.playListened(NEWPLAY);
                 }
                 break;
 
