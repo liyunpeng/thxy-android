@@ -64,7 +64,14 @@ public class HomeFragment extends Fragment {
                 String musicUrl = SPUtils.getMp3Url( mList.get(position).getMp3FileName());
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
+
                 intent.putExtra("is_new", true);
+
+                appData.currentCourseFileId = mList.get(position).getId();
+
+
+                appData.currentPostion = position;
+
                 String titleArr[] = mList.get(position).getFileName().split("\\.");
                 intent.putExtra("title", titleArr[0]);
                 startActivity(intent);
@@ -126,6 +133,8 @@ public class HomeFragment extends Fragment {
                 refreshListView();
 
                 appData.mList = mList;
+
+                SPUtils.listToMap();
             }
 
             @Override

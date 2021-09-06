@@ -3,7 +3,11 @@ package cn.tihuxueyuan.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.List;
+import java.util.Map;
+
 import cn.tihuxueyuan.globaldata.AppData;
+import cn.tihuxueyuan.model.CourseFileList;
 
 public class SPUtils {
     private static final String NAME = "config";
@@ -86,5 +90,15 @@ public class SPUtils {
         AppData appData = Constant.appData;
         String mp3Url = appData.baseUrl + appData.mp3SourceRouter + appData.courseStorePath + "?fileName=" + fileName;
         return mp3Url;
+    }
+
+    // list 转 map
+    public static void  listToMap () {
+        Map<Integer, CourseFileList.CourseFile> m = Constant.appData.mListMap;
+        m.clear();
+        for (CourseFileList.CourseFile c1 : Constant.appData.mList) {
+            int i = c1.getId();
+            m.put(i, c1);
+        }
     }
 }

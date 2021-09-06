@@ -281,12 +281,14 @@ D/tag1: parseNetworkResponse:
                 mList = response.getCourseFileList();
                 appData.mList = mList;
                 // list 转 map
-                Map<Integer, CourseFile> m = appData.mListMap;
-                m.clear();
-                for (CourseFile c1 : mList) {
-                    int i = c1.getId();
-                    m.put(i, c1);
-                }
+//                Map<Integer, CourseFile> m = appData.mListMap;
+//                m.clear();
+//                for (CourseFile c1 : mList) {
+//                    int i = c1.getId();
+//                    m.put(i, c1);
+//                }
+
+                SPUtils.listToMap();
 
                 lastListenedCourseFileId = response.getLastListenedCourseFileId();
                 refreshListView();
