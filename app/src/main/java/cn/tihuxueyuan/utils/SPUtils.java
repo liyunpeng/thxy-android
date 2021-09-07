@@ -96,9 +96,9 @@ public class SPUtils {
     public static void  listToMap () {
         Map<Integer, CourseFileList.CourseFile> m = Constant.appData.mListMap;
         m.clear();
-        for (CourseFileList.CourseFile c1 : Constant.appData.mList) {
-            int i = c1.getId();
-            m.put(i, c1);
+        for (CourseFileList.CourseFile c : Constant.appData.mList) {
+            int i = c.getId();
+            m.put(i, c);
         }
     }
 }

@@ -47,6 +47,7 @@ public class MainActivity extends BaseActivity {
 
     public ActivityMainBinding binding;
     private LiveDataBus.BusMutableLiveData<String> floatLiveData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +77,7 @@ public class MainActivity extends BaseActivity {
 
         Log.d(Constant.TAG, "onCreate: id:" + appId);
 
-        Constant.appData   = (AppData) getApplication();
+        Constant.appData = (AppData) getApplication();
     }
 
     public static MusicReceiver musicReceiver;
@@ -84,7 +85,7 @@ public class MainActivity extends BaseActivity {
     public class MusicReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "MusicReceiver onReceive : " + intent.toString());
+            Log.d(TAG, " 音乐播放接收器 MusicReceiver onReceive : " + intent.toString());
             SPUtils.putBoolean(Constant.IS_CHANGE, true, context);
             Constant.musicControl.UIControl(intent.getAction(), TAG);
         }
@@ -103,7 +104,6 @@ public class MainActivity extends BaseActivity {
         intentFilter.addAction(CLOSE);
         registerReceiver(musicReceiver, intentFilter);
     }
-
 
 
     //退出栈顶Activity
@@ -146,20 +146,21 @@ public class MainActivity extends BaseActivity {
     private long lastBackTime = 0;
     //当前按下返回键的系统时间
     private long currentBackTime = 0;
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //捕获返回键按下的事件
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             //获取当前系统时间的毫秒数
             currentBackTime = System.currentTimeMillis();
             //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
-            if(currentBackTime - lastBackTime > 2 * 1000){
+            if (currentBackTime - lastBackTime > 2 * 1000) {
                 Toast.makeText(this, "再按一次返回键退出", Toast.LENGTH_SHORT).show();
                 lastBackTime = currentBackTime;
-            }else{  //如果两次按下的时间差小于2秒，则退出程序
+            } else {  //如果两次按下的时间差小于2秒，则退出程序
 //                MyApplication.getInstance().exit();
                 unregisterHomeKeyReceiver(this);
-                if ( Constant.floatingControl != null) {
+                if (Constant.floatingControl != null) {
                     Constant.floatingControl.remove();
                 }
                 if (Constant.musicControl != null) {
@@ -231,6 +232,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, " MainActivity onDestroy");
 //        unregisterHomeKeyReceiver(this);
         super.onDestroy();
         finish();

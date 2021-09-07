@@ -421,6 +421,7 @@ public class MusicService extends Service {
         }
 
         public void playOrPause() {
+            Log.d(TAG, "playOrPause 调用 ");
             if (player.isPlaying()) {
                 player.pause();
                 musicActivityLiveData.postValue(PAUSE);

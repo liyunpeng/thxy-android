@@ -28,6 +28,7 @@
             android:layout_height="30dp"
             android:layout_weight="1"
             android:gravity="center"
+            android:layout_marginLeft="10dp"
             android:text="文件标题名"
 
             android:textColor="#777777"
@@ -45,6 +46,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:textSize="12dp"
+                android:layout_marginLeft="10dp"
                 android:text="时长10"
                 />
 

@@ -1,7 +1,5 @@
 package cn.tihuxueyuan.fragment.home;
 
-import static cn.tihuxueyuan.utils.Constant.appData;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -34,16 +32,15 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
-
     private CommonAdapter mAdapter;
-    private android.widget.ListView lv;
+    private android.widget.ListView listView;
     private android.widget.RelativeLayout activitymain;
     private AppData appData;
     private List<CourseFileList.CourseFile> mList = new ArrayList<>();
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -56,20 +53,17 @@ public class HomeFragment extends Fragment {
 //            }
 //        });
 
-        this.lv =  root.findViewById(R.id.lv);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        this.listView = root.findViewById(R.id.lv);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(HomeFragment.this.getActivity(), Music_Activity.class);//创建Intent对象，启动check
-                String musicUrl = SPUtils.getMp3Url( mList.get(position).getMp3FileName());
+                String musicUrl = SPUtils.getMp3Url(mList.get(position).getMp3FileName());
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
-
                 intent.putExtra("is_new", true);
 
                 appData.currentCourseFileId = mList.get(position).getId();
-
-
                 appData.currentPostion = position;
 
                 String titleArr[] = mList.get(position).getFileName().split("\\.");
@@ -98,7 +92,7 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    };
+    }
 
     @Override
     public void onResume() {
@@ -109,11 +103,13 @@ public class HomeFragment extends Fragment {
     }
 
     public void refreshListView() {
-        lv.setAdapter(mAdapter = new CommonAdapter<CourseFileList.CourseFile>(this.getContext(), mList, R.layout.dashboard_item_layout) {
+        listView.setAdapter(mAdapter = new CommonAdapter<CourseFileList.CourseFile>(this.getContext(), mList, R.layout.dashboard_item_layout) {
             @Override
-            public void convertView(ViewHolder holder, CourseFileList.CourseFile contactsBean) {
-                holder.set(R.id.name, contactsBean.getFileName(),  Color.parseColor("#000000"));
-                holder.getView(R.id.number).setVisibility(View.INVISIBLE);
+            public void convertView(ViewHolder holder, CourseFileList.CourseFile courseFile) {
+                holder.set(R.id.name, SPUtils.getTitleFromName( courseFile.getFileName()), Color.parseColor("#000000"));
+                holder.getView(R.id.number).setVisibility(View.GONE);
+                String duration = courseFile.getDuration();
+                holder.set(R.id.duration, "时长" + duration,   Color.parseColor("#000000"));
                 holder.getView(R.id.percent).setVisibility(View.GONE);
             }
         });
@@ -148,7 +144,7 @@ public class HomeFragment extends Fragment {
         HttpClient.getConfig("", new HttpCallback<Config>() {
             @Override
             public void onSuccess(Config response) {
-                if (response == null || response.getBaseUrl() == null ) {
+                if (response == null || response.getBaseUrl() == null) {
                     onFail(null);
                     return;
                 }

@@ -70,9 +70,7 @@
 
         <service android:name="cn.tihuxueyuan.service.FloatingImageDisplayService"/>
 <!--        <service android:name="cn.tihuxueyuan.float_lib.service.FloatMonkService"/>-->
-        <receiver android:name="cn.tihuxueyuan.receiver.HomeReceiver"
-            >
-
+        <receiver android:name="cn.tihuxueyuan.receiver.HomeReceiver">
         </receiver>
     </application>
 
