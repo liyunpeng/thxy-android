@@ -302,6 +302,9 @@ public class MusicService extends Service {
                             }
                             player.start();
                             addTimer();
+                            // 在播放器状态确定好之后，再显示通知栏，以保证应用界面和通知栏按钮状态一致
+                            updateNotificationShow(appData.currentPostion);
+                            musicActivityLiveData.postValue(action);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -309,8 +312,7 @@ public class MusicService extends Service {
                     }
                 }).start();
             }
-            updateNotificationShow(appData.currentPostion);
-            musicActivityLiveData.postValue(action);
+
         }
 
 //        // 适用于 next previous

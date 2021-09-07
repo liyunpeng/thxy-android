@@ -37,7 +37,6 @@ public class SPUtils {
             return sp.getString(key, defValue);
         }
         return "";
-
     }
 
     public static void putInt(String key, int value, Context context) {
@@ -53,13 +52,13 @@ public class SPUtils {
         return sp.getInt(key, defValue);
     }
 
-    public static String getTimeStrFromSecond( int seconds) {
+    public static String getTimeStrFromSecond(int seconds) {
         int minute = seconds / 60;
         int second = seconds % 60;
 
         if (second == 0) {
             return minute + ":00";
-        }else{
+        } else {
             return minute + ":" + second;
         }
     }
@@ -71,16 +70,14 @@ public class SPUtils {
     }
 
     /*
-
-     一是
-    输入：测试(21)课程.mp3
-    输出：测试(21)课程
+        输入：测试(21)课程.mp3
+        输出：测试(21)课程
      */
     public static String getTitleFromName(String fileName) {
-        /*在正则表达式中是个已经被使用的特殊符号（"."、"|"、"^"等字符）
-所以想要使用 | ，必须用 \ 来进行转义，而在java字符串中，\ 也是个已经被使用的特殊符号，也需要使用 \ 来转义。
-所以应为：
- String titleArr[] = courseFile.getFileName().split("\\.");
+        /* 在正则表达式中是个已经被使用的特殊符号（"."、"|"、"^"等字符）
+            所以想要使用 | ，必须用 \ 来进行转义，而在java字符串中，\ 也是个已经被使用的特殊符号，也需要使用 \ 来转义。
+            所以应为：
+             String titleArr[] = courseFile.getFileName().split("\\.");
          */
         String titleArr[] = fileName.split("\\.");
         return titleArr[0];
@@ -93,7 +90,7 @@ public class SPUtils {
     }
 
     // list 转 map
-    public static void  listToMap () {
+    public static void listToMap() {
         Map<Integer, CourseFileList.CourseFile> m = Constant.appData.mListMap;
         m.clear();
         for (CourseFileList.CourseFile c : Constant.appData.mList) {
