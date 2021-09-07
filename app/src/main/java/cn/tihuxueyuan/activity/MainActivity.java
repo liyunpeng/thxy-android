@@ -78,9 +78,13 @@ public class MainActivity extends BaseActivity {
         Log.d(Constant.TAG, "onCreate: id:" + appId);
 
         Constant.appData = (AppData) getApplication();
+
+
+        registerHomeKeyReceiver(this);
+        registerMusicReceiver();
     }
 
-    public static MusicReceiver musicReceiver;
+
 
     public class MusicReceiver extends BroadcastReceiver {
         @Override
@@ -96,13 +100,17 @@ public class MainActivity extends BaseActivity {
      * 动态广播不能放在服务里， 服务在ondestory后，服务就在存在了， 这是musicReceiver new 的服务 就会报错
      */
     private void registerMusicReceiver() {
-        musicReceiver = new MusicReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(PLAY);
-        intentFilter.addAction(PREV);
-        intentFilter.addAction(NEXT);
-        intentFilter.addAction(CLOSE);
-        registerReceiver(musicReceiver, intentFilter);
+        Log.d(TAG, "调用 registerMusicReceiver");
+        if (appData.musicReceiver == null) {
+            Log.d(TAG, " 保证只动态注册一次receiver");
+            appData.musicReceiver = new MusicReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(PLAY);
+            intentFilter.addAction(PREV);
+            intentFilter.addAction(NEXT);
+            intentFilter.addAction(CLOSE);
+            registerReceiver(appData.musicReceiver, intentFilter);
+        }
     }
 
 
@@ -167,9 +175,9 @@ public class MainActivity extends BaseActivity {
                     Constant.musicControl.release();
                 }
 
-                if (musicReceiver != null) {
+                if (appData.musicReceiver != null) {
                     //解除动态注册的广播
-                    unregisterReceiver(musicReceiver);
+                    unregisterReceiver(appData.musicReceiver);
                 }
 
                 Intent intent = new Intent(this, FloatingImageDisplayService.class);//创建意图对象
@@ -209,10 +217,9 @@ public class MainActivity extends BaseActivity {
     private static HomeReceiver mHomeKeyReceiver = null;
 
     private static void registerHomeKeyReceiver(Context context) {
-        Log.i(TAG, "registerHomeKeyReceiver");
+        Log.i(TAG, "registerHomeKeyReceiver 被调用");
         mHomeKeyReceiver = new HomeReceiver();
         final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-
         context.registerReceiver(mHomeKeyReceiver, homeFilter);
     }
 
@@ -226,8 +233,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerHomeKeyReceiver(this);
-        registerMusicReceiver();
+
     }
 
     @Override
