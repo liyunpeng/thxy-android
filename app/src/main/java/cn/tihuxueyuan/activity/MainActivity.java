@@ -213,27 +213,27 @@ public class MainActivity extends BaseActivity {
             popActivity(activity);
         }
     }
-
-    private static HomeReceiver mHomeKeyReceiver = null;
-
+    
     private static void registerHomeKeyReceiver(Context context) {
         Log.i(TAG, "registerHomeKeyReceiver 被调用");
-        mHomeKeyReceiver = new HomeReceiver();
-        final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        context.registerReceiver(mHomeKeyReceiver, homeFilter);
+        if (appData.mHomeKeyReceiver == null){
+            Log.i(TAG, "保证只注册一次 home 键的receiver ");
+            appData.mHomeKeyReceiver = new HomeReceiver();
+            final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+            context.registerReceiver(appData.mHomeKeyReceiver, homeFilter);
+        }
     }
 
     private static void unregisterHomeKeyReceiver(Context context) {
         Log.i(TAG, "unregisterHomeKeyReceiver");
-        if (null != mHomeKeyReceiver) {
-            context.unregisterReceiver(mHomeKeyReceiver);
+        if (null != appData.mHomeKeyReceiver) {
+            context.unregisterReceiver(appData.mHomeKeyReceiver);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @Override

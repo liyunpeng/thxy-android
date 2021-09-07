@@ -9,6 +9,7 @@ import java.util.Map;
 
 import cn.tihuxueyuan.activity.MainActivity;
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.receiver.HomeReceiver;
 
 public class AppData extends Application{
     private String b;
@@ -23,7 +24,8 @@ public class AppData extends Application{
 
     public int lastCourseFileId = -1;
     public int currentCourseFileId = -2;
-    public static MainActivity.MusicReceiver musicReceiver;
+    public static MainActivity.MusicReceiver musicReceiver = null;
+    public  static HomeReceiver mHomeKeyReceiver = null;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
 //    public List<CourseFileList.CourseFile> mList = new ArrayList<>();
     public Map<Integer, CourseFileList.CourseFile> mListMap = new HashMap<>();
