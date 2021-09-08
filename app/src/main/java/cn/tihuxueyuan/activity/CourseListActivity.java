@@ -194,7 +194,6 @@ D/tag1: parseNetworkResponse:
     }
 
     public void refreshListView() {
-
         reverseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,7 +201,6 @@ D/tag1: parseNetworkResponse:
                 mAdapter.notifyDataSetChanged();
             }
         });
-
 
         if (appData.lastCourseId != -1 && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId) ) {
 //            Date curDate = new Date(System.currentTimeMillis());

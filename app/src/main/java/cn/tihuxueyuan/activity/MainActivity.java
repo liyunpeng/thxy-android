@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.activity;
 
+import static android.os.Build.VERSION.SDK_INT;
 import static cn.tihuxueyuan.utils.Constant.CLOSE;
 import static cn.tihuxueyuan.utils.Constant.NEXT;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
@@ -30,6 +31,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import java.lang.reflect.Method;
 import java.util.Stack;
 
 import cn.tihuxueyuan.basic.BaseActivity;
@@ -53,7 +55,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 //        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(getApplicationContext())) {
                 //启动Activity让用户授权
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
@@ -61,6 +63,24 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(intent, 100);
             }
         }
+
+
+        if (SDK_INT < Build.VERSION_CODES.P) {
+            return;
+        }
+        try {
+            Method forName = Class.class.getDeclaredMethod("forName", String.class);
+            Method getDeclaredMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
+            Class<?> vmRuntimeClass = (Class<?>) forName.invoke(null, "dalvik.system.VMRuntime");
+            Method getRuntime = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "getRuntime", null);
+            Method setHiddenApiExemptions = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "setHiddenApiExemptions", new Class[]{String[].class});
+            Object sVmRuntime = getRuntime.invoke(null);
+            setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{new String[]{"L"}});
+        } catch (Throwable e) {
+            Log.e("[error]", "reflect bootstrap failed:", e);
+        }
+
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         getSupportActionBar().hide();
         setContentView(binding.getRoot());
@@ -213,7 +233,7 @@ public class MainActivity extends BaseActivity {
             popActivity(activity);
         }
     }
-    
+
     private static void registerHomeKeyReceiver(Context context) {
         Log.i(TAG, "registerHomeKeyReceiver 被调用");
         if (appData.mHomeKeyReceiver == null){

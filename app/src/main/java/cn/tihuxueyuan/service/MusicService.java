@@ -91,11 +91,73 @@ public class MusicService extends Service {
         initNotification();
         appData = (AppData) getApplication();
         player = new MediaPlayer();
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                int pos = appData.mListMap.get(appData.currentCourseFileId).getListenedPosition();
+                int percent = appData.mListMap.get(appData.currentCourseFileId).getListenedPercent();
+                String fileName = appData.mListMap.get(appData.currentCourseFileId).getFileName();
+                if (pos > 0) {
+                    Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
+                    player.seekTo(pos);
+                }
+                player.start();
+                musicControl.setText();
+                addTimer();
+                // 在播放器状态确定好之后，再显示通知栏，以保证应用界面和通知栏按钮状态一致
+                updateNotificationShow(appData.currentPostion);
+                musicActivityLiveData.postValue(NEWPLAY);
+            }
+        });
         player.setOnCompletionListener(
                 new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         Log.d(TAG, "音乐回调函数 onCompletion 调用");
+                        if (appData.currentPostion >= (appData.mList.size() - 1)) {
+                            Log.d(TAG, "音乐回调函数 onCompletion 调用 currentPostion  赋值");
+                            appData.currentPostion = (appData.mList.size() - 1);
+                        } else {
+                            appData.currentPostion++;
+                            appData.currentCourseFileId = appData.mList.get(appData.currentPostion).getId();
+                            musicControl.playListened(NEWPLAY);
+//                            try {
+//                                String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
+//                                player.setDataSource(mp3url);
+//                                player.prepare();
+//                                player.start();
+//                                addTimer();
+//                                // 在播放器状态确定好之后，再显示通知栏，以保证应用界面和通知栏按钮状态一致
+//                                updateNotificationShow(appData.currentPostion);
+//                                musicActivityLiveData.postValue(NEWPLAY);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+
+
+//                            new Thread(new Runnable() {
+//                                public void run() {
+//                                    try {
+//                                        Thread.sleep(1000);
+////                                        if (pos > 0) {
+////                                            Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
+////                                            player.seekTo(pos);
+////                                        }
+//                                        player.start();
+//                                        addTimer();
+//                                        // 在播放器状态确定好之后，再显示通知栏，以保证应用界面和通知栏按钮状态一致
+//                                        updateNotificationShow(appData.currentPostion);
+//                                        musicActivityLiveData.postValue(NEWPLAY);
+//                                    } catch (InterruptedException e) {
+//                                        e.printStackTrace();
+//                                    }
+////                      handler.sendMessage();
+//                                }
+//                            }).start();
+//                            setText();
+                            Log.d(TAG, "onCompletion 监听到当前音乐播放完成，自动播放到下一首 ");
+                        }
+
                     }
                 }
         );
@@ -276,10 +338,10 @@ public class MusicService extends Service {
             manager.cancel(NOTIFICATION_ID);
         }
 
-        public void playListened( String action ) {
+        public void playListened(String action) {
             boolean isPlaying = player.isPlaying();
             Log.d(TAG, "播放器是否在播放 isPlaying = " + isPlaying);
-            if ( (action == PLAY || action == PAUSE) &&  isPlaying && appData.lastCourseFileId == appData.currentCourseFileId) {
+            if ((action == PLAY || action == PAUSE) && isPlaying && appData.lastCourseFileId == appData.currentCourseFileId) {
 //                player.pause();
 //                musicActivityLiveData.postValue(PAUSE);
             } else {
@@ -288,29 +350,30 @@ public class MusicService extends Service {
                     init(mp3url);
                 }
 
-                int pos = appData.mListMap.get(appData.currentCourseFileId).getListenedPosition();
-                int percent = appData.mListMap.get(appData.currentCourseFileId).getListenedPercent();
-                String fileName = appData.mListMap.get(appData.currentCourseFileId).getFileName();
-
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            Thread.sleep(1000);
-                            if (pos > 0) {
-                                Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
-                                player.seekTo(pos);
-                            }
-                            player.start();
-                            addTimer();
-                            // 在播放器状态确定好之后，再显示通知栏，以保证应用界面和通知栏按钮状态一致
-                            updateNotificationShow(appData.currentPostion);
-                            musicActivityLiveData.postValue(action);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-//                      handler.sendMessage();
-                    }
-                }).start();
+//                int pos = appData.mListMap.get(appData.currentCourseFileId).getListenedPosition();
+//                int percent = appData.mListMap.get(appData.currentCourseFileId).getListenedPercent();
+//                String fileName = appData.mListMap.get(appData.currentCourseFileId).getFileName();
+//
+//                new Thread(new Runnable() {
+//                    public void run() {
+//                        try {
+//                            Thread.sleep(1000);
+//                            if (pos > 0) {
+//                                Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
+//                                player.seekTo(pos);
+//                            }
+//                            player.start();
+//                            setText();
+//                            addTimer();
+//                            // 在播放器状态确定好之后，再显示通知栏，以保证应用界面和通知栏按钮状态一致
+//                            updateNotificationShow(appData.currentPostion);
+//                            musicActivityLiveData.postValue(action);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+////                      handler.sendMessage();
+//                    }
+//                }).start();
             }
 
         }
@@ -407,19 +470,24 @@ public class MusicService extends Service {
                 return;
             }
 
-            Log.d(TAG, "musicControl init 调用， 执行player.reset()");
             if (player.isLooping()) {
                 player.stop();
                 player.release();
+                Log.d(TAG, "musicControl init 调用， 执行player.stop() player.release()");
             }
+            Log.d(TAG, "musicControl init 调用， 执行player.reset()");
             player.reset();
             try {
                 player.setDataSource(url);
+                player.prepareAsync();
+
+//                player.prepare();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            player.prepareAsync();
-            setText();
+
+//            setText();
         }
 
         public void playOrPause() {
