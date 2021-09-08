@@ -1,5 +1,7 @@
 package cn.tihuxueyuan.activity;
 
+import static cn.tihuxueyuan.globaldata.AppData.notificationBitMap;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -30,7 +32,6 @@ import okhttp3.Call;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class CourseListActivity extends BaseActivity {
     private android.widget.ListView courseListView;
@@ -46,7 +47,10 @@ public class CourseListActivity extends BaseActivity {
 
     private void setIamge()
     {
-        String url = "http://10.0.2.2:8082/api/fileDownload?fileName=tihuxueyuan.png";
+//        String url = "http://10.0.2.2:8082/api/fileDownload?fileName=tihuxueyuan.png";
+        String url = SPUtils.getImgOrMp3Url(Integer.parseInt(currentCouseId),   appData.currentCourseImageFileName);
+
+        Log.d(Constant.TAG, "课程图片 url=" +  url);
         OkHttpUtils.get().url(url).tag(this)
                 .build()
                 .connTimeOut(20000).readTimeOut(20000).writeTimeOut(20000)
@@ -59,6 +63,7 @@ public class CourseListActivity extends BaseActivity {
                     @Override
                     public void onResponse(Bitmap bitmap, int id) {
                         Log.d(Constant.TAG, "加载网络图片成功"+ url);
+                        notificationBitMap = bitmap;
                         imageView.setImageBitmap(bitmap);
                     }
                 });
@@ -97,7 +102,7 @@ public class CourseListActivity extends BaseActivity {
 
                 Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
 //                String musicUrll = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
-                String musicUrl = SPUtils.getMp3Url(mList.get(position).getMp3FileName());
+                String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
                 intent.putExtra("is_new", true);
@@ -204,7 +209,7 @@ D/tag1: parseNetworkResponse:
 
         if (appData.lastCourseId != -1 && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId) ) {
 //            Date curDate = new Date(System.currentTimeMillis());
-            String lastTitle = SPUtils.getTitleFromName(appData.mListMap.get(lastListenedCourseFileId).getFileName());
+            String lastTitle = SPUtils.getTitleFromName(appData.courseFileMap.get(lastListenedCourseFileId).getFileName());
             lastPlayTextView.setText("上次播放: " + lastTitle);
             lastPlayTextView.setVisibility(View.VISIBLE);
         } else {
@@ -214,10 +219,10 @@ D/tag1: parseNetworkResponse:
         lastPlayTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CourseFile courseFile = appData.mListMap.get(lastListenedCourseFileId);
+                CourseFile courseFile = appData.courseFileMap.get(lastListenedCourseFileId);
                 if (courseFile != null) {
                     Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
-                    String musicUrl = SPUtils.getMp3Url(courseFile.getFileName());
+                    String musicUrl = SPUtils.getImgOrMp3Url(courseFile.getCourseId(), courseFile.getFileName());
                     intent.putExtra("music_url", musicUrl);
                     intent.putExtra("current_position", lastListenedCourseFileId + 1);
                     intent.putExtra("is_new", true);
@@ -230,14 +235,11 @@ D/tag1: parseNetworkResponse:
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
                 int percent = courseFile.getListenedPercent();
-//                String duration = SPUtils.getTimeStrFromSecond(courseFile.getDuration());
                 String duration = courseFile.getDuration();
-
-//                courseFile.getLastListenedCourseFileId();
                 int color;
                 if (  Integer.parseInt(currentCouseId) == appData.currentMusicCourseId &&
-                        appData.currentPostion >= 0 && Constant.appData.currentPostion <  Constant.appData.mList.size() &&
-                        Constant.appData.mList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
+                        appData.currentPostion >= 0 && Constant.appData.currentPostion <  Constant.appData.courseFileList.size() &&
+                        Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
                     color = Color.parseColor("#FF0000");
                 } else {
                     if (percent > 0) {
@@ -250,7 +252,13 @@ D/tag1: parseNetworkResponse:
                 if (percent > 0) {
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);
-                    holder.set(R.id.percent, "已听" + percent + "%", color);
+
+                    if (percent == 100) {
+                        holder.set(R.id.percent, "已听完", color);
+                    }else{
+                        holder.set(R.id.percent, "已听" + percent + "%", color);
+                    }
+
                     holder.set(R.id.duration, "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.VISIBLE);
                 } else {
@@ -277,7 +285,7 @@ D/tag1: parseNetworkResponse:
                     return;
                 }
                 mList = response.getCourseFileList();
-                appData.mList = mList;
+                appData.courseFileList = mList;
                 // list 转 map
 //                Map<Integer, CourseFile> m = appData.mListMap;
 //                m.clear();

@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(HomeFragment.this.getActivity(), Music_Activity.class);//创建Intent对象，启动check
-                String musicUrl = SPUtils.getMp3Url(mList.get(position).getMp3FileName());
+                String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
                 intent.putExtra("is_new", true);
@@ -128,7 +128,7 @@ public class HomeFragment extends Fragment {
                 mList = response.getCourseFileList();
                 refreshListView();
 
-                appData.mList = mList;
+                appData.courseFileList = mList;
 
                 SPUtils.listToMap();
             }

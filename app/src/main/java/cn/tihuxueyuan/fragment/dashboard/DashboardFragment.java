@@ -98,7 +98,12 @@ public class DashboardFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         Intent intent =new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseListActivity.class);//创建意图对象
+
+
                         intent.putExtra("course_id", courseList.get(position).getId());
+
+                        Constant.appData.currentCourseImageFileName = courseList.get(position).getImgFileName();
+
                         intent.putExtra("title", courseList.get(position).getTitle());
                         Constant.appData.courseStorePath = courseList.get(position).getStorePath();
                         startActivity(intent);

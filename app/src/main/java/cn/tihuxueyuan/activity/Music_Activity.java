@@ -28,16 +28,10 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
 
-import com.google.gson.Gson;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.globaldata.AppData;
-import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
@@ -67,7 +61,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
         appData = (AppData) getApplication();
 
-        appData.currentMusicCourseId = appData.mList.get(0).getCourseId();
+        appData.currentMusicCourseId = appData.courseFileList.get(0).getCourseId();
         //通知栏的观察者
         musicActivityObserver();
         //控制通知栏
@@ -79,13 +73,13 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             appData.currentPostion = getIntent().getIntExtra("current_position", 0);
             musicTitle = getIntent().getStringExtra("title");
 
-            appData.currentCourseFileId = appData.mList.get(appData.currentPostion).getId();
+            appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
 
             bindMusicService();
 
         } else {
 //            bootstrapReflect();
-            musicTitle = SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
+            musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
             musicControl.setText();
             if (musicControl.isPlaying()) {
                 playPauseView.setImageResource(R.drawable.pause_dark);
@@ -110,25 +104,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onStop() {
         super.onStop();
-        JsonPost.ListenedFile listenedFile = new JsonPost.ListenedFile();
-        listenedFile.CourseFileId = Constant.appData.mList.get(Constant.appData.currentPostion).getId();
-        listenedFile.ListenedPercent = musicControl.getListenedPercent();
-        listenedFile.Position = musicControl.getPosition();
-        Log.d(TAG, "调jsonpost网络接口， 写入已听数据" +
-                ", 文件名= " + appData.mList.get(Constant.appData.currentPostion).getFileName() +
-                ", ListenedPercent = " + listenedFile.ListenedPercent +
-                ", Position=" + listenedFile.Position +
-                ", duration=" + musicControl.getDuration());
-        Map map = new HashMap<>();
-        map.put("code", "7899000");
-        map.put("course_id", Constant.appData.mList.get(Constant.appData.currentPostion).getCourseId());
-        map.put("listened_file", listenedFile);
-        Gson gson = new Gson();
-        String param = gson.toJson(map);
-        JsonPost.postListenedPercent(param);
-        Log.d(TAG, "Musicactivity onStop ");
-
-        appData.lastCourseFileId = appData.currentCourseFileId;
+        SPUtils.sendListenedPerscent();
     }
 
     private void bindMusicService() {
@@ -282,7 +258,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                         playPauseView.setImageResource(R.drawable.pause_dark);
                         break;
                     case NEWPLAY:
-                        musicTitle = SPUtils.getTitleFromName(appData.mList.get(appData.currentPostion).getFileName());
+                        musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
                         name_song.setText(musicTitle);
                         floatingControl.setText(musicTitle);
                         break;
@@ -371,16 +347,16 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     appData.currentPostion = 0;
                 } else {
                     appData.currentPostion--;
-                    appData.currentCourseFileId = appData.mList.get(appData.currentPostion).getId();
+                    appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
                     musicControl.playListened(NEWPLAY );
                 }
                 break;
             case R.id.play_next:
-                if (appData.currentPostion >= (appData.mList.size() - 1)) {
-                    appData.currentPostion = (appData.mList.size() - 1);
+                if (appData.currentPostion >= (appData.courseFileList.size() - 1)) {
+                    appData.currentPostion = (appData.courseFileList.size() - 1);
                 } else {
                     appData.currentPostion++;
-                    appData.currentCourseFileId = appData.mList.get(appData.currentPostion).getId();
+                    appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
                     musicControl.playListened(NEWPLAY);
                 }
                 break;

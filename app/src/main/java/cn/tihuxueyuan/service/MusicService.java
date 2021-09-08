@@ -94,12 +94,17 @@ public class MusicService extends Service {
         player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                int pos = appData.mListMap.get(appData.currentCourseFileId).getListenedPosition();
-                int percent = appData.mListMap.get(appData.currentCourseFileId).getListenedPercent();
-                String fileName = appData.mListMap.get(appData.currentCourseFileId).getFileName();
+                int pos = appData.courseFileMap.get(appData.currentCourseFileId).getListenedPosition();
+                int percent = appData.courseFileMap.get(appData.currentCourseFileId).getListenedPercent();
+                String fileName = appData.courseFileMap.get(appData.currentCourseFileId).getFileName();
                 if (pos > 0) {
                     Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
-                    player.seekTo(pos);
+                    if (percent == 100) {
+                        Log.d(TAG, " 上次已听完， 这次seekto开始位置，重新听 ");
+                        player.seekTo(0);
+                    } else {
+                        player.seekTo(pos);
+                    }
                 }
                 player.start();
                 musicControl.setText();
@@ -114,12 +119,14 @@ public class MusicService extends Service {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         Log.d(TAG, "音乐回调函数 onCompletion 调用");
-                        if (appData.currentPostion >= (appData.mList.size() - 1)) {
+                        SPUtils.sendListenedPerscent();
+
+                        if (appData.currentPostion >= (appData.courseFileList.size() - 1)) {
                             Log.d(TAG, "音乐回调函数 onCompletion 调用 currentPostion  赋值");
-                            appData.currentPostion = (appData.mList.size() - 1);
+                            appData.currentPostion = (appData.courseFileList.size() - 1);
                         } else {
                             appData.currentPostion++;
-                            appData.currentCourseFileId = appData.mList.get(appData.currentPostion).getId();
+                            appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
                             musicControl.playListened(NEWPLAY);
 //                            try {
 //                                String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
@@ -246,9 +253,9 @@ public class MusicService extends Service {
             remoteViews.setImageViewResource(R.id.btn_notification_play, R.drawable.play_black);
         }
         //封面专辑
-//        remoteViews.setImageViewBitmap(R.id.iv_album_cover, MusicUtils.getAlbumPicture(this, mList.get(position).getPath(), 0));
-        appData = (AppData) getApplication();
-        remoteViews.setTextViewText(R.id.tv_notification_song_name, SPUtils.getTitleFromName(appData.mList.get(position).getFileName()));
+        remoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
+
+        remoteViews.setTextViewText(R.id.tv_notification_song_name, SPUtils.getTitleFromName(appData.courseFileList.get(position).getFileName()));
 
         //歌手名
 //        remoteViews.setTextViewText(R.id.tv_notification_singer, mList.get(position).getSinger());
@@ -346,7 +353,7 @@ public class MusicService extends Service {
 //                musicActivityLiveData.postValue(PAUSE);
             } else {
                 if (action == NEWPLAY) {
-                    String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
+                    String mp3url = SPUtils.getImgOrMp3Url(appData.courseFileList.get(appData.currentPostion).getCourseId(), appData.courseFileList.get(appData.currentPostion).getMp3FileName());
                     init(mp3url);
                 }
 
