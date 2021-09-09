@@ -32,6 +32,7 @@ import okhttp3.Call;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Spliterator;
 
 public class CourseListActivity extends BaseActivity {
     private android.widget.ListView courseListView;
@@ -45,11 +46,10 @@ public class CourseListActivity extends BaseActivity {
     TextView titleView;
     ImageView imageView;
 
-    private void setIamge()
+    private void setImageBitMap()
     {
 //        String url = "http://10.0.2.2:8082/api/fileDownload?fileName=tihuxueyuan.png";
         String url = SPUtils.getImgOrMp3Url(Integer.parseInt(currentCouseId),   appData.currentCourseImageFileName);
-
         Log.d(Constant.TAG, "课程图片 url=" +  url);
         OkHttpUtils.get().url(url).tag(this)
                 .build()
@@ -76,33 +76,21 @@ public class CourseListActivity extends BaseActivity {
         setContentView(R.layout.course_list_activity);
 
         currentCouseId = getIntent().getStringExtra("course_id");
-
         title = getIntent().getStringExtra("title");
-
         this.titleView = findViewById(R.id.course_title);
-
         this.imageView = findViewById(R.id.course_image);
 
-        setIamge();
+        setImageBitMap();
         titleView.setText(title);
         this.courseListView = findViewById(R.id.courseList);
         this.lastPlayTextView = findViewById(R.id.last_play);
         reverseButton = findViewById(R.id.reverse);
 
-//        BitmapUtils bitmapUtils = new BitmapUtils(this);
-//        // 加载网络图片
-//        bitmapUtils.display(imageView,
-//                "https://img-my.csdn.net/uploads/201407/26/1406383290_9329.jpg");
-
-
-//        lp.setText();
         courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
-//                String musicUrll = mList.get(position).getMp3url() + "?fileName=" + mList.get(position).getMp3FileName();
                 String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
+                Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
                 intent.putExtra("is_new", true);
@@ -110,6 +98,7 @@ public class CourseListActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
         appData = (AppData) getApplication();
         Log.d("tag2", "onCreate: currentCouseId: " + currentCouseId);
     }
@@ -207,8 +196,7 @@ D/tag1: parseNetworkResponse:
             }
         });
 
-        if (appData.lastCourseId != -1 && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId) ) {
-//            Date curDate = new Date(System.currentTimeMillis());
+        if (appData.lastCourseId == -1 && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId) ) {
             String lastTitle = SPUtils.getTitleFromName(appData.courseFileMap.get(lastListenedCourseFileId).getFileName());
             lastPlayTextView.setText("上次播放: " + lastTitle);
             lastPlayTextView.setVisibility(View.VISIBLE);
@@ -220,17 +208,22 @@ D/tag1: parseNetworkResponse:
             @Override
             public void onClick(View v) {
                 CourseFile courseFile = appData.courseFileMap.get(lastListenedCourseFileId);
+
+                // android手机里播放音乐 按在listView中的位置找到音乐，而不是按fileId去找音乐，以便与播放上一首， 下一首一致, 以及自动播放下一首处理一致
+                appData.currentPostion  = SPUtils.findPositionByFileId(lastListenedCourseFileId);
+
                 if (courseFile != null) {
-                    Intent intent = new Intent(getApplicationContext(), Music_Activity.class);//创建Intent对象，启动check
+                    Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
                     String musicUrl = SPUtils.getImgOrMp3Url(courseFile.getCourseId(), courseFile.getFileName());
                     intent.putExtra("music_url", musicUrl);
-                    intent.putExtra("current_position", lastListenedCourseFileId + 1);
+                    intent.putExtra("current_position", appData.currentPostion);
                     intent.putExtra("is_new", true);
                     intent.putExtra("title", SPUtils.getTitleFromName(courseFile.getFileName()));
                     startActivity(intent);
                 }
             }
         });
+
         courseListView.setAdapter(mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
@@ -286,23 +279,15 @@ D/tag1: parseNetworkResponse:
                 }
                 mList = response.getCourseFileList();
                 appData.courseFileList = mList;
-                // list 转 map
-//                Map<Integer, CourseFile> m = appData.mListMap;
-//                m.clear();
-//                for (CourseFile c1 : mList) {
-//                    int i = c1.getId();
-//                    m.put(i, c1);
-//                }
-
                 SPUtils.listToMap();
-
                 lastListenedCourseFileId = response.getLastListenedCourseFileId();
+                Log.d(Constant.TAG, " 上次播放 lastListenedCourseFileId :" + lastListenedCourseFileId);
                 refreshListView();
             }
 
             @Override
             public void onFail(Exception e) {
-
+                Log.d(Constant.TAG, "getCourseFiles exception=" + e);
             }
         });
     }

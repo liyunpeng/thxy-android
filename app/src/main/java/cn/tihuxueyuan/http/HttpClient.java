@@ -122,7 +122,6 @@ public class HttpClient {
                 });
     }
 
-
     public static void getConfig(String keyword, final HttpCallback<Config> callback) {
         OkHttpUtils.post().url(BASE_URL + "getConfig")
                 .build()

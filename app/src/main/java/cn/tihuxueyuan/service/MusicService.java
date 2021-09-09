@@ -194,25 +194,21 @@ public class MusicService extends Service {
         //通知栏控制器上一首按钮广播操作
         Intent intentPrev = new Intent(PREV);
         PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, intentPrev, 0);
-        //为prev控件注册事件
         remoteViews.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
 
         //通知栏控制器播放暂停按钮广播操作  //用于接收广播时过滤意图信息
         Intent intentPlay = new Intent(PLAY);
         PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, intentPlay, 0);
-        //为play控件注册事件
         remoteViews.setOnClickPendingIntent(R.id.btn_notification_play, playPendingIntent);
 
         //通知栏控制器下一首按钮广播操作
         Intent intentNext = new Intent(NEXT);
         PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, intentNext, 0);
-        //为next控件注册事件
         remoteViews.setOnClickPendingIntent(R.id.btn_notification_next, nextPendingIntent);
 
         //通知栏控制器关闭按钮广播操作
         Intent intentClose = new Intent(CLOSE);
         PendingIntent closePendingIntent = PendingIntent.getBroadcast(this, 0, intentClose, 0);
-        //为close控件注册事件
         remoteViews.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
     }
 

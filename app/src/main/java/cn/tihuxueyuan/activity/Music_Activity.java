@@ -55,28 +55,22 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        appData = Constant.appData;
+
         setContentView(R.layout.activity_music);
         musicUrl = getIntent().getStringExtra("music_url");
         Log.d(Constant.TAG, "Music Activity oncreate  musicUrl= " + musicUrl);
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
-        appData = (AppData) getApplication();
 
         appData.currentMusicCourseId = appData.courseFileList.get(0).getCourseId();
-        //通知栏的观察者
         musicActivityObserver();
-        //控制通知栏
-//        notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
-//        floatLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
+
         init();
         if (isNew == true) {
-//            startService(new Intent(Music_Activity.this, FloatingImageDisplayService.class));
             appData.currentPostion = getIntent().getIntExtra("current_position", 0);
             musicTitle = getIntent().getStringExtra("title");
-
             appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
-
             bindMusicService();
-
         } else {
 //            bootstrapReflect();
             musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
@@ -115,7 +109,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         } else {
             musicControl.init(musicUrl);
             musicControl.playListened(PLAY);
-
         }
 
         if (floatingControl == null) {

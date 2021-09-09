@@ -98,12 +98,8 @@ public class DashboardFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         Intent intent =new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseListActivity.class);//创建意图对象
-
-
                         intent.putExtra("course_id", courseList.get(position).getId());
-
                         Constant.appData.currentCourseImageFileName = courseList.get(position).getImgFileName();
-
                         intent.putExtra("title", courseList.get(position).getTitle());
                         Constant.appData.courseStorePath = courseList.get(position).getStorePath();
                         startActivity(intent);
@@ -114,31 +110,17 @@ public class DashboardFragment extends Fragment {
                         Toast.makeText(DashboardFragment.this.getActivity().getBaseContext(), "Long Click " + courseList.get(position).getTitle(), Toast.LENGTH_SHORT).show();
                     }
                 }));
-
-//        LinearLayoutManager glm = new LinearLayoutManager(this.getActivity().getBaseContext());
-//        recyclerView.setLayoutManager(glm);
-//        adapter = new GridRecycleAdapter(this.getActivity().getBaseContext(),list.get(0).getItemName());
-//        tvName.setText(list.get(0).getName());
-//        recyclerView.setAdapter(adapter);
-
-
     }
 
-//    @SuppressLint("ResourceAsColor")
     public void refreshView() {
-
-        TabAdapterA ta = new TabAdapterA();
-        ta.titles = courseTypeList;
-        tabLayout.setTabAdapter(ta);
-//        tabLayout.
-//        tabLayout.set
+        TabAdapterA adapterA = new TabAdapterA();
+        adapterA.titles = courseTypeList;
+        tabLayout.setTabAdapter(adapterA);
         tabLayout.setBackgroundResource(R.drawable.tab_background);
-//        tabLayout.setBackgroundColor(R.color.darkBlue);
-
         tabLayout.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabView tab, int position) {
-                Log.d("tag1", "onTabSelected:  id :" + courseTypeList.get(position).getId());
+                Log.d(Constant.TAG, "onTabSelected:  id :" + courseTypeList.get(position).getId());
                 getCourseByType(courseTypeList.get(position).getId());
 //                recycleAdapter.setList(recyclelist.get(position).getItemName());
             }

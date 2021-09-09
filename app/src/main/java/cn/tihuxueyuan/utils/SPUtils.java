@@ -33,6 +33,8 @@ public class SPUtils {
         map.put("code", "7899000");
         map.put("course_id", Constant.appData.courseFileList.get(Constant.appData.currentPostion).getCourseId());
         map.put("listened_file", listenedFile);
+        map.put("last_listened_file_id", Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId());
+
         Gson gson = new Gson();
         String param = gson.toJson(map);
         JsonPost.postListenedPercent(param);
@@ -114,11 +116,8 @@ public class SPUtils {
     // 获取 img 或 mp3 的url
     public static String getImgOrMp3Url(int courseId, String fileName) {
         AppData appData = Constant.appData;
-
         String titleArr[] = fileName.split("\\.");
         String fileType = titleArr[1];
-
-        // mp3SourceRouter 为 download,
 
         if (fileType.contains("mp3") != true) {
             fileType = "img";
@@ -140,5 +139,16 @@ public class SPUtils {
             int i = c.getId();
             m.put(i, c);
         }
+    }
+
+    public static int findPositionByFileId( int fileId)  {
+        int position = 0 ;
+        for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
+            if( c.getId() == fileId ) {
+                return position;
+            }
+            position++;
+        }
+        return 0;
     }
 }
