@@ -132,9 +132,10 @@ public class CourseListActivity extends BaseActivity {
     }
 
     //    @RequiresApi(api = Build.VERSION_CODES.M)
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(Constant.TAG, "CourseListActivity   onActivityResult ");
 //        if (requestCode == 0) {
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //                if (!Settings.canDrawOverlays(this)) {
@@ -161,7 +162,7 @@ public class CourseListActivity extends BaseActivity {
 //                startService(new Intent(CourseListActivity.this, FloatingImageDisplayService.class));
 //            }
 //        }
-//    }
+    }
 
 
     /*
@@ -208,10 +209,8 @@ D/tag1: parseNetworkResponse:
             @Override
             public void onClick(View v) {
                 CourseFile courseFile = appData.courseFileMap.get(lastListenedCourseFileId);
-
                 // android手机里播放音乐 按在listView中的位置找到音乐，而不是按fileId去找音乐，以便与播放上一首， 下一首一致, 以及自动播放下一首处理一致
                 appData.currentPostion  = SPUtils.findPositionByFileId(lastListenedCourseFileId);
-
                 if (courseFile != null) {
                     Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
                     String musicUrl = SPUtils.getImgOrMp3Url(courseFile.getCourseId(), courseFile.getFileName());
@@ -241,7 +240,6 @@ D/tag1: parseNetworkResponse:
                         color = Color.parseColor("#000000");
                     }
                 }
-
                 if (percent > 0) {
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);
@@ -251,7 +249,6 @@ D/tag1: parseNetworkResponse:
                     }else{
                         holder.set(R.id.percent, "已听" + percent + "%", color);
                     }
-
                     holder.set(R.id.duration, "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.VISIBLE);
                 } else {

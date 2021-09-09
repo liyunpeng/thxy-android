@@ -5,6 +5,7 @@ import static android.os.Build.VERSION.SDK_INT;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.bootstrapReflect;
+
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -23,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
 import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
 
@@ -78,21 +80,22 @@ public class FloatingImageDisplayService extends Service {
         layoutParams.format = PixelFormat.RGBA_8888;
         layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;;
+        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        ;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        layoutParams.x = screenWidth - WindowManager.LayoutParams.WRAP_CONTENT ;
+        layoutParams.x = screenWidth - WindowManager.LayoutParams.WRAP_CONTENT;
 
         float dipRatio = 1;
-        if (screenHeight == 1920 ) {
+        if (screenHeight == 1920) {
             dipRatio = 4;
-        }else if (screenHeight == 1280 ){
+        } else if (screenHeight == 1280) {
             dipRatio = 3;
-        }else if (screenHeight == 1280 ){
+        } else if (screenHeight == 1280) {
             dipRatio = 2;
         }
         int contentHeight = (int) (120 * dipRatio);
-        layoutParams.y = outMetrics.heightPixels - contentHeight  ;
-        Log.d(TAG, "onCreate: layoutParams.y = "+ layoutParams.y + ", screenHeight = "+ screenHeight + ", dipRatio=" + dipRatio);
+        layoutParams.y = outMetrics.heightPixels - contentHeight;
+        Log.d(TAG, "onCreate: layoutParams.y = " + layoutParams.y + ", screenHeight = " + screenHeight + ", dipRatio=" + dipRatio);
 
         images = new int[]{
                 R.drawable.image_01,
@@ -117,6 +120,7 @@ public class FloatingImageDisplayService extends Service {
 
     public class FloatingControl extends Binder { //Binder是一种跨进程的通信方式
         TextView textView;
+
         @RequiresApi(api = Build.VERSION_CODES.M)
         public void initFloatingWindow() {
 //        if (Settings.canDrawOverlays(this)) {
@@ -135,8 +139,9 @@ public class FloatingImageDisplayService extends Service {
 //            windowManager.remo
 //        }
         }
-        public void remove(  ){
-                windowManager.removeView(displayView);
+
+        public void remove() {
+            windowManager.removeView(displayView);
 //            FloatWindowManager.createFloatWindow()
 //            textView.setText(s);
 //            displayView.g();
@@ -144,7 +149,7 @@ public class FloatingImageDisplayService extends Service {
         }
 
 
-        public void setText( String s ){
+        public void setText(String s) {
 //            FloatWindowManager.createFloatWindow()
 //            textView.setText(s);
 //            displayView.g();

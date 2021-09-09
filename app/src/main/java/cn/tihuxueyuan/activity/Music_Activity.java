@@ -11,6 +11,7 @@ import static cn.tihuxueyuan.utils.Constant.musicControl;
 //import static cn.tihuxueyuan.utils.Constant.musicReceiver;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -99,6 +100,11 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     protected void onStop() {
         super.onStop();
         SPUtils.sendListenedPerscent();
+
+        // Todo 待定
+        Intent intent = new Intent();
+//        intent.putExtra("respond", "Hello,Alice!I'm Bob.");
+        setResult(Activity.RESULT_OK, intent);
     }
 
     private void bindMusicService() {
