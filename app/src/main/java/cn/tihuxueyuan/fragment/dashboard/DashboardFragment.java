@@ -47,7 +47,6 @@ public class DashboardFragment extends Fragment {
     private FragmentDashboardBinding binding;
     private List<CourseType> courseTypeList = new ArrayList<>();
     private List<Course> courseList = new ArrayList<>();
-    //    private List<CourseType> courseTypeList = new ArrayList<>();
     private TextView tvName;
     private VerticalTabLayout tabLayout;
     private RecyclerView recyclerView;
@@ -93,6 +92,7 @@ public class DashboardFragment extends Fragment {
         recycleAdapter = new GridRecycleAdapter(this.getActivity().getBaseContext(), courseList);
         recyclerView.setAdapter(recycleAdapter);
 
+
         recyclerView.addOnItemTouchListener(new RecyclerViewClickListener2(DashboardFragment.this.getActivity().getBaseContext(), recyclerView,
                 new RecyclerViewClickListener2.OnItemClickListener() {
                     @Override
@@ -137,13 +137,17 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onSuccess(CourseList response) {
                 if (response == null || response.getCourseList() == null || response.getCourseList().isEmpty()) {
-                    onFail(null);
+                    Log.d(Constant.TAG, " 该类型没有课程");
+                    recyclerView.setAdapter(null);
                     return;
                 }
+                if (recyclerView.getAdapter() == null) {
+                    recyclerView.setAdapter(recycleAdapter);
+                }
                 courseList = response.getCourseList();
-//                tvName.setText(recyclelist.get(typeId).getName());
                 recycleAdapter.setList(courseList);
                 recycleAdapter.notifyDataSetChanged();
+
             }
 
             @Override

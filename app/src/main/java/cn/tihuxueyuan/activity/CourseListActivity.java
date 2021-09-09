@@ -223,7 +223,7 @@ D/tag1: parseNetworkResponse:
             }
         });
 
-        courseListView.setAdapter(mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
+        mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
                 int percent = courseFile.getListenedPercent();
@@ -259,9 +259,12 @@ D/tag1: parseNetworkResponse:
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
             }
-        });
+        };
 
-//        mAdapter.notifyDataSetChanged();
+//        courseListView.set
+        courseListView.setAdapter(mAdapter);
+
+        mAdapter.notifyDataSetChanged();
     }
 
     int lastListenedCourseFileId;

@@ -124,7 +124,6 @@ public class FloatingImageDisplayService extends Service {
         @RequiresApi(api = Build.VERSION_CODES.M)
         public void initFloatingWindow() {
 //        if (Settings.canDrawOverlays(this)) {
-
             LayoutInflater layoutInflater = LayoutInflater.from(FloatingImageDisplayService.this);
             displayView = layoutInflater.inflate(R.layout.image_display, null);
             displayView.setOnTouchListener(new FloatingOnTouchListener());

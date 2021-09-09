@@ -350,7 +350,7 @@ public class MusicService extends Service {
             } else {
                 if (action == NEWPLAY) {
                     String mp3url = SPUtils.getImgOrMp3Url(appData.courseFileList.get(appData.currentPostion).getCourseId(), appData.courseFileList.get(appData.currentPostion).getMp3FileName());
-                    init(mp3url);
+                    initPlayer(mp3url);
                 }
 
 //                int pos = appData.mListMap.get(appData.currentCourseFileId).getListenedPosition();
@@ -467,7 +467,7 @@ public class MusicService extends Service {
             Music_Activity.handler.sendMessage(msg);
         }
 
-        public void init(String url) {
+        public void initPlayer(String url) {
             if (appData.lastCourseFileId == appData.currentCourseFileId) {
                 Log.d(TAG, " musicControl init 调用， 因为appData.lastCourseFileId == appData.currentCourseFileId， play不需要reset 和 setDataSource");
                 return;
@@ -478,19 +478,16 @@ public class MusicService extends Service {
                 player.release();
                 Log.d(TAG, "musicControl init 调用， 执行player.stop() player.release()");
             }
+
             Log.d(TAG, "musicControl init 调用， 执行player.reset()");
             player.reset();
             try {
                 player.setDataSource(url);
                 player.prepareAsync();
-
 //                player.prepare();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-//            setText();
         }
 
         public void playOrPause() {

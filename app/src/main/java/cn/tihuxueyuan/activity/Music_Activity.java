@@ -66,7 +66,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         appData.currentMusicCourseId = appData.courseFileList.get(0).getCourseId();
         musicActivityObserver();
 
-        init();
+        initView();
         if (isNew == true) {
             appData.currentPostion = getIntent().getIntExtra("current_position", 0);
             musicTitle = getIntent().getStringExtra("title");
@@ -113,7 +113,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             Constant.conn1 = new MyServiceConn();
             bindService(Constant.intent2, Constant.conn1, BIND_AUTO_CREATE); //绑定服务
         } else {
-            musicControl.init(musicUrl);
+            musicControl.initPlayer(musicUrl);
             musicControl.playListened(PLAY);
         }
 
@@ -136,7 +136,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         super.onRestart();
     }
 
-    private void init() {
+    private void initView() {
         tv_progress = (TextView) findViewById(R.id.tv_progress);
         tv_total = (TextView) findViewById(R.id.tv_total);
         seekBar = (SeekBar) findViewById(R.id.seek_bar);
@@ -146,7 +146,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         findViewById(R.id.play_previous).setOnClickListener(this);
         findViewById(R.id.play_next).setOnClickListener(this);
 
-        //为滑动条添加事件监听
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
@@ -309,9 +308,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             String shortClassName = name.getShortClassName();
             if (shortClassName.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
-                musicControl.init(musicUrl);
+                musicControl.initPlayer(musicUrl);
                 musicControl.playListened(PLAY);
-
                 Log.d(Constant.TAG, "musicControl 初始化完成 ");
             } else if (shortClassName.contains("FloatingImageDisplayService")) {
                 Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
