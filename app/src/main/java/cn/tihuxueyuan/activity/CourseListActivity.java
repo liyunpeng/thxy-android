@@ -102,17 +102,7 @@ public class CourseListActivity extends BaseActivity {
         appData = (AppData) getApplication();
         Log.d("tag2", "onCreate: currentCouseId: " + currentCouseId);
     }
-
-//        @Override
-//    public void onBackPressed() {
-//        moveTaskToBack(true);
-//    }
-
-    /*
-    进入时log输出：
-    E/====: onRestart()
-    E/====: onStart()
-     */
+    
     @Override
     protected void onRestart() {
         Log.e("====", "onRestart()");
@@ -131,7 +121,6 @@ public class CourseListActivity extends BaseActivity {
         appData.lastCourseId = Integer.parseInt(currentCouseId);
     }
 
-    //    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -172,7 +161,6 @@ public class CourseListActivity extends BaseActivity {
 E/====: onStart()
 E/====: onResume()
 D/tag1: parseNetworkResponse:
-
 
 再点应用时：
 E/====: onRestart()
@@ -258,9 +246,10 @@ D/tag1: parseNetworkResponse:
                     holder.set(R.id.duration, "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
+
+                holder.getView(R.id.duration).setVisibility(View.GONE);
             }
         };
-
 //        courseListView.set
         courseListView.setAdapter(mAdapter);
 

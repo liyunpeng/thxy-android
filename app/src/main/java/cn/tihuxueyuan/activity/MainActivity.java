@@ -64,7 +64,6 @@ public class MainActivity extends BaseActivity {
             }
         }
 
-
         if (SDK_INT < Build.VERSION_CODES.P) {
             return;
         }

@@ -308,7 +308,8 @@ public class MusicService extends Service {
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-                    if (player == null) return;
+                    if (player == null ) return;
+
                     int duration = player.getDuration();//获取歌曲总时长
                     int currentPosition = player.getCurrentPosition();//获取播放进度
                     Message msg = Music_Activity.handler.obtainMessage();//创建消息对象
@@ -454,7 +455,9 @@ public class MusicService extends Service {
         }
 
         public void setText() {
+            Log.d(TAG, " musicControl.setText 调用, 调用getDuration ");
             if (player == null) return;
+
             int duration = player.getDuration();//获取歌曲总时长
             int currentPosition = player.getCurrentPosition();//获取播放进度
             Message msg = Music_Activity.handler.obtainMessage();//创建消息对象

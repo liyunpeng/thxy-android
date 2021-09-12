@@ -119,8 +119,10 @@ public class SPUtils {
         String titleArr[] = fileName.split("\\.");
         String fileType = titleArr[1];
 
-        if (fileType.contains("mp3") != true) {
+        if (fileType.contains("mp3") != true && fileType.contains("MP3") != true && fileType.contains("Mp3") != true) {
             fileType = "img";
+        }else{
+            fileType = "mp3";
         }
         String imgOrMp3Url = appData.baseUrl + appData.mp3SourceRouter +
                 "?course_id=" + courseId +

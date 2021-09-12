@@ -81,7 +81,6 @@ public class FloatingImageDisplayService extends Service {
         layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        ;
         layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         layoutParams.x = screenWidth - WindowManager.LayoutParams.WRAP_CONTENT;
 
@@ -93,7 +92,7 @@ public class FloatingImageDisplayService extends Service {
         } else if (screenHeight == 1280) {
             dipRatio = 2;
         }
-        int contentHeight = (int) (120 * dipRatio);
+        int contentHeight = (int) (100 * dipRatio);
         layoutParams.y = outMetrics.heightPixels - contentHeight;
         Log.d(TAG, "onCreate: layoutParams.y = " + layoutParams.y + ", screenHeight = " + screenHeight + ", dipRatio=" + dipRatio);
 

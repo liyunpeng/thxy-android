@@ -45,13 +45,6 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-//        final TextView textView = binding.textHome;
-//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
 
         this.listView = root.findViewById(R.id.lv);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -69,19 +62,6 @@ public class HomeFragment extends Fragment {
                 String titleArr[] = mList.get(position).getFileName().split("\\.");
                 intent.putExtra("title", titleArr[0]);
                 startActivity(intent);
-
-//                if (id == 1) {
-//                    Intent intent = new Intent(HomeFragment.this.getContext(), MusicMainActivity.class);//创建Intent对象，启动check
-////                intent.putExtra("name",name[position]);
-////                intent.putExtra("position",String.valueOf(position));
-//                    startActivity(intent);
-//                } else if (id == 2) {
-//                    Intent intent = new Intent(HomeFragment.this.getContext(), OkhttpClientActivity.class);//创建Intent对象，启动check
-//                    startActivity(intent);
-//                } else if ( id == 3){
-//                    Intent intent = new Intent(HomeFragment.this.getContext(), MainActivity.class);//创建Intent对象，启动check
-//                    startActivity(intent);
-//                }
             }
         });
         appData = (AppData) HomeFragment.this.getActivity().getApplication();
@@ -111,6 +91,7 @@ public class HomeFragment extends Fragment {
                 String duration = courseFile.getDuration();
                 holder.set(R.id.duration, "时长" + duration,   Color.parseColor("#000000"));
                 holder.getView(R.id.percent).setVisibility(View.GONE);
+                holder.getView(R.id.duration).setVisibility(View.GONE);
             }
         });
 
@@ -150,8 +131,6 @@ public class HomeFragment extends Fragment {
                 }
                 Constant.appData.baseUrl = response.getBaseUrl();
                 Constant.appData.mp3SourceRouter = response.getMp3SourceRouter();
-//                refreshListView();
-//                appData.mList = mList;
             }
 
             @Override
