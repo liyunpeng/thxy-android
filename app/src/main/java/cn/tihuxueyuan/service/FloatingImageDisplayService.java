@@ -92,7 +92,7 @@ public class FloatingImageDisplayService extends Service {
         } else if (screenHeight == 1280) {
             dipRatio = 2;
         }
-        int contentHeight = (int) (100 * dipRatio);
+        int contentHeight = (int) (140 * dipRatio);
         layoutParams.y = outMetrics.heightPixels - contentHeight;
         Log.d(TAG, "onCreate: layoutParams.y = " + layoutParams.y + ", screenHeight = " + screenHeight + ", dipRatio=" + dipRatio);
 

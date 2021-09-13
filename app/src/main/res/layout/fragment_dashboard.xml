@@ -18,7 +18,8 @@
 
             app:indicator_color="#6186E4"
             app:indicator_gravity="fill"
-            app:tab_height="40dp"
+
+            app:tab_height="50dp"
             app:tab_mode="scrollable" />
 
         <LinearLayout

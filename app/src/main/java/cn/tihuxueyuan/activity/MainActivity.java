@@ -7,6 +7,7 @@ import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.PREV;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.appData;
+import static cn.tihuxueyuan.utils.Constant.logcatHelper;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -25,6 +26,7 @@ import cn.tihuxueyuan.R;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -43,6 +45,7 @@ import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.setting.AppConfig;
 import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.LogcatHelper;
 import cn.tihuxueyuan.utils.SPUtils;
 
 public class MainActivity extends BaseActivity {
@@ -50,23 +53,15 @@ public class MainActivity extends BaseActivity {
     public ActivityMainBinding binding;
     private LiveDataBus.BusMutableLiveData<String> floatLiveData;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        if (SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(getApplicationContext())) {
-                //启动Activity让用户授权
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, 100);
-            }
-        }
-
-        if (SDK_INT < Build.VERSION_CODES.P) {
-            return;
-        }
+       Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
+        logcatHelper.start();
+        right();
         try {
             Method forName = Class.class.getDeclaredMethod("forName", String.class);
             Method getDeclaredMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
@@ -78,7 +73,6 @@ public class MainActivity extends BaseActivity {
         } catch (Throwable e) {
             Log.e("[error]", "reflect bootstrap failed:", e);
         }
-
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         getSupportActionBar().hide();
@@ -104,6 +98,20 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    private void right() {
+        if (SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(getApplicationContext())) {
+                //启动Activity让用户授权
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 100);
+            }
+        }
+
+        if (SDK_INT < Build.VERSION_CODES.P) {
+            return;
+        }
+    }
 
     public class MusicReceiver extends BroadcastReceiver {
         @Override
@@ -208,6 +216,8 @@ public class MainActivity extends BaseActivity {
                 intent.setPackage(getPackageName());
                 Log.i("当前包", getPackageName());
                 stopService(intent);
+
+                logcatHelper.stop();
 
                 onDestroy();
                 finish();

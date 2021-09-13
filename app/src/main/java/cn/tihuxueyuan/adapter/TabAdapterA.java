@@ -12,12 +12,12 @@ import q.rorbin.verticaltablayout.widget.QTabView;
 import q.rorbin.verticaltablayout.widget.TabView;
 
 public class TabAdapterA implements TabAdapter {
-    public  List<CourseType> titles;
-
+    public List<CourseType> titles;
 
     {
         titles = new ArrayList<>();
     }
+
     @Override
     public int getCount() {
         return titles.size();
@@ -37,8 +37,8 @@ public class TabAdapterA implements TabAdapter {
     public QTabView.TabTitle getTitle(int position) {
         return new QTabView.TabTitle.Builder()
                 .setContent(titles.get(position).getName())
-//                .setTextSize(20)
-                        .setTextColor(Color.YELLOW, Color.GRAY)
+                .setTextSize(25)
+                .setTextColor(Color.YELLOW, Color.GRAY)
                 .build();
     }
 

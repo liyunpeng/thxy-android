@@ -23,6 +23,7 @@ public class Constant {
     public static FloatingImageDisplayService.FloatingControl floatingControl;
     public static MusicService.MusicControl musicControl;
 
+    public static LogcatHelper logcatHelper;
     public static final String TAG = "thxy";
     /**
      * 歌曲播放

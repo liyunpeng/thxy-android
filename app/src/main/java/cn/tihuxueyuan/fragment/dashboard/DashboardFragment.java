@@ -88,11 +88,8 @@ public class DashboardFragment extends Fragment {
 
         GridLayoutManager glm = new GridLayoutManager(this.getActivity().getBaseContext(), 2);
         recyclerView.setLayoutManager(glm);
-//        tvName.setText(recyclelist.get(0).getName());
         recycleAdapter = new GridRecycleAdapter(this.getActivity().getBaseContext(), courseList);
         recyclerView.setAdapter(recycleAdapter);
-
-
         recyclerView.addOnItemTouchListener(new RecyclerViewClickListener2(DashboardFragment.this.getActivity().getBaseContext(), recyclerView,
                 new RecyclerViewClickListener2.OnItemClickListener() {
                     @Override

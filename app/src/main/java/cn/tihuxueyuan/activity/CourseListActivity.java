@@ -102,7 +102,7 @@ public class CourseListActivity extends BaseActivity {
         appData = (AppData) getApplication();
         Log.d("tag2", "onCreate: currentCouseId: " + currentCouseId);
     }
-    
+
     @Override
     protected void onRestart() {
         Log.e("====", "onRestart()");
