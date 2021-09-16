@@ -2,13 +2,16 @@ package cn.tihuxueyuan.utils;
 
 import static android.os.Build.VERSION.SDK_INT;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
+import android.view.WindowManager;
 
 import java.lang.reflect.Method;
 
 import cn.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.db.DBUtils;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
@@ -16,13 +19,16 @@ import cn.tihuxueyuan.service.MusicService;
 public class Constant {
 
     public static Music_Activity.MyServiceConn conn1;
+
     private String name;
     public static String MusicLiveDataObserverTag = "music_activity_observer";
     public static Intent intent1, intent2;
     public static  AppData appData ;
     public static FloatingImageDisplayService.FloatingControl floatingControl;
     public static MusicService.MusicControl musicControl;
+    public static WindowManager  mWM;
 
+    public static UpdateManager updateManager = null;
     public static LogcatHelper logcatHelper;
     public static final String TAG = "thxy";
     /**
@@ -42,6 +48,8 @@ public class Constant {
      * 下一曲
      */
     public static final String NEXT = "next";
+
+
 
 
     /**

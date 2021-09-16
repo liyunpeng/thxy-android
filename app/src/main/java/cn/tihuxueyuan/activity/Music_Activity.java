@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -34,6 +36,7 @@ import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
+import cn.tihuxueyuan.receiver.MediaButtonReceiver;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.utils.Constant;
@@ -56,6 +59,46 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+//        //获得AudioManager对象
+//        AudioManager mAudioManager =(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//
+////构造一个ComponentName，指向MediaoButtonReceiver类
+//        ComponentName  mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
+//
+////注册一个MediaButtonReceiver广播监听
+//        mAudioManager.registerMediaButtonEventReceiver(mComponent);
+//
+////注销方法
+//        mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
+//
+
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD //解锁
+
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON //保持屏幕不息屏
+
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);//点亮屏幕
+
+        if (Build.VERSION.SDK_INT > 27) {
+            setShowWhenLocked(true);
+
+        } else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+
+        }
+
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+
+//低调模式, 会隐藏不重要的状态栏图标，https://blog.csdn.net/QQsongQQ/article/details/89312763
+
+        params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
+
+        getWindow().setAttributes(params);
+
+//        setContentView(R.layout.activity_call
+
         appData = Constant.appData;
 
         setContentView(R.layout.activity_music);
@@ -345,7 +388,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 } else {
                     appData.currentPostion--;
                     appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
-                    musicControl.playListened(NEWPLAY );
+                    musicControl.playListened(NEWPLAY);
                 }
                 break;
             case R.id.play_next:

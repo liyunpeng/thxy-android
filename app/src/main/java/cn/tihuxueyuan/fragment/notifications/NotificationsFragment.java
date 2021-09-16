@@ -12,7 +12,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.databinding.FragmentNotificationsBinding;
+import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.UpdateManager;
 
 public class NotificationsFragment extends Fragment {
 
@@ -27,13 +30,17 @@ public class NotificationsFragment extends Fragment {
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textNotifications;
-        notificationsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+//        final TextView textView = binding.textNotifications;
+//        notificationsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(@Nullable String s) {
+//                textView.setText(s);
+//            }
+//        });
+
+//        root.setcon(R.layout.user_main);
+//        bind = ButterKnife.bind(this);
+
         return root;
     }
 

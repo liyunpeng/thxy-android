@@ -228,10 +228,14 @@ public class MusicService extends Service {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        /*
+
+         */
         //初始化通知
         notification = new NotificationCompat.Builder(this, "play_control")
                 .setContentIntent(pendingIntent)
                 .setWhen(System.currentTimeMillis())
+                .setPriority( Notification.PRIORITY_MAX )
                 .setSmallIcon(R.mipmap.goods)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setCustomContentView(remoteViews)

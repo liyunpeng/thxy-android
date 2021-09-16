@@ -66,7 +66,7 @@ public class FloatingImageDisplayService extends Service {
 //                wmParams.type = WindowManager.LayoutParams.TYPE_TOAST;
 //            }
         } else {
-            layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+            layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
         }
 
         DisplayMetrics dm = new DisplayMetrics();

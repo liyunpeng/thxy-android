@@ -9,11 +9,13 @@ import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.appData;
 import static cn.tihuxueyuan.utils.Constant.logcatHelper;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,7 +28,9 @@ import cn.tihuxueyuan.R;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -58,9 +62,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 222);
 
-       Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
-        logcatHelper.start();
         right();
         try {
             Method forName = Class.class.getDeclaredMethod("forName", String.class);
@@ -92,9 +95,34 @@ public class MainActivity extends BaseActivity {
 
         Constant.appData = (AppData) getApplication();
 
-
         registerHomeKeyReceiver(this);
         registerMusicReceiver();
+    }
+
+    // 含有全部的权限
+    private boolean hasAllPermissionsGranted(@NonNull int[] grantResults) {
+        for (int grantResult : grantResults) {
+            if (grantResult == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (!hasAllPermissionsGranted(grantResults)) {
+            Log.d(TAG, "onRequestPermissionsResult return ");
+            return;
+        }
+        switch (requestCode) {
+            case 222:
+                Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
+                logcatHelper.start();
+                Toast.makeText(getApplicationContext(), "已申请权限", Toast.LENGTH_SHORT).show();
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
 
