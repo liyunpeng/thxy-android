@@ -3,9 +3,11 @@ package cn.tihuxueyuan.utils;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -26,11 +28,11 @@ public class UpdateManager {
     // 提示消息
     private String updateMsg = "有最新的软件包，请下载！";
     // 下载安装包的网络路径
-    private String apkUrl = "http://softfile.3g.qq.com:8080/msoft/179/24659/43549/qq_hd_mini_1.4.apk";
+    private String apkUrl = "http://10.0.2.2:8082/api/apkUpload";
     private Dialog noticeDialog;// 提示有软件更新的对话框
     private Dialog downloadDialog;// 下载对话框
-    private static final String savePath = "/sdcard/updatedemo/";// 保存apk的文件夹
-    private static final String saveFileName = savePath + "UpdateDemoRelease.apk";
+    private static final String savePath = "/storage/emulated/0/Thxy1/";// 保存apk的文件夹
+    private static final String saveFileName = savePath + "a.apk";
     // 进度条与通知UI刷新的handler和msg常量
     private ProgressBar mProgress;
     private static final int DOWN_UPDATE = 1;
@@ -60,9 +62,6 @@ public class UpdateManager {
     }
     // 显示更新程序对话框，供主程序调用
     public  void checkUpdateInfo( Context  c) {
-
-
-
         mContext = c;
         showNoticeDialog();
     }
@@ -134,8 +133,20 @@ public class UpdateManager {
                     file.mkdir();
                 }
                 String apkFile = saveFileName;
-                File ApkFile = new File(apkFile);
-                FileOutputStream outStream = new FileOutputStream(ApkFile);
+
+                ContextWrapper cw = new ContextWrapper(mContext.getApplicationContext());
+                File directory = cw.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+                File file1 = new File(directory, "app-debug.apk");
+
+
+//                File ApkFile = new File(apkFile);
+//                ApkFile.createNewFile();
+                FileOutputStream outStream = new FileOutputStream(file1);
+//
+//                out = new FileOutputStream(new File(dir, "log-"
+//                        + getFileName() + ".log"));
+//
+
                 int count = 0;
                 byte buf[] = new byte[1024];
                 do {
@@ -151,6 +162,8 @@ public class UpdateManager {
                     }
                     outStream.write(buf, 0, numread);
                 } while (!interceptFlag);// 点击取消停止下载
+
+                outStream.flush();
                 outStream.close();
                 ins.close();
             } catch (Exception e) {

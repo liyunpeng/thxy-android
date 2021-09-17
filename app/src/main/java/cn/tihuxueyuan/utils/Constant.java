@@ -49,9 +49,6 @@ public class Constant {
      */
     public static final String NEXT = "next";
 
-
-
-
     /**
      * 关闭通知栏
      */

@@ -27,11 +27,11 @@ public class LogcatHelper {
                 Environment.MEDIA_MOUNTED)) {// 优先保存到SD卡中
             Log.d(TAG, "优先保存到SD卡中");
             PATH_LOGCAT = Environment.getExternalStorageDirectory()
-                    .getAbsolutePath() + File.separator + "Thxy1/";
+                    .getAbsolutePath() + File.separator + "Documents/";
         } else {// 如果SD卡不存在，就保存到本应用的目录下
             Log.d(TAG, "如果SD卡不存在，就保存到本应用的目录下");
             PATH_LOGCAT = context.getFilesDir().getAbsolutePath()
-                    + File.separator + "Thxy/";
+                    + File.separator + "Documents/";
         }
 
 //        PATH_LOGCAT = Environment.getDataDirectory() + File.separator + "Thxy/";

@@ -119,7 +119,7 @@ public class MainActivity extends BaseActivity {
             case 222:
                 Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
                 logcatHelper.start();
-                Toast.makeText(getApplicationContext(), "已申请权限", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "已申请权限", Toast.LENGTH_SHORT).show();
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.setting.CToast;
 import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.UpdateManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -44,6 +45,8 @@ public class ToastMain extends AppCompatActivity {
             public void onClick(View v) {
 //                int time= TextUtils.isEmpty(mEditText.getText().toString())?CToast.LENGTH_SHORT:Integer.valueOf(mEditText.getText().toString());
                 int time= 1000;
+
+//                Constant.updateManager = new UpdateManager();
                 mCToast=CToast.makeText(getApplicationContext(), "我来自CToast!",time);
                 mCToast.show();
 
