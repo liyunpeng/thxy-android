@@ -114,6 +114,14 @@ public class MusicService extends Service {
                 musicActivityLiveData.postValue(NEWPLAY);
             }
         });
+        player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.d(TAG, " 切换 下一首 时发生错误 ， 错误被拦截， 不会回调到onCompletion ");
+                return true;
+            }
+        });
+
         player.setOnCompletionListener(
                 new MediaPlayer.OnCompletionListener() {
                     @Override
