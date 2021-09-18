@@ -41,4 +41,17 @@ public class BaseActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(Constant.TAG, " onDestroy className ="+ this.getLocalClassName());
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        String className = this.getLocalClassName();
+//        if (Constant.floatingControl != null) {
+//            if (className.contains("Music")){
+//                Constant.floatingControl.setVisibility(false);
+//            }else{
+//                Constant.floatingControl.setVisibility(true);
+//            }
+//        }
+    }
 }

@@ -43,6 +43,7 @@ import java.util.Stack;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
 import cn.tihuxueyuan.globaldata.AppData;
+import cn.tihuxueyuan.listenner.CheckObserver;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.receiver.HomeReceiver;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
@@ -97,6 +98,9 @@ public class MainActivity extends BaseActivity {
 
         registerHomeKeyReceiver(this);
         registerMusicReceiver();
+        getLifecycle().addObserver(new CheckObserver());
+
+//        ProcessLifecycleOwner.get().lifecycle.addObserver(checkObserver)
     }
 
     // 含有全部的权限

@@ -29,18 +29,17 @@ public class HomeReceiver extends BroadcastReceiver {
             if (SYSTEM_DIALOG_REASON_HOME_KEY.equals(reason)) {
                 // 短按Home键
                 Log.i(LOG_TAG, "homekey");
-                Constant.floatingControl.setVisibility(false);
-            }
-            else if (SYSTEM_DIALOG_REASON_RECENT_APPS.equals(reason)) {
+                if (Constant.floatingControl != null) {
+                    Constant.floatingControl.setVisibility(false);
+                }
+            } else if (SYSTEM_DIALOG_REASON_RECENT_APPS.equals(reason)) {
                 // 长按Home键 或者 activity切换键
                 Log.i(LOG_TAG, "long press home key or activity switch");
 
-            }
-            else if (SYSTEM_DIALOG_REASON_LOCK.equals(reason)) {
+            } else if (SYSTEM_DIALOG_REASON_LOCK.equals(reason)) {
                 // 锁屏
                 Log.i(LOG_TAG, "lock");
-            }
-            else if (SYSTEM_DIALOG_REASON_ASSIST.equals(reason)) {
+            } else if (SYSTEM_DIALOG_REASON_ASSIST.equals(reason)) {
                 // samsung 长按Home键
                 Log.i(LOG_TAG, "assist");
             }

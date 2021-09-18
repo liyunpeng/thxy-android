@@ -100,6 +100,9 @@ public class CourseListActivity extends BaseActivity {
         });
 
         appData = (AppData) getApplication();
+
+        ActivityManager.setCurrentActivity(CourseListActivity.this);
+        getCourseFiles();
         Log.d("tag2", "onCreate: currentCouseId: " + currentCouseId);
     }
 
@@ -172,8 +175,7 @@ D/tag1: parseNetworkResponse:
     public void onResume() {
         super.onResume();
         Log.e("====", "onResume()");
-        ActivityManager.setCurrentActivity(CourseListActivity.this);
-        getCourseFiles();
+
     }
 
     public void refreshListView() {
