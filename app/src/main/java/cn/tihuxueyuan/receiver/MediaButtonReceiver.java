@@ -18,7 +18,7 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 
         // 获得KeyEvent对象
         KeyEvent event = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-        Log.d(TAG, " 耳机按键事件 中键");
+
         if (Intent.ACTION_MEDIA_BUTTON.equals(action)) {
 
             // 获得按键码

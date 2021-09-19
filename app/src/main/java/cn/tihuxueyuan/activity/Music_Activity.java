@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.activity;
 
+import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static java.lang.Integer.parseInt;
 
 import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
@@ -13,6 +14,7 @@ import static cn.tihuxueyuan.utils.Constant.musicControl;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
@@ -56,10 +58,30 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private AppData appData;
     private LiveDataBus.BusMutableLiveData<String> musicActivityLiveData;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            super.onCreate(savedInstanceState);
+        }
 
+//        if (isBluetoothA2dpOn()) {
+//
+//// Adjust output for Bluetooth.
+//
+//        } else if (isSpeakerphoneOn()) {
+//
+//// Adjust output for Speakerphone.
+//
+//        } else if (isWiredHeadsetOn()) {
+//
+//// Adjust output for headsets
+//
+//        } else {
+//
+//// If audio plays and noone can hear it, is it still playing?
+//
+//        }
 
 //        //获得AudioManager对象
 //        AudioManager mAudioManager =(AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -103,7 +125,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
         setContentView(R.layout.activity_music);
         musicUrl = getIntent().getStringExtra("music_url");
-        Log.d(Constant.TAG, "Music Activity oncreate  musicUrl= " + musicUrl);
+        Log.d(TAG, "Music Activity oncreate  musicUrl= " + musicUrl);
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
 
         appData.currentMusicCourseId = appData.courseFileList.get(0).getCourseId();
@@ -127,8 +149,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         }
 
         name_song.setText(musicTitle);
-        if (Constant.floatingControl != null) {
-            Constant.floatingControl.setText(musicTitle);
+        if (floatingControl != null) {
+            floatingControl.setText(musicTitle);
         }
 
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))

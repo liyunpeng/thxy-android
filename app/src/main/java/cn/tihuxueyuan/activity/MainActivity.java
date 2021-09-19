@@ -11,6 +11,7 @@ import static cn.tihuxueyuan.utils.Constant.logcatHelper;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
@@ -38,6 +40,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Stack;
 
 import cn.tihuxueyuan.basic.BaseActivity;
@@ -50,6 +53,7 @@ import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.setting.AppConfig;
 import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.ForegroundCallbacks;
 import cn.tihuxueyuan.utils.LogcatHelper;
 import cn.tihuxueyuan.utils.SPUtils;
 
@@ -57,11 +61,59 @@ public class MainActivity extends BaseActivity {
 
     public ActivityMainBinding binding;
     private LiveDataBus.BusMutableLiveData<String> floatLiveData;
+    Context mContext;
+
+    private void initAppStatusListener() {
+
+        ForegroundCallbacks.init(getApplication()).addListener(new ForegroundCallbacks.Listener() {
+            @Override
+            public void onBecameForeground() {
+                Log.d(TAG, "onBecameForeground 应用进入前台 ");
+//                Toast.makeText(mContext, "应用进入前台", Toast.LENGTH_SHORT).show();
+
+                if (Constant.floatingControl != null) {
+                    Constant.floatingControl.setVisibility(true);
+                }
+            }
+
+            @Override
+            public void onBecameBackground() {
+                Log.d(TAG, "onBecameForeground  应用退至后台 ");
+//                Toast.makeText(mContext, "应用宝退至后台", Toast.LENGTH_SHORT).show();
+
+                if (Constant.floatingControl != null) {
+                    Constant.floatingControl.setVisibility(false);
+                }
+            }
+        });
+    }
+
+    // 进程名
+    private String getProcessName(Context cxt, int pid) {
+        ActivityManager am = (ActivityManager) cxt.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = am.getRunningAppProcesses();
+        if (runningApps == null) {
+            return null;
+        }
+        for (ActivityManager.RunningAppProcessInfo procInfo : runningApps) {
+            if (procInfo.pid == pid) {
+                return procInfo.processName;
+            }
+        }
+        return null;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String curProcess = getProcessName(this, android.os.Process.myPid());
+
+        if (!TextUtils.equals(curProcess, "cn.tihuxueyuan")) {
+            return;
+        }
+        initAppStatusListener();
+
 //        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 222);
 
@@ -82,6 +134,7 @@ public class MainActivity extends BaseActivity {
         getSupportActionBar().hide();
         setContentView(binding.getRoot());
 
+        mContext = this.getApplicationContext();
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
@@ -98,7 +151,10 @@ public class MainActivity extends BaseActivity {
 
         registerHomeKeyReceiver(this);
         registerMusicReceiver();
-        getLifecycle().addObserver(new CheckObserver());
+
+        Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
+        logcatHelper.start();
+//        getApplication() .addObserver(new CheckObserver());
 
 //        ProcessLifecycleOwner.get().lifecycle.addObserver(checkObserver)
     }
@@ -121,8 +177,10 @@ public class MainActivity extends BaseActivity {
         }
         switch (requestCode) {
             case 222:
-                Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
-                logcatHelper.start();
+
+                //todo：  获取到创建目录权限  ， 还放目录用系统自带的document目录， 放在这个地方， 一些初妈化的log打印不到
+//                Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
+//                logcatHelper.start();
 //                Toast.makeText(getApplicationContext(), "已申请权限", Toast.LENGTH_SHORT).show();
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -277,7 +335,7 @@ public class MainActivity extends BaseActivity {
 
     private static void registerHomeKeyReceiver(Context context) {
         Log.i(TAG, "registerHomeKeyReceiver 被调用");
-        if (appData.mHomeKeyReceiver == null){
+        if (appData.mHomeKeyReceiver == null) {
             Log.i(TAG, "保证只注册一次 home 键的receiver ");
             appData.mHomeKeyReceiver = new HomeReceiver();
             final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);

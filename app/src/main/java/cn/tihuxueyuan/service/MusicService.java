@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.service;
 
+import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.CLOSE;
@@ -17,8 +18,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
@@ -69,11 +74,103 @@ public class MusicService extends Service {
      */
     private static NotificationManager manager;
 
+    private class NoisyAudioStreamReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+
+                // Pause the playback
+            }
+
+        }
+
+    }
+
+    ;
     /**
      * 音乐广播接收器
      */
+    NoisyAudioStreamReceiver myNoisyAudioStreamReceiver;
+
     public MusicService() {
+        myNoisyAudioStreamReceiver = new NoisyAudioStreamReceiver();
     }
+
+    AudioManager audioManager;
+    private IntentFilter intentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+
+
+    private void startPlayback() {
+        registerReceiver(myNoisyAudioStreamReceiver, intentFilter);
+    }
+
+
+    private void stopPlayback() {
+
+        unregisterReceiver(myNoisyAudioStreamReceiver);
+
+    }
+
+    AudioManager.OnAudioFocusChangeListener afChangeListener =
+
+            new AudioManager.OnAudioFocusChangeListener() {
+
+                public void onAudioFocusChange(int focusChange) {
+                    if (focusChange == AUDIOFOCUS_LOSS_TRANSIENT) {
+                        Log.d(TAG, " AUDIOFOCUS_LOSS_TRANSIENT 事件");
+                        // Pause playback
+                        musicControl.pause();
+
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                        Log.d(TAG, " AUDIOFOCUS_GAIN 事件");
+                        musicControl.play();
+                        // Resume playback
+
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                        Log.d(TAG, " AUDIOFOCUS_LOSS 事件");
+//                        am.unregisterMediaButtonEventReceiver(RemoteControlReceiver);
+
+                        audioManager.abandonAudioFocus(afChangeListener);
+// Stop playback
+                        musicControl.pause();
+                    }
+
+                    if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+
+// Lower the volume
+
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+
+// Raise it back to normal
+
+                    }
+
+                }
+
+            };
+
+    private void initAudioLoseListener() {
+        Context mContext = getApplicationContext();
+        audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+// Request audio focus for playback
+
+        int result = audioManager.requestAudioFocus(afChangeListener,
+// Use the music stream.
+                AudioManager.STREAM_MUSIC,
+// Request permanent focus.
+                AudioManager.AUDIOFOCUS_GAIN);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+
+//            am.registerMediaButtonEventReceiver(recei);
+
+// Start playback.
+
+        }
+
+    }
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -91,6 +188,7 @@ public class MusicService extends Service {
         initNotification();
         appData = (AppData) getApplication();
         player = new MediaPlayer();
+        initAudioLoseListener();
         player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
@@ -243,7 +341,7 @@ public class MusicService extends Service {
         notification = new NotificationCompat.Builder(this, "play_control")
                 .setContentIntent(pendingIntent)
                 .setWhen(System.currentTimeMillis())
-                .setPriority( Notification.PRIORITY_MAX )
+                .setPriority(Notification.PRIORITY_MAX)
                 .setSmallIcon(R.mipmap.goods)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setCustomContentView(remoteViews)
@@ -320,7 +418,7 @@ public class MusicService extends Service {
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-                    if (player == null ) return;
+                    if (player == null) return;
 
                     int duration = player.getDuration();//获取歌曲总时长
                     int currentPosition = player.getCurrentPosition();//获取播放进度
@@ -503,6 +601,19 @@ public class MusicService extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        public void play() {
+            player.start();
+            addTimer();
+            musicActivityLiveData.postValue(PLAY);
+            updateNotificationShow(appData.currentPostion);
+        }
+
+        public void pause() {
+            player.pause();
+            musicActivityLiveData.postValue(PAUSE);
+            updateNotificationShow(appData.currentPostion);
         }
 
         public void playOrPause() {
