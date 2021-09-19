@@ -27,6 +27,7 @@ public class SPUtils {
         listenedFile.Position = musicControl.getPosition();
         Log.d(TAG, "调jsonpost网络接口， 写入已听数据" +
                 ", 文件名= " + Constant.appData.courseFileList.get(Constant.appData.currentPostion).getFileName() +
+                ", CourseFileId= " + listenedFile.CourseFileId +
                 ", ListenedPercent = " + listenedFile.ListenedPercent +
                 ", Position=" + listenedFile.Position +
                 ", duration=" + musicControl.getDuration());

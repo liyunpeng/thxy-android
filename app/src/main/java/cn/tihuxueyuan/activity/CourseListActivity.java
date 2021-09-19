@@ -219,9 +219,15 @@ D/tag1: parseNetworkResponse:
                 int percent = courseFile.getListenedPercent();
                 String duration = courseFile.getDuration();
                 int color;
+//                if (  Integer.parseInt(currentCouseId) == appData.currentMusicCourseId &&
+//                        appData.currentPostion >= 0 && Constant.appData.currentPostion <  Constant.appData.courseFileList.size() &&
+//                        Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
                 if (  Integer.parseInt(currentCouseId) == appData.currentMusicCourseId &&
                         appData.currentPostion >= 0 && Constant.appData.currentPostion <  Constant.appData.courseFileList.size() &&
-                        Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
+                        Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.getId()) {
+//                int percent = appData.courseFileMap.get(appData.currentCourseFileId).getListenedPercent();
+//                        Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
+
                     color = Color.parseColor("#FF0000");
                 } else {
                     if (percent > 0) {
@@ -230,6 +236,7 @@ D/tag1: parseNetworkResponse:
                         color = Color.parseColor("#000000");
                     }
                 }
+
                 if (percent > 0) {
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, courseFile.getNumber(), color);

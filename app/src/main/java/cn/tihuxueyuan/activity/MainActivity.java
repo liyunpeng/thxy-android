@@ -45,6 +45,7 @@ import java.util.Stack;
 
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
+import cn.tihuxueyuan.db.DBUtils;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.listenner.CheckObserver;
 import cn.tihuxueyuan.livedata.LiveDataBus;
@@ -353,6 +354,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        DBUtils.getInstance(getApplicationContext());
     }
 
     @Override
