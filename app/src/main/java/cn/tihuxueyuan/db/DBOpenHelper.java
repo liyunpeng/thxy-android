@@ -15,13 +15,14 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     public static String DB_NAME = "bxg.db";
     public static final String U_USER_INFO = "userInfo";
+    public static final String USER_LISTENED_COURSE = "user_listened_courses";
+    public static final String COURSE_FILE = "course_file";
 
     Context mContext;
     public DBOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, null, version);
         mContext = context;
     }
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -39,13 +40,23 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 + "qq VARCHAR "
                 + ")");
 
-        db.execSQL("CREATE TABLE IF NOT EXISTS  user_listend_courses ( "
+        db.execSQL("CREATE TABLE IF NOT EXISTS  " + USER_LISTENED_COURSE + " ( "
                 + "_id  INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "code VARCHAR, "
                 + "course_id INT, "
                 + "last_listend_course_file_id INT, "
                 + "listened_files INT "
                 + ")");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS  " + COURSE_FILE + " ( "
+                + "_id  INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "course_id INT, "
+                + "number INT, "
+                + "mp3_file_name VARCHAR, "
+                + "duraion VARCHAR "
+                + ")");
+
+
 
         Log.d( TAG, " 成功创建sqlite3 数据库表 ");
     }
@@ -55,6 +66,16 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         Log.i("健康档案表","版本更新"+oldVersion+"-->"+newVersion);
     }
 
+
+//    public void InsertListened( ContentValues contentValues ) {
+//        SQLiteDatabase sqLiteDatabase = myDatabaseHelper.getWritableDatabase();
+//        ContentValues contentValues = new ContentValues();
+//        contentValues.put("id",1);
+//        contentValues.put("author","MrChegns");
+//        contentValues.put("price",143.2);
+//        contentValues.put("name","Android");
+//        sqLiteDatabase.insert("Book",null,contentValues);
+//    }
 
 
 //    /**

@@ -3,6 +3,7 @@ package cn.tihuxueyuan.activity;
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static java.lang.Integer.parseInt;
 
+import static cn.tihuxueyuan.utils.Constant.CLOSE;
 import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
@@ -31,6 +32,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import cn.tihuxueyuan.R;
@@ -57,6 +59,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private boolean isUnbind = false; //记录服务是否被解绑
     private AppData appData;
     private LiveDataBus.BusMutableLiveData<String> musicActivityLiveData;
+    private static LiveDataBus.BusMutableLiveData<String> courseListActivityLiveData;
 
 
     @Override
@@ -64,7 +67,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             super.onCreate(savedInstanceState);
         }
-
+        courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, String.class);
 //        if (isBluetoothA2dpOn()) {
 //
 //// Adjust output for Bluetooth.
@@ -164,12 +167,16 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onStop() {
         super.onStop();
-        SPUtils.sendListenedPerscent();
+
+//        Constant.appData.courseFileList.get(Constant.appData.currentPostion).listenedPercent = 50;
 
         // Todo 待定
         Intent intent = new Intent();
 //        intent.putExtra("respond", "Hello,Alice!I'm Bob.");
         setResult(Activity.RESULT_OK, intent);
+
+        SPUtils.sendListenedPerscent();
+
     }
 
     private void bindMusicService() {
@@ -264,8 +271,11 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         ActivityManager.setCurrentActivity(Music_Activity.this);
     }
 
+//    private static MutableLiveData<Object> courseListActivityLiveData;
     public static Handler handler = new Handler() {//创建消息处理器对象
         //在主线程中处理从子线程发送过来的消息
+
+        int lastPercent;
         @Override
         public void handleMessage(Message msg) {
 //            Log.d("tag1", "handleMessage: 处理消息 ： " + msg.toString());
@@ -304,8 +314,26 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 strSecond = second + " ";
             }
             tv_progress.setText(strMinute + ":" + strSecond);
+            int currentPercent = 0;
+            if (duration >  0) {
+                 currentPercent = (currentPosition*100/duration);
+
+                if (currentPercent != lastPercent ) {
+                    String listenedPercent  =Integer.toString (currentPercent);
+
+                    Log.d(TAG, "handleMessage  listenedPercent = " + listenedPercent
+                            + ", currentPosition=" + currentPosition + ", duration=" + duration
+                            + ", cp=" + currentPercent
+                    );
+
+                    courseListActivityLiveData.postValue( listenedPercent);
+                }
+
+            }
+            lastPercent = currentPercent ;
         }
     };
+
 
     private void musicActivityObserver() {
         musicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);

@@ -21,21 +21,21 @@ public class CourseFileList {
 
     public static class CourseFile {
         @SerializedName("id")
-        private int id;
+        public int id;
         @SerializedName("mp3_file_name")
-        private String mp3_file_name;
+        public String mp3_file_name;
         @SerializedName("img_src")
-        private String img_src;
+        public String img_src;
         @SerializedName("number")
-        private String number;
+        public String number;
         @SerializedName("course_id")
-        private int courseId;
+        public int courseId;
         @SerializedName("listened_percent")
-        private int listenedPercent;
+        public int listenedPercent;
         @SerializedName("duration")
-        private String duration;
+        public String duration;
         @SerializedName("listened_position")
-        private int listenedPosition;
+        public int listenedPosition;
 
 
         public int getCourseId() { return  courseId;}

@@ -122,12 +122,10 @@ public class MusicService extends Service {
                         Log.d(TAG, " AUDIOFOCUS_LOSS_TRANSIENT 事件");
                         // Pause playback
                         musicControl.pause();
-
                     } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
                         Log.d(TAG, " AUDIOFOCUS_GAIN 事件");
                         musicControl.play();
                         // Resume playback
-
                     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
                         Log.d(TAG, " AUDIOFOCUS_LOSS 事件");
 //                        am.unregisterMediaButtonEventReceiver(RemoteControlReceiver);
@@ -179,6 +177,7 @@ public class MusicService extends Service {
 
     private AppData appData;
 
+    int currentCourseId;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
@@ -194,6 +193,7 @@ public class MusicService extends Service {
             public void onPrepared(MediaPlayer mediaPlayer) {
                 int pos = appData.courseFileMap.get(appData.currentCourseFileId).getListenedPosition();
                 int percent = appData.courseFileMap.get(appData.currentCourseFileId).getListenedPercent();
+                currentCourseId = appData.courseFileMap.get(appData.currentCourseFileId).getCourseId();
                 String fileName = appData.courseFileMap.get(appData.currentCourseFileId).getFileName();
                 if (pos > 0) {
                     Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
@@ -452,6 +452,9 @@ public class MusicService extends Service {
             manager.cancel(NOTIFICATION_ID);
         }
 
+        public  int getCurrentCourseId() {
+            return  currentCourseId;
+        }
         public void playListened(String action) {
             boolean isPlaying = player.isPlaying();
             Log.d(TAG, "播放器是否在播放 isPlaying = " + isPlaying);

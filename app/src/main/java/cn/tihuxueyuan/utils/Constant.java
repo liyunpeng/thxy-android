@@ -22,6 +22,7 @@ public class Constant {
 
     private String name;
     public static String MusicLiveDataObserverTag = "music_activity_observer";
+    public static String CourseListLiveDataObserverTag = "course_list_activity_observer";
     public static Intent intent1, intent2;
     public static  AppData appData ;
     public static FloatingImageDisplayService.FloatingControl floatingControl;
@@ -30,6 +31,7 @@ public class Constant {
 
     public static UpdateManager updateManager = null;
     public static LogcatHelper logcatHelper;
+    public static DBUtils dbUtils;
     public static final String TAG = "thxy";
     /**
      * 歌曲播放

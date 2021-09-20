@@ -354,7 +354,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        DBUtils.getInstance(getApplicationContext());
+        Constant.dbUtils = DBUtils.getInstance(getApplicationContext());
     }
 
     @Override
