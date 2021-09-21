@@ -226,13 +226,14 @@ D/tag1: parseNetworkResponse:
     @Override
     public void onResume() {
         super.onResume();
-        if (flag == 1 && mList != null && mList.size() > appData.currentPostion && mList.get(Constant.appData.currentPostion) != null) {
-            mAdapter.notifyDataSetChanged();
+        if (flag == 1 && mList != null && mList.size() > appData.currentPostion ) {
+            // 从悬浮窗进入音乐界面， 再回到列表界面时，如果是其他课程列表，不刷新
+            if (  Integer.parseInt( currentCouseId) == Constant.musicControl.getCurrentCourseId()) {
+                mAdapter.notifyDataSetChanged();
+            }
             freshLastPlay();
         }
     }
-
-
 
     private void courseListActivityObserver() {
         courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, String.class);
@@ -281,20 +282,15 @@ D/tag1: parseNetworkResponse:
                 int percent = courseFile.getListenedPercent();
                 String duration = courseFile.getDuration();
                 int color = Color.parseColor("#000000");
-//                if (  Integer.parseInt(currentCouseId) == appData.currentMusicCourseId &&
-//                        appData.currentPostion >= 0 && Constant.appData.currentPostion <  Constant.appData.courseFileList.size() &&
-//                        Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
                 if (Integer.parseInt(currentCouseId) == appData.currentMusicCourseId &&
                         appData.currentPostion >= 0 && Constant.appData.currentPostion < Constant.appData.courseFileList.size()
-                ) {//                int percent = appData.courseFileMap.get(appData.currentCourseFileId).getListenedPercent();
-//                        Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId() == courseFile.getId()) {
-
+                ) {
                     if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId) != null) {
                         if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.getId()) {
                             color = Color.parseColor("#FF0000");
                         }
                     } else {
-                        color = Color.parseColor("#777777");
+                        color = Color.parseColor("#000000");
                     }
 
                 } else {

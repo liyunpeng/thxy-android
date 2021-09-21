@@ -26,10 +26,10 @@ public class Constant {
     public static Intent intent1, intent2;
     public static String FromIntent = "from_intent";
     public static String FloatWindow = "float_window";
-    public static  AppData appData ;
+    public static AppData appData;
     public static FloatingImageDisplayService.FloatingControl floatingControl;
     public static MusicService.MusicControl musicControl;
-    public static WindowManager  mWM;
+    public static WindowManager mWM;
 
     public static UpdateManager updateManager = null;
     public static LogcatHelper logcatHelper;
