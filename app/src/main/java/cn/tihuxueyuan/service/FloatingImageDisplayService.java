@@ -147,11 +147,10 @@ public class FloatingImageDisplayService extends Service {
         }
 
 
-        public void setText(String s) {
-//            FloatWindowManager.createFloatWindow()
-//            textView.setText(s);
-//            displayView.g();
-            ((TextView) displayView.findViewById(R.id.float_text)).setText(s);
+
+        public void setText(String musicTitle) {
+            floatText = musicTitle;
+            ((TextView) displayView.findViewById(R.id.float_text)).setText(musicTitle);
         }
 
         public void setVisibility(boolean visible) {
@@ -163,6 +162,7 @@ public class FloatingImageDisplayService extends Service {
         }
     }
 
+    private  String floatText;
     private Handler.Callback changeImageCallback = new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -214,6 +214,7 @@ public class FloatingImageDisplayService extends Service {
                     x = (int) event.getRawX();
                     y = (int) event.getRawY();
                     Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
+                    intent.putExtra("float_text", floatText);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     break;

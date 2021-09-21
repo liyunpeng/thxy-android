@@ -22,6 +22,14 @@ public class SPUtils {
 
     public static void sendListenedPerscent() {
         JsonPost.ListenedFile listenedFile = new JsonPost.ListenedFile();
+
+        // 从其他列表课程的悬浮穿 进入音乐播放界面，currentPostion 大于了Constant.appData.courseFileList.size， 导致报错
+        // todo : 考虑在什么适合时间 调用用sendListenedPerscent， 现在都是在音乐播放页面 的onstop调用
+        if  (  Constant.appData.courseFileList.size() <= Constant.appData.currentPostion ) {
+            Log.d(TAG, " sendListenedPerscent 出错，原因：Constant.appData.courseFileList.size() <= Constant.appData.currentPostion ");
+            return;
+        }
+        
         listenedFile.CourseFileId = Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId();
         listenedFile.ListenedPercent = musicControl.getListenedPercent();
         listenedFile.Position = musicControl.getPosition();

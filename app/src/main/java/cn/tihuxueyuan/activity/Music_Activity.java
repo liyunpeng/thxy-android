@@ -142,7 +142,13 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             bindMusicService();
         } else {
 //            bootstrapReflect();
-            musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
+
+            if ( appData.courseFileList == null || appData.courseFileList.size() <= appData.currentPostion ||  appData.courseFileList.get(appData.currentPostion) == null ) {
+                Log.d(TAG, "从悬浮窗启动的activity");
+                musicTitle = getIntent().getStringExtra("float_text");
+            }else{
+                musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
+            }
             musicControl.setText();
             if (musicControl.isPlaying()) {
                 playPauseView.setImageResource(R.drawable.pause_dark);

@@ -49,6 +49,7 @@ public class CourseListActivity extends BaseActivity {
     TextView reverseButton;
     TextView titleView;
     ImageView imageView;
+    private LiveDataBus.BusMutableLiveData<String> courseListActivityLiveData;
 
     private void setImageBitMap() {
 //        String url = "http://10.0.2.2:8082/api/fileDownload?fileName=tihuxueyuan.png";
@@ -80,6 +81,7 @@ public class CourseListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.course_list_activity);
 
+        Log.d(TAG, "CourseListActivity 创建， 调用oncreate");
         currentCouseId = getIntent().getStringExtra("course_id");
         title = getIntent().getStringExtra("title");
         this.titleView = findViewById(R.id.course_title);
@@ -119,6 +121,7 @@ public class CourseListActivity extends BaseActivity {
                 mAdapter.notifyDataSetChanged();
             }
         });
+
     }
 
     @Override
@@ -175,7 +178,7 @@ public class CourseListActivity extends BaseActivity {
 
     private void freshLastPlay() {
 //        if ( appData.lastCourseId == -1  && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
-        if ( lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
+        if (lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
             Log.d(TAG, " freshLastPlay 准备设置为 可见 ");
             if (musicControl != null) {
                 if (Integer.parseInt(currentCouseId) != musicControl.getCurrentCourseId()) {
@@ -223,20 +226,13 @@ D/tag1: parseNetworkResponse:
     @Override
     public void onResume() {
         super.onResume();
-
-//
-
-        if (flag == 1 && mList != null && mList.get(Constant.appData.currentPostion) != null) {
-//        if (flag == 1 && mList != null) {
-//            mList.get(Constant.appData.currentPostion).listenedPercent = 70;
-//            mList = Constant.dbUtils.getSqlite3CourseFileList(16);
+        if (flag == 1 && mList != null && mList.size() > appData.currentPostion && mList.get(Constant.appData.currentPostion) != null) {
             mAdapter.notifyDataSetChanged();
-
-             freshLastPlay();
+            freshLastPlay();
         }
     }
 
-    private LiveDataBus.BusMutableLiveData<String> courseListActivityLiveData;
+
 
     private void courseListActivityObserver() {
         courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, String.class);
