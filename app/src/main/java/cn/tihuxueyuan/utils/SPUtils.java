@@ -29,7 +29,7 @@ public class SPUtils {
             Log.d(TAG, " sendListenedPerscent 出错，原因：Constant.appData.courseFileList.size() <= Constant.appData.currentPostion ");
             return;
         }
-        
+
         listenedFile.CourseFileId = Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId();
         listenedFile.ListenedPercent = musicControl.getListenedPercent();
         listenedFile.Position = musicControl.getPosition();

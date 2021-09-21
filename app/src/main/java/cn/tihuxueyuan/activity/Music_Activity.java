@@ -143,12 +143,21 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         } else {
 //            bootstrapReflect();
 
-            if ( appData.courseFileList == null || appData.courseFileList.size() <= appData.currentPostion ||  appData.courseFileList.get(appData.currentPostion) == null ) {
-                Log.d(TAG, "从悬浮窗启动的activity");
+//            if ( appData.courseFileList == null || appData.courseFileList.size() <= appData.currentPostion ||  appData.courseFileList.get(appData.currentPostion) == null ) {
+//                Log.d(TAG, "从悬浮窗启动的activity");
+//
+//
+//                musicTitle = getIntent().getStringExtra("float_text");
+//            }else{
+            Log.d(TAG, " from intent = " +getIntent().getStringExtra(Constant.FromIntent));
+
+            if (getIntent().getStringExtra(Constant.FromIntent).contains( Constant.FloatWindow) ){
                 musicTitle = getIntent().getStringExtra("float_text");
-            }else{
+            } else {
                 musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
             }
+
+//            }
             musicControl.setText();
             if (musicControl.isPlaying()) {
                 playPauseView.setImageResource(R.drawable.pause_dark);
@@ -277,11 +286,12 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         ActivityManager.setCurrentActivity(Music_Activity.this);
     }
 
-//    private static MutableLiveData<Object> courseListActivityLiveData;
+    //    private static MutableLiveData<Object> courseListActivityLiveData;
     public static Handler handler = new Handler() {//创建消息处理器对象
         //在主线程中处理从子线程发送过来的消息
 
         int lastPercent;
+
         @Override
         public void handleMessage(Message msg) {
 //            Log.d("tag1", "handleMessage: 处理消息 ： " + msg.toString());
@@ -321,22 +331,22 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             }
             tv_progress.setText(strMinute + ":" + strSecond);
             int currentPercent = 0;
-            if (duration >  0) {
-                 currentPercent = (currentPosition*100/duration);
+            if (duration > 0) {
+                currentPercent = (currentPosition * 100 / duration);
 
-                if (currentPercent != lastPercent ) {
-                    String listenedPercent  =Integer.toString (currentPercent);
+                if (currentPercent != lastPercent) {
+                    String listenedPercent = Integer.toString(currentPercent);
 
                     Log.d(TAG, "handleMessage  listenedPercent = " + listenedPercent
                             + ", currentPosition=" + currentPosition + ", duration=" + duration
                             + ", cp=" + currentPercent
                     );
 
-                    courseListActivityLiveData.postValue( listenedPercent);
+                    courseListActivityLiveData.postValue(listenedPercent);
                 }
 
             }
-            lastPercent = currentPercent ;
+            lastPercent = currentPercent;
         }
     };
 

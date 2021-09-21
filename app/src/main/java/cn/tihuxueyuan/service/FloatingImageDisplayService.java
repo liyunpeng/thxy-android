@@ -214,6 +214,7 @@ public class FloatingImageDisplayService extends Service {
                     x = (int) event.getRawX();
                     y = (int) event.getRawY();
                     Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
+                    intent.putExtra(Constant.FromIntent, Constant.FloatWindow);
                     intent.putExtra("float_text", floatText);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);

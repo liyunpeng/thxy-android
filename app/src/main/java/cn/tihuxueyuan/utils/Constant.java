@@ -24,6 +24,8 @@ public class Constant {
     public static String MusicLiveDataObserverTag = "music_activity_observer";
     public static String CourseListLiveDataObserverTag = "course_list_activity_observer";
     public static Intent intent1, intent2;
+    public static String FromIntent = "from_intent";
+    public static String FloatWindow = "float_window";
     public static  AppData appData ;
     public static FloatingImageDisplayService.FloatingControl floatingControl;
     public static MusicService.MusicControl musicControl;
