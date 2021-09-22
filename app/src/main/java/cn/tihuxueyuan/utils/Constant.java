@@ -21,6 +21,7 @@ public class Constant {
     public static Music_Activity.MyServiceConn conn1;
 
     private String name;
+    public static  boolean order;
     public static String MusicLiveDataObserverTag = "music_activity_observer";
     public static String CourseListLiveDataObserverTag = "course_list_activity_observer";
     public static Intent intent1, intent2;

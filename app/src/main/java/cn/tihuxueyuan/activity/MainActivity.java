@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +25,9 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.tihuxueyuan.R;
@@ -104,10 +108,13 @@ public class MainActivity extends BaseActivity {
         return null;
     }
 
+    private Context context;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.context = this.getApplicationContext();
         String curProcess = getProcessName(this, android.os.Process.myPid());
 
         if (!TextUtils.equals(curProcess, "cn.tihuxueyuan")) {
@@ -334,6 +341,63 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private View mView;// 显示的view
+    private WindowManager mWM;//窗口管理者
+    private int startX;//坐标
+    private int startY;//坐标
+    private WindowManager.LayoutParams params;
+
+    public void hide() {
+        if (mView != null) {
+            // note: checking parent() just to make sure the view has
+            // been added... i have seen cases where we get here when
+            // the view isn't yet added, so let's try not to crash.
+            //英文意思就是判断之前有没有add，就是有没有显示过自定义的view
+            if (mView.getParent() != null) {
+                mWM.removeView(mView);
+            }
+            //增加严谨性
+            mView = null;
+        }
+    }
+
+    //自定义显示的方法，根据需求传入需要的参数，这里我传入一个String。
+    public void showToast(String addr) {
+        // 每次显示之前 先隐藏（确保界面只有一个view）
+        hide();
+        // 要显示的view（可以任意，根据需求来定）
+        mView = View.inflate(context, R.layout.image_display, null);
+        // 显示内容的view（简单的一个展示，数据是我传入的String）
+        TextView tvAddr = (TextView) mView.findViewById(R.id.float_text);
+        tvAddr.setText(addr);
+        // 设置背景（简单的设置背景，其实你可以任意操作）
+//        mView.setBackgroundResource(R.drawable.bg_addr_normal_shape);
+//        // 设置触摸监听（因为我们一会要拖动他，当然类要实现这个接口）
+//        mView.setOnTouchListener(this);
+
+        // 获取窗口管理器
+        // window 窗口 其实我们的activity dialog toast ...都是显示在窗口上
+        mWM =(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+
+        // 布局参数 在布局里，以layout_开头的属性都是可以可以在代码里设置
+        //下面代码是从toast源码拷贝出来，并做了修改。有兴趣可以自己去看看
+        params = new WindowManager.LayoutParams();
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                // | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE 注释掉 因为我们要实现拖动的功能
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+        params.format = PixelFormat.TRANSLUCENT;
+        // 更改显示级别 需要权限 <uses-permission
+        // android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+//        params.type = WindowManager.LayoutParams.TYPE_PRIORITY_PHONE;
+//        params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        params.type = WindowManager.LayoutParams.TYPE_TOAST;
+        params.setTitle("Toast");
+        // 给窗口添加一个顶级的布局（显示在所有布局之上）（mView我们自己的view）
+        mWM.addView(mView, params);
+    }
+
     private static void registerHomeKeyReceiver(Context context) {
         Log.i(TAG, "registerHomeKeyReceiver 被调用");
         if (appData.mHomeKeyReceiver == null) {
@@ -355,6 +419,8 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         Constant.dbUtils = DBUtils.getInstance(getApplicationContext());
+
+//        showToast("abcd");
     }
 
     @Override

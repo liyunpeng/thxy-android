@@ -30,6 +30,7 @@ import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
 import okhttp3.Call;
@@ -46,11 +47,12 @@ public class CourseListActivity extends BaseActivity {
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
     private AppData appData;
     TextView lastPlayTextView;
-    TextView reverseButton;
+    TextView reverseTextView;
     TextView titleView;
     ImageView imageView;
     private LiveDataBus.BusMutableLiveData<String> courseListActivityLiveData;
 
+    boolean  order = true;
     private void setImageBitMap() {
 //        String url = "http://10.0.2.2:8082/api/fileDownload?fileName=tihuxueyuan.png";
         String url = SPUtils.getImgOrMp3Url(Integer.parseInt(currentCouseId), appData.currentCourseImageFileName);
@@ -74,7 +76,9 @@ public class CourseListActivity extends BaseActivity {
     }
 
 
-    int flag = 0;
+    int createFlag = 0;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +95,7 @@ public class CourseListActivity extends BaseActivity {
         titleView.setText(title);
         this.courseListView = findViewById(R.id.courseList);
         this.lastPlayTextView = findViewById(R.id.last_play);
-        reverseButton = findViewById(R.id.reverse);
+        reverseTextView = findViewById(R.id.reverse);
 
         courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -114,13 +118,29 @@ public class CourseListActivity extends BaseActivity {
 
         courseListActivityObserver();
 
-        reverseButton.setOnClickListener(new View.OnClickListener() {
+
+
+        reverseTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Collections.reverse(mList);
+                if (order == true) {
+                    order = false;
+                    Constant.order = false;
+                    Collections.sort(mList , new ComparatorValues());
+
+                    reverseTextView.setText(" 倒序");
+                }else{
+                    order = true;
+                    Constant.order = true;
+                    Collections.sort(mList , new ComparatorValues());
+
+                    reverseTextView.setText(" 正序");
+                }
+
                 mAdapter.notifyDataSetChanged();
             }
         });
+
 
     }
 
@@ -226,13 +246,20 @@ D/tag1: parseNetworkResponse:
     @Override
     public void onResume() {
         super.onResume();
-        if (flag == 1 && mList != null && mList.size() > appData.currentPostion ) {
+        if (createFlag == 1 && mList != null && mList.size() > appData.currentPostion ) {
             // 从悬浮窗进入音乐界面， 再回到列表界面时，如果是其他课程列表，不刷新
             if (  Integer.parseInt( currentCouseId) == Constant.musicControl.getCurrentCourseId()) {
                 mAdapter.notifyDataSetChanged();
             }
             freshLastPlay();
         }
+
+        if (order == true){
+            reverseTextView.setText("正序");
+        }else{
+            reverseTextView.setText("倒序");
+        }
+
     }
 
     private void courseListActivityObserver() {
@@ -303,7 +330,7 @@ D/tag1: parseNetworkResponse:
 
                 if (percent > 0) {
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
-                    holder.set(R.id.number, courseFile.getNumber(), color);
+                    holder.set(R.id.number, String.valueOf(courseFile.getNumber()), color);
 
                     if (percent == 100) {
                         holder.set(R.id.percent, "已听完", color);
@@ -314,7 +341,7 @@ D/tag1: parseNetworkResponse:
                     holder.getView(R.id.percent).setVisibility(View.VISIBLE);
                 } else {
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
-                    holder.set(R.id.number, courseFile.getNumber(), color);
+                    holder.set(R.id.number, String.valueOf(courseFile.getNumber()), color);
                     holder.set(R.id.percent, "", color);
                     holder.set(R.id.duration, "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
@@ -348,7 +375,8 @@ D/tag1: parseNetworkResponse:
 
 //                Constant.dbUtils.saveCourseFiles();
 
-                flag = 1;
+                createFlag = 1;
+                order = true;
             }
 
             @Override

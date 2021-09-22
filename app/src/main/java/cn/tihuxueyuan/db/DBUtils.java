@@ -79,7 +79,7 @@ public class DBUtils {
             //直接将对应用户名的所有数据从表中动态赋值给bean
             bean.mp3_file_name = cursor.getString(cursor.getColumnIndex("mp3_file_name"));
             bean.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
-            bean.number = cursor.getString(cursor.getColumnIndex("number"));
+            bean.number = cursor.getInt(cursor.getColumnIndex("number"));
             bean.id = cursor.getInt(cursor.getColumnIndex("_id"));
 //            bean.nickName = cursor.getString(cursor.getColumnIndex("nickName"));
 //            bean.sex = cursor.getString(cursor.getColumnIndex("sex"));

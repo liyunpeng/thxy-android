@@ -27,7 +27,7 @@ public class CourseFileList {
         @SerializedName("img_src")
         public String img_src;
         @SerializedName("number")
-        public String number;
+        public int number;
         @SerializedName("course_id")
         public int courseId;
         @SerializedName("listened_percent")
@@ -53,7 +53,7 @@ public class CourseFileList {
             return duration;
         }
 
-        public String getNumber(){
+        public int getNumber(){
             return  number;
         }
 
