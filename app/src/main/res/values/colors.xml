@@ -10,12 +10,13 @@
     <color name="theme_red">#FF0000</color>
     <color name="color_check_bg">#00ff00</color>
 
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="default_shadow_color">#1Aefefef</color>
 
     <color name="colorPrimary">#26252B</color>
     <color name="yellow">#FFEB3B</color>
     <color name="darkBlue">#061042</color>
-    <color name="colorPrimaryDark">#26252B</color>
-    <color name="colorAccent">#D81B60</color>
 
     <!--App主要颜色-->
     <color name="app_color">#26252B</color>

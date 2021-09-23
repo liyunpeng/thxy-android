@@ -19,4 +19,13 @@
         <attr name="pass" format="boolean"></attr>
         <attr name="right_icon" format="reference"></attr>
     </declare-styleable>
+
+    <declare-styleable name="UniversalMediaController">
+        <attr name="uvv_scalable" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="UniversalVideoView">
+        <attr name="uvv_fitXY" format="boolean" />
+        <attr name="uvv_autoRotation" format="boolean" />
+    </declare-styleable>
 </resources>

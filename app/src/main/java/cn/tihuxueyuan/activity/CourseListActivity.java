@@ -118,8 +118,6 @@ public class CourseListActivity extends BaseActivity {
 
         courseListActivityObserver();
 
-
-
         reverseTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,7 +125,6 @@ public class CourseListActivity extends BaseActivity {
                     order = false;
                     Constant.order = false;
                     Collections.sort(mList , new ComparatorValues());
-
                     reverseTextView.setText(" 倒序");
                 }else{
                     order = true;
