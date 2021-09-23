@@ -44,17 +44,17 @@ public class CheckObserver implements LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onAppBackgrounded() {
         Log.d(Constant.TAG, "app进入后台 onAppBackgrounded  调用");
-        if (Constant.floatingControl != null) {
-            Constant.floatingControl.setVisibility(false);
-        }
+//        if (Constant.floatingControl != null) {
+//            Constant.floatingControl.setVisibility(false);
+//        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onAppForegrounded() {
         Log.d(Constant.TAG, "app进入前台 onAppForegrounded  调用");
-        if (Constant.floatingControl != null) {
-            Constant.floatingControl.setVisibility(true);
-        }
+//        if (Constant.floatingControl != null) {
+//            Constant.floatingControl.setVisibility(true);
+//        }
     }
 
 //        @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

@@ -76,9 +76,9 @@ public class MainActivity extends BaseActivity {
                 Log.d(TAG, "onBecameForeground 应用进入前台 ");
 //                Toast.makeText(mContext, "应用进入前台", Toast.LENGTH_SHORT).show();
 
-                if (Constant.floatingControl != null) {
-                    Constant.floatingControl.setVisibility(true);
-                }
+//                if (Constant.floatingControl != null) {
+//                    Constant.floatingControl.setVisibility(true);
+//                }
             }
 
             @Override
@@ -86,9 +86,9 @@ public class MainActivity extends BaseActivity {
                 Log.d(TAG, "onBecameForeground  应用退至后台 ");
 //                Toast.makeText(mContext, "应用宝退至后台", Toast.LENGTH_SHORT).show();
 
-                if (Constant.floatingControl != null) {
-                    Constant.floatingControl.setVisibility(false);
-                }
+//                if (Constant.floatingControl != null) {
+//                    Constant.floatingControl.setVisibility(false);
+//                }
             }
         });
     }

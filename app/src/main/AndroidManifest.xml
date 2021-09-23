@@ -63,6 +63,20 @@
         </activity>
 
 
+
+<!--        <activity android:name="cn.tihuxueyuan.floatview.EggActivity"></activity>-->
+<!--        <activity android:name="cn.tihuxueyuan.floatview.Main3Activity" />-->
+<!--        <activity android:name="cn.tihuxueyuan.floatview.Main2Activity" />-->
+<!--        <activity android:name="cn.tihuxueyuan.floatview.MainActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+
+
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.MainActivity" />
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.RecyclerActivity" />
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.ViewPagerActivity" />
@@ -74,7 +88,6 @@
         <activity android:name="cn.tihuxueyuan.activity.OkhttpClientActivity" />
 
         <receiver android:name=".receiver.NotificationClickReceiver"/>
-        <service android:name="cn.tihuxueyuan.service.FloatingImageDisplayService"></service>
 
         <service
             android:name="cn.tihuxueyuan.service.MusicService"
@@ -95,7 +108,6 @@
 <!--            </intent-filter>-->
 
 <!--        </receiver>-->
-        <service android:name="cn.tihuxueyuan.service.FloatingImageDisplayService"/>
 <!--        <service android:name="cn.tihuxueyuan.float_lib.service.FloatMonkService"/>-->
         <receiver android:name="cn.tihuxueyuan.receiver.HomeReceiver">
         </receiver>

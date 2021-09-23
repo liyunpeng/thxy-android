@@ -13,7 +13,7 @@ public class Main2Activity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main21);
 
         ImageView img = findViewById(R.id.img);
 //        Glide.with(getApplicationContext()).load("https://goss.veer.com/creative/vcg/veer/800water/veer-171124464.jpg")

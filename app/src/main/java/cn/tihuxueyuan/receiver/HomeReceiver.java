@@ -29,9 +29,9 @@ public class HomeReceiver extends BroadcastReceiver {
             if (SYSTEM_DIALOG_REASON_HOME_KEY.equals(reason)) {
                 // 短按Home键
                 Log.i(LOG_TAG, "homekey");
-                if (Constant.floatingControl != null) {
-                    Constant.floatingControl.setVisibility(false);
-                }
+//                if (Constant.floatingControl != null) {
+//                    Constant.floatingControl.setVisibility(false);
+//                }
             } else if (SYSTEM_DIALOG_REASON_RECENT_APPS.equals(reason)) {
                 // 长按Home键 或者 activity切换键
                 Log.i(LOG_TAG, "long press home key or activity switch");

@@ -22,6 +22,7 @@ public class BaseActivity extends AppCompatActivity {
         if (null == floatingView) {
             floatingView = new FloatingView(this);
             floatingView.showFloat();
+//            floatingView.setVisibility(View.INVISIBLE);
             floatingView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

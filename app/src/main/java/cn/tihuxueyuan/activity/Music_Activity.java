@@ -367,7 +367,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     case NEWPLAY:
                         musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
                         name_song.setText(musicTitle);
-                        floatingControl.setText(musicTitle);
+//                        floatingControl.setText(musicTitle);
                         break;
 //                    case CLOSE:
 //                        btnPlay.setIcon(getDrawable(R.mipmap.icon_play));
@@ -421,11 +421,11 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 musicControl.playListened(PLAY);
                 Log.d(Constant.TAG, "musicControl 初始化完成 ");
             } else if (shortClassName.contains("FloatingImageDisplayService")) {
-                Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
-                Constant.floatingControl.initFloatingWindow();
-                Constant.floatingControl.setVisibility(false);
-                Constant.floatingControl.setText(musicTitle);
-                Log.d(Constant.TAG, "floatingControl 初始化完成");
+//                Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
+//                Constant.floatingControl.initFloatingWindow();
+//                Constant.floatingControl.setVisibility(false);
+//                Constant.floatingControl.setText(musicTitle);
+//                Log.d(Constant.TAG, "floatingControl 初始化完成");
             }
         }
 
