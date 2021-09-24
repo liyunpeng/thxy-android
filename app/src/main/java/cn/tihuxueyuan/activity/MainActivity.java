@@ -290,9 +290,9 @@ public class MainActivity extends BaseActivity {
             } else {  //如果两次按下的时间差小于2秒，则退出程序
 //                MyApplication.getInstance().exit();
                 unregisterHomeKeyReceiver(this);
-                if (Constant.floatingControl != null) {
-                    Constant.floatingControl.remove();
-                }
+//                if (Constant.floatingControl != null) {
+//                    Constant.floatingControl.remove();
+//                }
                 if (Constant.musicControl != null) {
                     Constant.musicControl.release();
                 }

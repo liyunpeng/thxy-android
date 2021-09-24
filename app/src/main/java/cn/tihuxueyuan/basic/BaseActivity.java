@@ -32,10 +32,11 @@ public class BaseActivity extends AppCompatActivity {
         floatViewLiveData = LiveDataBus.getInstance().with(Constant.BaseActivityFloatTextViewDataObserverTag, String.class);
         floatViewLiveData.observe(BaseActivity.this, true, new Observer<String>() {
             @Override
-            public void onChanged(String state) {
-                Log.d(Constant.TAG, "floatViewObserver onChanged state= "+ state);
+            public void onChanged(String musicTitle) {
+                Log.d(Constant.TAG, "floatViewObserver onChanged state= "+ musicTitle);
                 if (floatingView != null) {
-                    floatingView.setText(state);
+                    customFloatViewText = musicTitle;
+                    floatingView.setText(musicTitle);
                     floatingView.refreshDrawableState();
                 }
             }
@@ -150,14 +151,6 @@ public class BaseActivity extends AppCompatActivity {
             floatingView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    numberMask++;
-//                    if (numberMask == 3) {
-//                        Toast.makeText(BaseActivity.this, "恭喜你发现了隐藏页面！", Toast.LENGTH_SHORT).show();
-////                        startActivity(new Intent(BaseActivity.this, EggActivity.class));
-//                    } else {
-//                        Toast.makeText(BaseActivity.this, "你点击了", Toast.LENGTH_SHORT).show();
-//                    }
-
                     Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
                     intent.putExtra(Constant.FromIntent, Constant.FloatWindow);
                     intent.putExtra("float_text", customFloatViewText);
