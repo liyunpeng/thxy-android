@@ -9,7 +9,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- for mta statistics, not necessary-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+<!--    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>-->
 <!--    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
 <!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
 
@@ -21,25 +21,25 @@
 
 <!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
 <!--    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />-->
-    <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
+<!--    <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />-->
 
     <!-- 悬浮窗必加权限 -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS" />
+<!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
+<!--    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
+<!--    <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS" />-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+<!--    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 高德天气 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<!--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
+<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+<!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>-->
     <application
         android:allowBackup="true"
         android:icon="@drawable/thxy"

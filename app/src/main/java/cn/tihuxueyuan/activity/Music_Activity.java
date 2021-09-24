@@ -67,6 +67,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             super.onCreate(savedInstanceState);
         }
+
+
         courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, String.class);
 //        if (isBluetoothA2dpOn()) {
 //
@@ -98,12 +100,8 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 ////注销方法
 //        mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
 //
-
-
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD //解锁
-
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON //保持屏幕不息屏
-
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);//点亮屏幕
 
         if (Build.VERSION.SDK_INT > 27) {
@@ -145,8 +143,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
 //            if ( appData.courseFileList == null || appData.courseFileList.size() <= appData.currentPostion ||  appData.courseFileList.get(appData.currentPostion) == null ) {
 //                Log.d(TAG, "从悬浮窗启动的activity");
-//
-//
 //                musicTitle = getIntent().getStringExtra("float_text");
 //            }else{
             Log.d(TAG, " from intent = " +getIntent().getStringExtra(Constant.FromIntent));
@@ -167,10 +163,12 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         }
 
         name_song.setText(musicTitle);
-        if (floatingControl != null) {
-            floatingControl.setText(musicTitle);
-        }
+//        if (floatingControl != null) {
+//            floatingControl.setText(musicTitle);
+//        }
 
+
+        this.floatText = musicTitle;
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
 //            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
 

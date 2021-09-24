@@ -37,13 +37,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Stack;
 
@@ -51,7 +49,6 @@ import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
 import cn.tihuxueyuan.db.DBUtils;
 import cn.tihuxueyuan.globaldata.AppData;
-import cn.tihuxueyuan.listenner.CheckObserver;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.receiver.HomeReceiver;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
@@ -125,18 +122,18 @@ public class MainActivity extends BaseActivity {
 //        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 222);
 
-        right();
-        try {
-            Method forName = Class.class.getDeclaredMethod("forName", String.class);
-            Method getDeclaredMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
-            Class<?> vmRuntimeClass = (Class<?>) forName.invoke(null, "dalvik.system.VMRuntime");
-            Method getRuntime = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "getRuntime", null);
-            Method setHiddenApiExemptions = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "setHiddenApiExemptions", new Class[]{String[].class});
-            Object sVmRuntime = getRuntime.invoke(null);
-            setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{new String[]{"L"}});
-        } catch (Throwable e) {
-            Log.e("[error]", "reflect bootstrap failed:", e);
-        }
+//        getOverlayPermission();
+//        try {
+//            Method forName = Class.class.getDeclaredMethod("forName", String.class);
+//            Method getDeclaredMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
+//            Class<?> vmRuntimeClass = (Class<?>) forName.invoke(null, "dalvik.system.VMRuntime");
+//            Method getRuntime = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "getRuntime", null);
+//            Method setHiddenApiExemptions = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "setHiddenApiExemptions", new Class[]{String[].class});
+//            Object sVmRuntime = getRuntime.invoke(null);
+//            setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{new String[]{"L"}});
+//        } catch (Throwable e) {
+//            Log.e("[error]", "reflect bootstrap failed:", e);
+//        }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         getSupportActionBar().hide();
@@ -196,7 +193,7 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private void right() {
+    private void getOverlayPermission() {
         if (SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(getApplicationContext())) {
                 //启动Activity让用户授权

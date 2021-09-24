@@ -178,6 +178,7 @@ public class MusicService extends Service {
     private AppData appData;
 
     int currentCourseId;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
@@ -452,9 +453,10 @@ public class MusicService extends Service {
             manager.cancel(NOTIFICATION_ID);
         }
 
-        public  int getCurrentCourseId() {
-            return  currentCourseId;
+        public int getCurrentCourseId() {
+            return currentCourseId;
         }
+
         public void playListened(String action) {
             boolean isPlaying = player.isPlaying();
             Log.d(TAG, "播放器是否在播放 isPlaying = " + isPlaying);
@@ -635,6 +637,13 @@ public class MusicService extends Service {
         public boolean isPlaying() {
             return player.isPlaying();
         }
+
+
+        public boolean isActivie() {
+            return player.isLooping();
+        }
+
+
 
         public void seekTo(int progress) {
             player.seekTo(progress);//设置音乐的播放位置

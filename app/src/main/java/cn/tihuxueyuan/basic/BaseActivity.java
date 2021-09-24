@@ -2,6 +2,8 @@ package cn.tihuxueyuan.basic;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.floatview.weight.FloatingView;
 import cn.tihuxueyuan.utils.Constant;
 
@@ -22,6 +25,8 @@ public class BaseActivity extends AppCompatActivity {
     boolean isForeground;
     boolean isRunInBackground;
     int appCount = 0;
+    public String floatText = "123";
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,7 +113,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         String className = this.getLocalClassName();
-        Log.d(Constant.TAG, " name ="+ this.getLocalClassName());
+        Log.d(Constant.TAG, "BaseActivity onResume classname =" + this.getLocalClassName());
 //        if (Constant.floatingControl != null) {
 //            if (className.contains("Music")){
 //                Constant.floatingControl.setVisibility(false);
@@ -119,8 +124,6 @@ public class BaseActivity extends AppCompatActivity {
 
         if (null == floatingView) {
             floatingView = new FloatingView(this);
-            floatingView.showFloat();
-//            floatingView.setVisibility(View.INVISIBLE);
             floatingView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -132,17 +135,33 @@ public class BaseActivity extends AppCompatActivity {
                         Toast.makeText(BaseActivity.this, "你点击了", Toast.LENGTH_SHORT).show();
                     }
 
+                    Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
+                    intent.putExtra(Constant.FromIntent, Constant.FloatWindow);
+                    intent.putExtra("float_text", floatText);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 }
             });
 
+            if (!isFinishing()  && !className.contains("Music")) {
+                floatingView.showFloat();
+            }
+        }
 
+        if (className.contains("Music")) {
+            Log.d(Constant.TAG, " 当前是音乐播放界面， 不显示悬浮窗");
+            // 当前是音乐播放界面， 不显示悬浮窗
+            floatingView.setVisibility(View.GONE);
+        } else {
+            if (Constant.musicControl != null) {
+                //  Constant.musicControl 不空，说明在活跃状态
+                Log.d(Constant.TAG, " Constant.musicControl 不空，说明在活跃状态， 显示悬浮窗");
+                floatingView.setVisibility(View.VISIBLE);
 
-                if (className.contains("Music")){
-                    floatingView.setVisibility(View.INVISIBLE);
-                }else{
-                    floatingView.setVisibility(View.VISIBLE);
-                }
-
+            } else {
+                Log.d(Constant.TAG, " Constant.musicControl 为空，说明不在活跃状态， 不显示悬浮窗");
+                floatingView.setVisibility(View.GONE);
+            }
 
 //            Glide.with(getApplicationContext()).load("https://p26-tt.byteimg.com/origin/pgc-image/6ffb4c43c75749dd9af820028871242b")
 //                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
@@ -160,7 +179,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(Constant.TAG, " onDestroy className ="+ this.getLocalClassName());
+        Log.d(Constant.TAG, " onDestroy className =" + this.getLocalClassName());
     }
 
     @Override

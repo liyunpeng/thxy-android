@@ -67,7 +67,8 @@ public class FloatingView extends RelativeLayout {
         mScreenWidth = ScreenUtils.getScreenWidth(context);
         mScreenHeight = ScreenUtils.getScreenHeight(context);
         mDp167 = (int) ScreenUtils.dp2px(mContext, 167);
-        mDp48 = (int) ScreenUtils.dp2px(mContext, 48);
+//        mDp48 = (int) ScreenUtils.dp2px(mContext, 48);
+        mDp48 = (int) ScreenUtils.dp2px(mContext, 300);
 //        slop = ViewConfigurationCompat.getScaledPagingTouchSlop(ViewConfiguration.get(context));
         slop = 3;
     }
@@ -257,9 +258,10 @@ public class FloatingView extends RelativeLayout {
             mFloatBallParams.x = mFloatBallParamsX;
             mFloatBallParams.y = mFloatBallParamsY;
         }
+
         mWindowManager.addView(this, mFloatBallParams);
         //吸附贴边计算和动画
-        welt();
+//        welt();
     }
 
     /**
