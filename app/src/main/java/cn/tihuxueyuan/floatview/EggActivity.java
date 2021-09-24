@@ -114,7 +114,6 @@ public class EggActivity extends AppCompatActivity implements UniversalVideoView
     }
 
     private void switchActionBar(boolean show) {
-
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             if (show) {

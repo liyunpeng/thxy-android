@@ -2,18 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:layout_alignParentBottom="true"
-
-    android:background="#000000FF"
-
-    >
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="2dp"
+    android:paddingRight="2dp"
+    android:background="@color/darkBlue">
 
     <cn.tihuxueyuan.floatview.weight.ShadowLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:visibility="gone"
         app:sl_dx="1dp"
         app:sl_dy="2dp"
         app:sl_oval="true"
@@ -58,13 +58,17 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"></cn.tihuxueyuan.floatview.weight.GifView>
 
-            <TextView
-                android:id="@+id/custom_float_view__text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1234567"
-                >
-            </TextView>
+
         </RelativeLayout>
     </cn.tihuxueyuan.floatview.weight.ShadowLayout>
+
+    <TextView
+        android:id="@+id/custom_float_view__text"
+        android:textColor="@color/yellow"
+
+        android:layout_width="100dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:gravity="left|center"
+        ></TextView>
 </RelativeLayout>

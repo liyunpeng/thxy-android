@@ -33,8 +33,8 @@ public class FloatingView extends RelativeLayout {
     private ImageView mSdv_cover;
     private TextView customFloatTextView;
     private GifView mGif_float;
-    private int mDp167;
-    private int mDp48;
+    private int floatViewWidth;
+    private int floatViewHeight;
     private boolean mLoading;
     private ValueAnimator mValueAnimator;
     private boolean moveVertical;
@@ -69,9 +69,9 @@ public class FloatingView extends RelativeLayout {
 
         mScreenWidth = ScreenUtils.getScreenWidth(context);
         mScreenHeight = ScreenUtils.getScreenHeight(context);
-        mDp167 = (int) ScreenUtils.dp2px(mContext, 167);
+        floatViewWidth = (int) ScreenUtils.dp2px(mContext, 167);
 //        mDp48 = (int) ScreenUtils.dp2px(mContext, 48);
-        mDp48 = (int) ScreenUtils.dp2px(mContext, 300);
+        floatViewHeight = (int) ScreenUtils.dp2px(mContext, 300);
 //        slop = ViewConfigurationCompat.getScaledPagingTouchSlop(ViewConfiguration.get(context));
         slop = 3;
     }
@@ -90,8 +90,8 @@ public class FloatingView extends RelativeLayout {
                 | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
                 | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            //避免悬浮球被通知栏部分遮挡
-                |WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+                //避免悬浮球被通知栏部分遮挡
+                | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
         mFloatBallParams.dimAmount = 0.2f;
 
 //      mFloatBallParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
@@ -248,22 +248,29 @@ public class FloatingView extends RelativeLayout {
         return mSdv_cover;
     }
 
-    /**
-     * 显示悬浮
-     */
     public void showFloat() {
         mIsShow = true;
-        if (mFloatBallParamsX == -1 || mFloatBallParamsY == -1) {
-            //首次打开时，初始化的位置
-            mFloatBallParams.x = mScreenWidth - mDp48;
-            mFloatBallParams.y = mScreenHeight - mDp167 - mDp48;
+//        if (mFloatBallParamsX == -1 || mFloatBallParamsY == -1) {
+//            //首次打开时，初始化的位置
+//            mFloatBallParams.x = mScreenWidth - mDp48;
+//            mFloatBallParams.y = mScreenHeight - mDp167 - mDp48;
+//
+//            mFloatBallParamsX = mFloatBallParams.x;
+//            mFloatBallParamsY = mFloatBallParams.y;
+//        } else {
+//            mFloatBallParams.x = mFloatBallParamsX;
+//            mFloatBallParams.y = mFloatBallParamsY;
+//        }
+        /*
+                android:layout_width="100dp"
+        android:layout_height="60dp"
+         */
 
-            mFloatBallParamsX = mFloatBallParams.x;
-            mFloatBallParamsY = mFloatBallParams.y;
-        } else {
-            mFloatBallParams.x = mFloatBallParamsX;
-            mFloatBallParams.y = mFloatBallParamsY;
-        }
+        floatViewWidth = (int) ScreenUtils.dp2px(mContext, 100);
+        floatViewHeight = (int) ScreenUtils.dp2px(mContext, 60);
+
+        mFloatBallParams.x = mScreenWidth - floatViewHeight;
+        mFloatBallParams.y = mScreenHeight - floatViewWidth;
 
         mWindowManager.addView(this, mFloatBallParams);
         //吸附贴边计算和动画

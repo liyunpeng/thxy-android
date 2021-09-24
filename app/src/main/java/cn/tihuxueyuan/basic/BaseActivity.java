@@ -1,6 +1,5 @@
 package cn.tihuxueyuan.basic;
 
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,132 +18,29 @@ import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.utils.Constant;
 
 public class BaseActivity extends AppCompatActivity {
-
-    boolean isForeground;
-    boolean isRunInBackground;
-    int appCount = 0;
     public String customFloatViewText = "123";
-
+    private FloatingView floatingView;
     private LiveDataBus.BusMutableLiveData<String> floatViewLiveData;
-
-    private void floatViewObserver() {
-        Log.d(Constant.TAG, " 创建了 floatViewObserver ");
-        floatViewLiveData = LiveDataBus.getInstance().with(Constant.BaseActivityFloatTextViewDataObserverTag, String.class);
-        floatViewLiveData.observe(BaseActivity.this, true, new Observer<String>() {
-            @Override
-            public void onChanged(String musicTitle) {
-                Log.d(Constant.TAG, "floatViewObserver onChanged state= "+ musicTitle);
-                if (floatingView != null) {
-                    customFloatViewText = musicTitle;
-                    floatingView.setText(musicTitle);
-                    floatingView.refreshDrawableState();
-                }
-            }
-        });
-    };
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
-
-
-
-
-//        getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-//            @Override
-//            public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle bundle) {
-//                isForeground = true;
-//            }
-//
-//            @Override
-//            public void onActivityStarted(@NonNull Activity activity) {
-//                if (isForeground) {
-//                    //do nothing
-//                } else {
-////                    long currentTimeMillis = System.currentTimeMillis();
-////                    if ((currentTimeMillis - startSwitchBackgroundTime) > Constants.THREE_MINUTES) {
-////                        sendBroadcast(new Intent(Constants.ACTION_VERIFY_PIN));
-////                    }
-//                }
-//
-//                appCount++;
-//                if (isRunInBackground) {
-//                    Log.d(Constant.TAG, "应用从后台回到前台 需要做的操作");
-////                    back2App(activity);
-//                    isRunInBackground = false;
-//
-////                    if (Constant.floatingControl != null) {
-////                        Constant.floatingControl.setVisibility(true);
-////                    }
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onActivityResumed(@NonNull Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityPaused(@NonNull Activity activity) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityStopped(@NonNull Activity activity) {
-//
-//                appCount--;
-//                if (appCount == 0) {
-//                    //
-////                    leaveApp(activity);
-//                    isRunInBackground = true;
-//                    Log.d(Constant.TAG, "应用进入后台 需要做的操作");
-////                    if (Constant.floatingControl != null) {
-////                        Constant.floatingControl.setVisibility(false);
-////                    }
-//                }
-//
-//
-////                if (UIUtils.isBackground(BaseApplication.this)) {
-////                    isForeground = false;
-////                    startSwitchBackgroundTime = System.currentTimeMillis();
-////                }
-//            }
-//
-//            @Override
-//            public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle bundle) {
-//
-//            }
-//
-//            @Override
-//            public void onActivityDestroyed(@NonNull Activity activity) {
-//
-//            }
-//        });
         String className = this.getLocalClassName();
         if ( !className.contains("Music")) {
             floatViewObserver();
         }
     }
 
-
-    private int numberMask;
-    FloatingView floatingView;
     @Override
     protected void onResume() {
         super.onResume();
+        if (customFloatViewText.contains("123")){
+            customFloatViewText = Constant.currentMusicName;
+        }
         String className = this.getLocalClassName();
         Log.d(Constant.TAG, "BaseActivity onResume classname =" + this.getLocalClassName());
-//        if (Constant.floatingControl != null) {
-//            if (className.contains("Music")){
-//                Constant.floatingControl.setVisibility(false);
-//            }else{
-//                Constant.floatingControl.setVisibility(true);
-//            }
-//        }
-
 
         if (null == floatingView) {
             floatingView = new FloatingView(this);
@@ -158,7 +54,6 @@ public class BaseActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-
             if (!isFinishing() && !className.contains("Music")) {
                 floatingView.showFloat();
             }
@@ -172,7 +67,7 @@ public class BaseActivity extends AppCompatActivity {
             if (Constant.musicControl != null) {
                 //  Constant.musicControl 不空，说明在活跃状态
                 Log.d(Constant.TAG, " Constant.musicControl 不空，说明在活跃状态， 显示悬浮窗, text=" + customFloatViewText);
-//                floatingView.setText(customFloatViewText);
+                floatingView.setText(customFloatViewText);
                 floatingView.setVisibility(View.VISIBLE);
             } else {
                 Log.d(Constant.TAG, " Constant.musicControl 为空，说明不在活跃状态， 不显示悬浮窗");
@@ -186,7 +81,6 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    //
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
@@ -197,6 +91,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d(Constant.TAG, " onDestroy className =" + this.getLocalClassName());
     }
+
 
     @Override
     protected void onStop() {
@@ -210,4 +105,21 @@ public class BaseActivity extends AppCompatActivity {
 //            }
 //        }
     }
+
+    private void floatViewObserver() {
+        Log.d(Constant.TAG, " 创建 floatViewObserver ");
+        floatViewLiveData = LiveDataBus.getInstance().with(Constant.BaseActivityFloatTextViewDataObserverTag, String.class);
+        floatViewLiveData.observe(BaseActivity.this, true, new Observer<String>() {
+            @Override
+            public void onChanged(String musicTitle) {
+                Log.d(Constant.TAG, "悬浮窗Observer = "+ musicTitle);
+                if (floatingView != null) {
+                    customFloatViewText = musicTitle;
+                    floatingView.setText(musicTitle);
+                    floatingView.refreshDrawableState();
+                }
+            }
+        });
+    };
+
 }

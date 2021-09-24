@@ -48,7 +48,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private String musicTitle;
     private Intent intent3;
     private MyServiceConn conn1;
-    private String name;
     private String musicUrl;
     private boolean isUnbind = false; //记录服务是否被解绑
     private AppData appData;
@@ -61,7 +60,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             super.onCreate(savedInstanceState);
         }
-
 
         courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, String.class);
 //        if (isBluetoothA2dpOn()) {
@@ -94,27 +92,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 ////注销方法
 //        mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
 //
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD //解锁
-                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON //保持屏幕不息屏
-                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);//点亮屏幕
 
-        if (Build.VERSION.SDK_INT > 27) {
-            setShowWhenLocked(true);
-
-        } else {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-
-        }
-
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-
-//低调模式, 会隐藏不重要的状态栏图标，https://blog.csdn.net/QQsongQQ/article/details/89312763
-
-        params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
-
-        getWindow().setAttributes(params);
-
-//        setContentView(R.layout.activity_call
 
         appData = Constant.appData;
 
@@ -156,13 +134,13 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             }
         }
 
+//        setLockedScreen();
         name_song.setText(musicTitle);
 //        if (floatingControl != null) {
 //            floatingControl.setText(musicTitle);
 //        }
 
-
-        this.customFloatViewText = musicTitle;
+//        this.customFloatViewText = musicTitle;
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
 //            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
 
@@ -170,12 +148,28 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //        floatLiveData.postValue(PLAY);
     }
 
+    // 设置锁屏显示
+    private void setLockedScreen() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD //解锁
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON //保持屏幕不息屏
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);//点亮屏幕
 
+        if (Build.VERSION.SDK_INT > 27) {
+            setShowWhenLocked(true);
+        } else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        }
+
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+
+//低调模式, 会隐藏不重要的状态栏图标，https://blog.csdn.net/QQsongQQ/article/details/89312763
+        params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
+
+        getWindow().setAttributes(params);
+    }
     @Override
     protected void onStop() {
         super.onStop();
-
-//        Constant.appData.courseFileList.get(Constant.appData.currentPostion).listenedPercent = 50;
 
         // Todo 待定
         Intent intent = new Intent();
@@ -183,7 +177,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         setResult(Activity.RESULT_OK, intent);
 
         SPUtils.sendListenedPerscent();
-
     }
 
     private void bindMusicService() {
@@ -485,28 +478,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //        isUnbind = true;
 //        finish();
     }
-
-//    private void playNextPrevious() {
-//
-//        CourseFileList.CourseFile c = app.mList.get(app.currentPostion);
-//        String musicUrl = c.getMp3url() + "?fileName=" + c.getMp3FileName();
-//        musicControl.init(musicUrl);
-//
-//        new Thread(new Runnable() {
-//            public void run() {
-//                try {
-//                    Thread.sleep(1000);
-//                    musicControl.setText();
-//                    musicControl.play();
-////                        animator.start();
-//                    playPauseView.setImageResource(R.drawable.stop);
-//
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//    }
 }
 
 

@@ -13,14 +13,17 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -51,6 +54,7 @@ import cn.tihuxueyuan.db.DBUtils;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.receiver.HomeReceiver;
+import cn.tihuxueyuan.receiver.MediaButtonReceiver;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.setting.AppConfig;
@@ -107,12 +111,74 @@ public class MainActivity extends BaseActivity {
 
     private Context context;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    private final BroadcastReceiver headSetReceiver = new BroadcastReceiver() {
+        @Override
+
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (action.equals(Intent.ACTION_HEADSET_PLUG)) {
+// phone headset plugged
+
+                if (intent.getIntExtra("state", 0) == 1) {
+// do something
+
+                    Log.d(TAG, "耳机检测：插入");
+
+                    Toast.makeText(context, "耳机检测：插入", Toast.LENGTH_SHORT).show();
+
+
+                    //获得AudioManager对象
+
+
+
+//                    mAudioManager.registerMediaButtonEventReceiver(mComponent);
+
+// phone head unplugged
+
+                } else {
+// do something
+
+                    Log.d(TAG, "耳机检测：没有插入");
+
+                    Toast.makeText(context, "耳机检测：没有插入", Toast.LENGTH_SHORT).show();
+
+//                    mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
+
+                }
+
+            }
+
+        }
+    };
+
+//    AudioManager mAudioManager;
+//    ComponentName mComponent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        if (SDK_INT >= Build.VERSION_CODES.Q) {
+            super.onCreate(savedInstanceState);
+        }
         this.context = this.getApplicationContext();
-        String curProcess = getProcessName(this, android.os.Process.myPid());
+//         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//
+////构造一个ComponentName，指向MediaoButtonReceiver类
+//        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
+//
+////注册一个MediaButtonReceiver广播监听
+////        mAudioManager.registerMediaButtonEventReceiver(mComponent);
+//
+////        mAudioManager.registerMediaButtonEventReceiver(mComponent);
+//
+//        registerReceiver(headSetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+
+
+//        mAudioManager.registerAudioDeviceCallback();
+//注销方法
+//        mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
+
+        String curProcess = getProcessName(this, Process.myPid());
 
         if (!TextUtils.equals(curProcess, "cn.tihuxueyuan")) {
             return;
@@ -150,14 +216,14 @@ public class MainActivity extends BaseActivity {
 
         String appId = "android_" + AppConfig.getVersionName(MainActivity.this) + "_" + AppConfig.getAppMetaData(MainActivity.this, "UMENG_CHANNEL");
 
-        Log.d(Constant.TAG, "onCreate: id:" + appId);
+        Log.d(TAG, "onCreate: id:" + appId);
 
-        Constant.appData = (AppData) getApplication();
+        appData = (AppData) getApplication();
 
         registerHomeKeyReceiver(this);
         registerMusicReceiver();
 
-        Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
+        logcatHelper = LogcatHelper.getInstance(getApplicationContext());
         logcatHelper.start();
 //        getApplication() .addObserver(new CheckObserver());
 
@@ -374,7 +440,7 @@ public class MainActivity extends BaseActivity {
 
         // 获取窗口管理器
         // window 窗口 其实我们的activity dialog toast ...都是显示在窗口上
-        mWM =(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        mWM = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
         // 布局参数 在布局里，以layout_开头的属性都是可以可以在代码里设置
         //下面代码是从toast源码拷贝出来，并做了修改。有兴趣可以自己去看看
@@ -396,13 +462,22 @@ public class MainActivity extends BaseActivity {
     }
 
     private static void registerHomeKeyReceiver(Context context) {
+
+
         Log.i(TAG, "registerHomeKeyReceiver 被调用");
         if (appData.mHomeKeyReceiver == null) {
             Log.i(TAG, "保证只注册一次 home 键的receiver ");
             appData.mHomeKeyReceiver = new HomeReceiver();
-            final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+//            final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+            final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
+            homeFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);
+            homeFilter.addAction(Intent.ACTION_MEDIA_CHECKING);
+            homeFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
+            homeFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
+            homeFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
             context.registerReceiver(appData.mHomeKeyReceiver, homeFilter);
         }
+
     }
 
     private static void unregisterHomeKeyReceiver(Context context) {
