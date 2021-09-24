@@ -57,6 +57,7 @@
                 android:layout_gravity="center"></cn.tihuxueyuan.floatview.weight.GifView>
 
             <TextView
+                android:id="@+id/custom_float_view__text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1234567"

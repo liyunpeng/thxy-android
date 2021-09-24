@@ -1,9 +1,7 @@
 package cn.tihuxueyuan.activity;
 
-import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
 import static java.lang.Integer.parseInt;
 
-import static cn.tihuxueyuan.utils.Constant.CLOSE;
 import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.PLAY;
@@ -15,10 +13,8 @@ import static cn.tihuxueyuan.utils.Constant.musicControl;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,7 +28,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import cn.tihuxueyuan.R;
@@ -40,7 +35,6 @@ import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
-import cn.tihuxueyuan.receiver.MediaButtonReceiver;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.utils.Constant;
@@ -168,7 +162,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 //        }
 
 
-        this.floatText = musicTitle;
+        this.customFloatViewText = musicTitle;
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
 //            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
 
@@ -365,6 +359,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     case NEWPLAY:
                         musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
                         name_song.setText(musicTitle);
+
 //                        floatingControl.setText(musicTitle);
                         break;
 //                    case CLOSE:

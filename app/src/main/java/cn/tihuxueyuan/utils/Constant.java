@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 
 import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.db.DBUtils;
+import cn.tihuxueyuan.floatview.weight.FloatingView;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
@@ -23,10 +24,12 @@ public class Constant {
     private String name;
     public static  boolean order;
     public static String MusicLiveDataObserverTag = "music_activity_observer";
+    public static String BaseActivityFloatTextViewDataObserverTag = "base_activity_float_observer";
     public static String CourseListLiveDataObserverTag = "course_list_activity_observer";
     public static Intent intent1, intent2;
     public static String FromIntent = "from_intent";
     public static String FloatWindow = "float_window";
+    public static String currentMusicName = null;
     public static AppData appData;
     public static FloatingImageDisplayService.FloatingControl floatingControl;
     public static MusicService.MusicControl musicControl;
@@ -36,6 +39,8 @@ public class Constant {
     public static LogcatHelper logcatHelper;
     public static DBUtils dbUtils;
     public static final String TAG = "thxy";
+
+//    public static FloatingView floatingView = null;
     /**
      * 歌曲播放
      */

@@ -57,6 +57,7 @@ public class MusicService extends Service {
      * 通知栏控制Activity页面UI
      */
     private LiveDataBus.BusMutableLiveData<String> musicActivityLiveData;
+    private LiveDataBus.BusMutableLiveData<String> baseActivityFloatLiveData;
     /**
      * 通知
      */
@@ -196,6 +197,7 @@ public class MusicService extends Service {
                 int percent = appData.courseFileMap.get(appData.currentCourseFileId).getListenedPercent();
                 currentCourseId = appData.courseFileMap.get(appData.currentCourseFileId).getCourseId();
                 String fileName = appData.courseFileMap.get(appData.currentCourseFileId).getFileName();
+                Constant.currentMusicName = SPUtils.getTitleFromName(fileName);
                 if (pos > 0) {
                     Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
                     if (percent == 100) {
@@ -208,8 +210,10 @@ public class MusicService extends Service {
                 player.start();
                 musicControl.setText();
                 addTimer();
+
                 // 在播放器状态确定好之后，再显示通知栏，以保证应用界面和通知栏按钮状态一致
-                updateNotificationShow(appData.currentPostion);
+                updateNotificationShow(Constant.currentMusicName);
+                baseActivityFloatLiveData.postValue(Constant.currentMusicName);
                 musicActivityLiveData.postValue(NEWPLAY);
             }
         });
@@ -276,6 +280,7 @@ public class MusicService extends Service {
                 }
         );
         musicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
+        baseActivityFloatLiveData = LiveDataBus.getInstance().with(Constant.BaseActivityFloatTextViewDataObserverTag, String.class);
     }
 
     /**
@@ -353,7 +358,7 @@ public class MusicService extends Service {
                 .build();
     }
 
-    public void updateNotificationShow(int position) {
+    public void updateNotificationShow(String musicTitle) {
         if (player.isPlaying()) {
             remoteViews.setImageViewResource(R.id.btn_notification_play, R.drawable.pause_black);
         } else {
@@ -362,7 +367,7 @@ public class MusicService extends Service {
         //封面专辑
         remoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
 
-        remoteViews.setTextViewText(R.id.tv_notification_song_name, SPUtils.getTitleFromName(appData.courseFileList.get(position).getFileName()));
+        remoteViews.setTextViewText(R.id.tv_notification_song_name, musicTitle);
 
         //歌手名
 //        remoteViews.setTextViewText(R.id.tv_notification_singer, mList.get(position).getSinger());
@@ -611,27 +616,33 @@ public class MusicService extends Service {
         public void play() {
             player.start();
             addTimer();
-            musicActivityLiveData.postValue(PLAY);
-            updateNotificationShow(appData.currentPostion);
+            updateOtherActivity(PLAY);
         }
 
         public void pause() {
             player.pause();
-            musicActivityLiveData.postValue(PAUSE);
-            updateNotificationShow(appData.currentPostion);
+            updateOtherActivity(PAUSE);
         }
 
         public void playOrPause() {
             Log.d(TAG, "playOrPause 调用 ");
+
+            String action;
             if (player.isPlaying()) {
                 player.pause();
-                musicActivityLiveData.postValue(PAUSE);
+                action = PAUSE;
             } else {
                 player.start();
                 addTimer();
-                musicActivityLiveData.postValue(PLAY);
+                action = PLAY;
             }
-            updateNotificationShow(appData.currentPostion);
+            updateOtherActivity(action);
+        }
+
+        private void updateOtherActivity(String action) {
+            musicActivityLiveData.postValue(action);
+            baseActivityFloatLiveData.postValue(Constant.currentMusicName);
+            updateNotificationShow(Constant.currentMusicName);
         }
 
         public boolean isPlaying() {
@@ -642,7 +653,6 @@ public class MusicService extends Service {
         public boolean isActivie() {
             return player.isLooping();
         }
-
 
 
         public void seekTo(int progress) {

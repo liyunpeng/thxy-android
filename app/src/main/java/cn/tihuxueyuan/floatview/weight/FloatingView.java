@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.floatview.utils.ScreenUtils;
@@ -30,6 +31,7 @@ public class FloatingView extends RelativeLayout {
     private int mScreenWidth;
     private boolean mIsShow;
     private ImageView mSdv_cover;
+    private TextView customFloatTextView;
     private GifView mGif_float;
     private int mDp167;
     private int mDp48;
@@ -58,6 +60,7 @@ public class FloatingView extends RelativeLayout {
         inflate(context, R.layout.floating_view, this);
 
         mSdv_cover = findViewById(R.id.sdv_cover);
+        customFloatTextView = (TextView) findViewById(R.id.custom_float_view__text);
         mGif_float = findViewById(R.id.gif_float);
         mGif_float.setOnShot(false);
         mGif_float.setGifResource(R.mipmap.mailgif);
@@ -71,6 +74,10 @@ public class FloatingView extends RelativeLayout {
         mDp48 = (int) ScreenUtils.dp2px(mContext, 300);
 //        slop = ViewConfigurationCompat.getScaledPagingTouchSlop(ViewConfiguration.get(context));
         slop = 3;
+    }
+
+    public void setText(String text) {
+        customFloatTextView.setText(text);
     }
 
     /**
@@ -196,7 +203,6 @@ public class FloatingView extends RelativeLayout {
         }
         mValueAnimator.setDuration(Math.abs(duration));
         mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 Integer level = (Integer) animation.getAnimatedValue();
@@ -278,7 +284,6 @@ public class FloatingView extends RelativeLayout {
         mFloatBallParamsX = mFloatBallParams.x;
         mFloatBallParamsY = mFloatBallParams.y;
     }
-
 
     private void loadData() {
         if (mLoading) {

@@ -146,8 +146,6 @@ public class FloatingImageDisplayService extends Service {
 //            ((TextView) displayView.findViewById(R.id.float_text)).setText(s);
         }
 
-
-
         public void setText(String musicTitle) {
             floatText = musicTitle;
             ((TextView) displayView.findViewById(R.id.float_text)).setText(musicTitle);

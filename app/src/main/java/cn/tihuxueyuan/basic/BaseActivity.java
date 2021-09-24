@@ -1,23 +1,21 @@
 package cn.tihuxueyuan.basic;
 
-import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
 import cn.tihuxueyuan.activity.Music_Activity;
 import cn.tihuxueyuan.floatview.weight.FloatingView;
+import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.utils.Constant;
 
 public class BaseActivity extends AppCompatActivity {
@@ -25,13 +23,33 @@ public class BaseActivity extends AppCompatActivity {
     boolean isForeground;
     boolean isRunInBackground;
     int appCount = 0;
-    public String floatText = "123";
+    public String customFloatViewText = "123";
+
+    private LiveDataBus.BusMutableLiveData<String> floatViewLiveData;
+
+    private void floatViewObserver() {
+        Log.d(Constant.TAG, " 创建了 floatViewObserver ");
+        floatViewLiveData = LiveDataBus.getInstance().with(Constant.BaseActivityFloatTextViewDataObserverTag, String.class);
+        floatViewLiveData.observe(BaseActivity.this, true, new Observer<String>() {
+            @Override
+            public void onChanged(String state) {
+                Log.d(Constant.TAG, "floatViewObserver onChanged state= "+ state);
+                if (floatingView != null) {
+                    floatingView.setText(state);
+                    floatingView.refreshDrawableState();
+                }
+            }
+        });
+    };
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
+
+
+
 
 //        getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
 //            @Override
@@ -104,11 +122,15 @@ public class BaseActivity extends AppCompatActivity {
 //
 //            }
 //        });
+        String className = this.getLocalClassName();
+        if ( !className.contains("Music")) {
+            floatViewObserver();
+        }
     }
 
-    private FloatingView floatingView;
-    private int numberMask;
 
+    private int numberMask;
+    FloatingView floatingView;
     @Override
     protected void onResume() {
         super.onResume();
@@ -122,28 +144,29 @@ public class BaseActivity extends AppCompatActivity {
 //            }
 //        }
 
+
         if (null == floatingView) {
             floatingView = new FloatingView(this);
             floatingView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    numberMask++;
-                    if (numberMask == 3) {
-                        Toast.makeText(BaseActivity.this, "恭喜你发现了隐藏页面！", Toast.LENGTH_SHORT).show();
-//                        startActivity(new Intent(BaseActivity.this, EggActivity.class));
-                    } else {
-                        Toast.makeText(BaseActivity.this, "你点击了", Toast.LENGTH_SHORT).show();
-                    }
+//                    numberMask++;
+//                    if (numberMask == 3) {
+//                        Toast.makeText(BaseActivity.this, "恭喜你发现了隐藏页面！", Toast.LENGTH_SHORT).show();
+////                        startActivity(new Intent(BaseActivity.this, EggActivity.class));
+//                    } else {
+//                        Toast.makeText(BaseActivity.this, "你点击了", Toast.LENGTH_SHORT).show();
+//                    }
 
                     Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
                     intent.putExtra(Constant.FromIntent, Constant.FloatWindow);
-                    intent.putExtra("float_text", floatText);
+                    intent.putExtra("float_text", customFloatViewText);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
             });
 
-            if (!isFinishing()  && !className.contains("Music")) {
+            if (!isFinishing() && !className.contains("Music")) {
                 floatingView.showFloat();
             }
         }
@@ -155,9 +178,9 @@ public class BaseActivity extends AppCompatActivity {
         } else {
             if (Constant.musicControl != null) {
                 //  Constant.musicControl 不空，说明在活跃状态
-                Log.d(Constant.TAG, " Constant.musicControl 不空，说明在活跃状态， 显示悬浮窗");
+                Log.d(Constant.TAG, " Constant.musicControl 不空，说明在活跃状态， 显示悬浮窗, text=" + customFloatViewText);
+//                floatingView.setText(customFloatViewText);
                 floatingView.setVisibility(View.VISIBLE);
-
             } else {
                 Log.d(Constant.TAG, " Constant.musicControl 为空，说明不在活跃状态， 不显示悬浮窗");
                 floatingView.setVisibility(View.GONE);
