@@ -1,21 +1,28 @@
 package cn.tihuxueyuan.utils;
 
+import static cn.tihuxueyuan.globaldata.AppData.notificationBitMap;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.BitmapCallback;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.service.MusicService;
+import okhttp3.Call;
 
 public class SPUtils {
     private static final String NAME = "config";
@@ -25,7 +32,7 @@ public class SPUtils {
 
         // 从其他列表课程的悬浮穿 进入音乐播放界面，currentPostion 大于了Constant.appData.courseFileList.size， 导致报错
         // todo : 考虑在什么适合时间 调用用sendListenedPerscent， 现在都是在音乐播放页面 的onstop调用
-        if  (  Constant.appData.courseFileList.size() <= Constant.appData.currentPostion ) {
+        if (Constant.appData.courseFileList.size() <= Constant.appData.currentPostion) {
             Log.d(TAG, " sendListenedPerscent 出错，原因：Constant.appData.courseFileList.size() <= Constant.appData.currentPostion ");
             return;
         }
@@ -58,7 +65,7 @@ public class SPUtils {
         sp.edit().putBoolean(key, value).commit();
     }
 
-//    public static void f() {
+    //    public static void f() {
 //        // 获得缓存文件路径，磁盘空间不足或清除缓存时数据会被删掉，一般存放一些临时文件
 //// /data/data/<application package>/cache目录
 //        File cacheDir = getCacheDir();
@@ -207,7 +214,7 @@ public class SPUtils {
 
         if (fileType.contains("mp3") != true && fileType.contains("MP3") != true && fileType.contains("Mp3") != true) {
             fileType = "img";
-        }else{
+        } else {
             fileType = "mp3";
         }
         String imgOrMp3Url = appData.baseUrl + appData.mp3SourceRouter +
@@ -229,14 +236,47 @@ public class SPUtils {
         }
     }
 
-    public static int findPositionByFileId( int fileId)  {
-        int position = 0 ;
+    public static int findPositionByFileId(int fileId) {
+        int position = 0;
         for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
-            if( c.getId() == fileId ) {
+            if (c.getId() == fileId) {
                 return position;
             }
             position++;
         }
         return 0;
+    }
+
+    public static void httpGetCourseImage(ImageView imageView) {
+//        String url = "http://10.0.2.2:8082/api/fileDownload?fileName=tihuxueyuan.png";
+//        String url = SPUtils.getImgOrMp3Url(Integer.parseInt(currentCouseId), appData.currentCourseImageFileName);
+        AppData appData = Constant.appData;
+        String url = SPUtils.getImgOrMp3Url(appData.currentCourseId, appData.currentCourseImageFileName);
+        Log.d(Constant.TAG, "httpGetCourseImage 调用， 加载课程图片的url=" + url);
+//        OkHttpUtils.get().url(url).tag(this)
+        OkHttpUtils.get().url(url)
+                .build()
+                .connTimeOut(20000).readTimeOut(20000).writeTimeOut(20000)
+                .execute(new BitmapCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        Log.d(Constant.TAG, "加载网络图片失败, 图片url=" + url);
+                    }
+
+                    @Override
+                    public void onResponse(Bitmap bitmap, int id) {
+                        Log.d(Constant.TAG, "加载网络图片成功,图片url=" + url);
+                        notificationBitMap = bitmap;
+
+                        if (imageView != null) {
+                            imageView.setImageBitmap(bitmap);
+                        } else {
+                            if (MusicService.notificationRemoteViews != null) {
+                                MusicService.notificationRemoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
+                                MusicService.notificationManager.notify();
+                            }
+                        }
+                    }
+                });
     }
 }

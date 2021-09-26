@@ -7,6 +7,7 @@ import static cn.tihuxueyuan.utils.Constant.musicControl;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.AdapterView;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
 
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -41,8 +43,9 @@ import java.util.List;
 
 public class CourseListActivity extends BaseActivity {
     private android.widget.ListView courseListView;
-    private String currentCouseId;
+    private int currentCouseId;
     private String title;
+    int createFlag = 0;
     private CommonAdapter<CourseFile> mAdapter;
     public List<CourseFileList.CourseFile> mList = new ArrayList<>();
     private AppData appData;
@@ -52,46 +55,26 @@ public class CourseListActivity extends BaseActivity {
     ImageView imageView;
     private LiveDataBus.BusMutableLiveData<String> courseListActivityLiveData;
 
-    boolean  order = true;
-    private void setImageBitMap() {
-//        String url = "http://10.0.2.2:8082/api/fileDownload?fileName=tihuxueyuan.png";
-        String url = SPUtils.getImgOrMp3Url(Integer.parseInt(currentCouseId), appData.currentCourseImageFileName);
-        Log.d(Constant.TAG, "课程图片 url=" + url);
-        OkHttpUtils.get().url(url).tag(this)
-                .build()
-                .connTimeOut(20000).readTimeOut(20000).writeTimeOut(20000)
-                .execute(new BitmapCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        Log.d(Constant.TAG, "加载网络图片失败, 图片url=" + url);
-                    }
-
-                    @Override
-                    public void onResponse(Bitmap bitmap, int id) {
-                        Log.d(Constant.TAG, "加载网络图片成功" + url);
-                        notificationBitMap = bitmap;
-                        imageView.setImageBitmap(bitmap);
-                    }
-                });
-    }
-
-
-    int createFlag = 0;
+    boolean order = true;
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.course_list_activity);
 
         Log.d(TAG, "CourseListActivity 创建， 调用oncreate");
-        currentCouseId = getIntent().getStringExtra("course_id");
+        currentCouseId = getIntent().getIntExtra("course_id", 0);
         title = getIntent().getStringExtra("title");
+
+        appData = (AppData) getApplication();
+        appData.currentCourseId = this.currentCouseId;
+
         this.titleView = findViewById(R.id.course_title);
         this.imageView = findViewById(R.id.course_image);
 
-        setImageBitMap();
         titleView.setText(title);
         this.courseListView = findViewById(R.id.courseList);
         this.lastPlayTextView = findViewById(R.id.last_play);
@@ -110,35 +93,31 @@ public class CourseListActivity extends BaseActivity {
             }
         });
 
-        appData = (AppData) getApplication();
 
         ActivityManager.setCurrentActivity(CourseListActivity.this);
-        网络获取课程列表文件();
+        httpGetCourseFiles();
         Log.d("tag2", "onCreate: currentCouseId: " + currentCouseId);
 
         courseListActivityObserver();
-
         reverseTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (order == true) {
                     order = false;
                     Constant.order = false;
-                    Collections.sort(mList , new ComparatorValues());
+                    Collections.sort(mList, new ComparatorValues());
                     reverseTextView.setText(" 倒序");
-                }else{
+                } else {
                     order = true;
                     Constant.order = true;
-                    Collections.sort(mList , new ComparatorValues());
-
+                    Collections.sort(mList, new ComparatorValues());
                     reverseTextView.setText(" 正序");
                 }
 
                 mAdapter.notifyDataSetChanged();
             }
         });
-
-
+        SPUtils.httpGetCourseImage(imageView);
     }
 
     @Override
@@ -156,7 +135,8 @@ public class CourseListActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        appData.lastCourseId = Integer.parseInt(currentCouseId);
+//        appData.lastCourseId = Integer.parseInt(currentCouseId);
+        appData.lastCourseId = currentCouseId;
     }
 
     @Override
@@ -195,10 +175,11 @@ public class CourseListActivity extends BaseActivity {
 
     private void freshLastPlay() {
 //        if ( appData.lastCourseId == -1  && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
-        if (lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
+//        if (lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
+        if (lastListenedCourseFileId >= 0 && appData.lastCourseId != currentCouseId) {
             Log.d(TAG, " freshLastPlay 准备设置为 可见 ");
             if (musicControl != null) {
-                if (Integer.parseInt(currentCouseId) != musicControl.getCurrentCourseId()) {
+                if (currentCouseId != musicControl.getCurrentCourseId()) {
                     Log.d(TAG, " freshLastPlay 当前课程列表的courseId  和 当前正在播放的courseId 不同， 设置为可见");
                     String lastTitle = SPUtils.getTitleFromName(appData.courseFileMap.get(lastListenedCourseFileId).getFileName());
                     lastPlayTextView.setText("上次播放: " + lastTitle);
@@ -243,17 +224,17 @@ D/tag1: parseNetworkResponse:
     @Override
     public void onResume() {
         super.onResume();
-        if (createFlag == 1 && mList != null && mList.size() > appData.currentPostion ) {
+        if (createFlag == 1 && mList != null && mList.size() > appData.currentPostion) {
             // 从悬浮窗进入音乐界面， 再回到列表界面时，如果是其他课程列表，不刷新
-            if (  Integer.parseInt( currentCouseId) == Constant.musicControl.getCurrentCourseId()) {
+            if (currentCouseId == Constant.musicControl.getCurrentCourseId()) {
                 mAdapter.notifyDataSetChanged();
             }
             freshLastPlay();
         }
 
-        if (order == true){
+        if (order == true) {
             reverseTextView.setText("正序");
-        }else{
+        } else {
             reverseTextView.setText("倒序");
         }
 
@@ -306,7 +287,7 @@ D/tag1: parseNetworkResponse:
                 int percent = courseFile.getListenedPercent();
                 String duration = courseFile.getDuration();
                 int color = Color.parseColor("#000000");
-                if (Integer.parseInt(currentCouseId) == appData.currentMusicCourseId &&
+                if (currentCouseId == appData.currentMusicCourseId &&
                         appData.currentPostion >= 0 && Constant.appData.currentPostion < Constant.appData.courseFileList.size()
                 ) {
                     if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId) != null) {
@@ -355,7 +336,7 @@ D/tag1: parseNetworkResponse:
 
     int lastListenedCourseFileId;
 
-    public void 网络获取课程列表文件() {
+    public void httpGetCourseFiles() {
         HttpClient.getCourseFilesByCourseId(currentCouseId, new HttpCallback<CourseFileList>() {
             @Override
             public void onSuccess(CourseFileList response) {

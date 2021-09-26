@@ -20,7 +20,7 @@ public class CourseList {
         @SerializedName("title")
         private String title;
         @SerializedName("id")
-        private String id;
+        private int id;
         @SerializedName("img_file_name")
         private String ImgFileName;
         @SerializedName("store_path")
@@ -47,7 +47,7 @@ public class CourseList {
 //            this.artistname = artistname;
 //        }
 
-        public String getId() {
+        public int getId() {
             return id;
         }
 

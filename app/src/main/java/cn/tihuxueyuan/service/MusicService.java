@@ -52,47 +52,24 @@ import java.util.TimerTask;
 public class MusicService extends Service {
     public MediaPlayer player;
     public Timer timer;
-
-    /**
-     * 通知栏控制Activity页面UI
-     */
     private LiveDataBus.BusMutableLiveData<String> musicActivityLiveData;
     private LiveDataBus.BusMutableLiveData<String> baseActivityFloatLiveData;
-    /**
-     * 通知
-     */
     private static Notification notification;
-    /**
-     * 通知栏视图
-     */
-    private static RemoteViews remoteViews;
-    /**
-     * 通知ID
-     */
+    public static RemoteViews notificationRemoteViews;
     private int NOTIFICATION_ID = 1;
-    /**
-     * 通知管理器
-     */
-    private static NotificationManager manager;
+    public static NotificationManager notificationManager;
 
     private class NoisyAudioStreamReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
 
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
-
+                Log.d(TAG, "ACTION_AUDIO_BECOMING_NOISY 触发 ");
                 // Pause the playback
             }
-
         }
-
     }
 
-    ;
-    /**
-     * 音乐广播接收器
-     */
     NoisyAudioStreamReceiver myNoisyAudioStreamReceiver;
 
     public MusicService() {
@@ -107,45 +84,34 @@ public class MusicService extends Service {
         registerReceiver(myNoisyAudioStreamReceiver, intentFilter);
     }
 
-
     private void stopPlayback() {
 
         unregisterReceiver(myNoisyAudioStreamReceiver);
-
     }
 
     AudioManager.OnAudioFocusChangeListener afChangeListener =
-
             new AudioManager.OnAudioFocusChangeListener() {
-
                 public void onAudioFocusChange(int focusChange) {
                     if (focusChange == AUDIOFOCUS_LOSS_TRANSIENT) {
-                        Log.d(TAG, " AUDIOFOCUS_LOSS_TRANSIENT 事件");
+                        Log.d(TAG, " AUDIOFOCUS_LOSS_TRANSIENT 事件，音乐暂停 ");
                         // Pause playback
                         musicControl.pause();
                     } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-                        Log.d(TAG, " AUDIOFOCUS_GAIN 事件");
+                        Log.d(TAG, " AUDIOFOCUS_GAIN 事件, 音乐播放");
                         musicControl.play();
                         // Resume playback
                     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                        Log.d(TAG, " AUDIOFOCUS_LOSS 事件");
+                        Log.d(TAG, " AUDIOFOCUS_LOSS 事件, 音乐暂停");
 //                        am.unregisterMediaButtonEventReceiver(RemoteControlReceiver);
 
                         audioManager.abandonAudioFocus(afChangeListener);
 // Stop playback
                         musicControl.pause();
-                    }
-
-                    if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-
+                    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                        Log.d(TAG, " AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK 事件, 无动作");
 // Lower the volume
 
-                    } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-
-// Raise it back to normal
-
                     }
-
                 }
 
             };
@@ -301,27 +267,27 @@ public class MusicService extends Service {
      * 初始化自定义通知栏 的按钮点击事件
      */
     private void initNotificationRemoteViews() {
-        remoteViews = new RemoteViews(this.getPackageName(), R.layout.notification);
+        notificationRemoteViews = new RemoteViews(this.getPackageName(), R.layout.notification);
 
         //通知栏控制器上一首按钮广播操作
         Intent intentPrev = new Intent(PREV);
         PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 0, intentPrev, 0);
-        remoteViews.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
+        notificationRemoteViews.setOnClickPendingIntent(R.id.btn_notification_previous, prevPendingIntent);
 
         //通知栏控制器播放暂停按钮广播操作  //用于接收广播时过滤意图信息
         Intent intentPlay = new Intent(PLAY);
         PendingIntent playPendingIntent = PendingIntent.getBroadcast(this, 0, intentPlay, 0);
-        remoteViews.setOnClickPendingIntent(R.id.btn_notification_play, playPendingIntent);
+        notificationRemoteViews.setOnClickPendingIntent(R.id.btn_notification_play, playPendingIntent);
 
         //通知栏控制器下一首按钮广播操作
         Intent intentNext = new Intent(NEXT);
         PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 0, intentNext, 0);
-        remoteViews.setOnClickPendingIntent(R.id.btn_notification_next, nextPendingIntent);
+        notificationRemoteViews.setOnClickPendingIntent(R.id.btn_notification_next, nextPendingIntent);
 
         //通知栏控制器关闭按钮广播操作
         Intent intentClose = new Intent(CLOSE);
         PendingIntent closePendingIntent = PendingIntent.getBroadcast(this, 0, intentClose, 0);
-        remoteViews.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
+        notificationRemoteViews.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
     }
 
     /**
@@ -340,9 +306,6 @@ public class MusicService extends Service {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        /*
-
-         */
         //初始化通知
         notification = new NotificationCompat.Builder(this, "play_control")
                 .setContentIntent(pendingIntent)
@@ -350,7 +313,7 @@ public class MusicService extends Service {
                 .setPriority(Notification.PRIORITY_MAX)
                 .setSmallIcon(R.mipmap.goods)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                .setCustomContentView(remoteViews)
+                .setCustomContentView(notificationRemoteViews)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setAutoCancel(false)
                 .setOnlyAlertOnce(true)
@@ -360,19 +323,24 @@ public class MusicService extends Service {
 
     public void updateNotificationShow(String musicTitle) {
         if (player.isPlaying()) {
-            remoteViews.setImageViewResource(R.id.btn_notification_play, R.drawable.pause_black);
+            notificationRemoteViews.setImageViewResource(R.id.btn_notification_play, R.drawable.pause_black);
         } else {
-            remoteViews.setImageViewResource(R.id.btn_notification_play, R.drawable.play_black);
+            notificationRemoteViews.setImageViewResource(R.id.btn_notification_play, R.drawable.play_black);
         }
-        //封面专辑
-        remoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
 
-        remoteViews.setTextViewText(R.id.tv_notification_song_name, musicTitle);
+        if (currentCourseId != appData.lastCourseId) {
+            Log.d(TAG, " 更新通知栏 当前currentCourseId 与上次 记录的 courseId 不同，走网络获取图片");
+            SPUtils.httpGetCourseImage(null);
+        } else {
+            notificationRemoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
+        }
+
+        notificationRemoteViews.setTextViewText(R.id.tv_notification_song_name, musicTitle);
 
         //歌手名
 //        remoteViews.setTextViewText(R.id.tv_notification_singer, mList.get(position).getSinger());
-        //发送通知
-        manager.notify(NOTIFICATION_ID, notification);
+
+        notificationManager.notify(NOTIFICATION_ID, notification);
 
         Log.d(TAG, "显示通知栏完成  ");
     }
@@ -385,39 +353,23 @@ public class MusicService extends Service {
         channel.enableVibration(false);
         channel.setVibrationPattern(new long[]{0});
         channel.setSound(null, null);
-        manager = (NotificationManager) getSystemService(
+        notificationManager = (NotificationManager) getSystemService(
                 NOTIFICATION_SERVICE);
-        manager.createNotificationChannel(channel);
+        notificationManager.createNotificationChannel(channel);
     }
 
-    /**
-     * 关闭音乐通知栏
-     */
     public void closeNotification() {
         if (player != null) {
             if (player.isPlaying()) {
                 player.pause();
             }
         }
-        manager.cancel(NOTIFICATION_ID);
+        notificationManager.cancel(NOTIFICATION_ID);
 
         musicActivityLiveData.postValue(CLOSE);
     }
 
 
-    /**
-     * Activity的观察者
-     */
-//    private void activityObserver() {
-//        notificationLiveData = LiveDataBus.getInstance().with("notification_control", String.class);
-//        notificationLiveData.observe(MusicService.this, new Observer<String>() {
-//            @Override
-//            public void onChanged(String state) {
-//                //UI控制
-//                UIControl(state, TAG);
-//            }
-//        });
-//    }
     public void addTimer() { //添加计时器用于设置音乐播放器中的播放进度条
         if (timer == null) {
             timer = new Timer();//创建计时器对象
@@ -455,7 +407,7 @@ public class MusicService extends Service {
             if (player.isPlaying()) player.stop();//停止播放音乐
             player.release();//释放占用的资源
             player = null;//将player置为空
-            manager.cancel(NOTIFICATION_ID);
+            notificationManager.cancel(NOTIFICATION_ID);
         }
 
         public int getCurrentCourseId() {

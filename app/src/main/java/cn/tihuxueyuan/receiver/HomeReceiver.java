@@ -19,31 +19,22 @@ public class HomeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        Log.i(LOG_TAG, "onReceive: action: " + action);
-
+        Log.i(LOG_TAG, "HomeReceiver  接收事件: " + action);
         if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
-            // android.intent.action.CLOSE_SYSTEM_DIALOGS
             String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
-            Log.i(LOG_TAG, "reason: " + reason);
-
             if (SYSTEM_DIALOG_REASON_HOME_KEY.equals(reason)) {
                 // 短按Home键
-                Log.i(LOG_TAG, "homekey");
-//                if (Constant.floatingControl != null) {
-//                    Constant.floatingControl.setVisibility(false);
-//                }
+                Log.i(LOG_TAG, "HomeReceiver 接收的intent的extra是短按中键");
             } else if (SYSTEM_DIALOG_REASON_RECENT_APPS.equals(reason)) {
                 // 长按Home键 或者 activity切换键
-                Log.i(LOG_TAG, "long press home key or activity switch");
-
+                Log.i(LOG_TAG, "HomeReceiver 接收的intent的extra是 切换键");
             } else if (SYSTEM_DIALOG_REASON_LOCK.equals(reason)) {
                 // 锁屏
-                Log.i(LOG_TAG, "lock");
+                Log.i(LOG_TAG, "HomeReceiver 接收的intent的extra是锁屏");
             } else if (SYSTEM_DIALOG_REASON_ASSIST.equals(reason)) {
                 // samsung 长按Home键
-                Log.i(LOG_TAG, "assist");
+                Log.i(LOG_TAG, "HomeReceiver 接收的intent的extra是长按");
             }
-
         }
     }
 

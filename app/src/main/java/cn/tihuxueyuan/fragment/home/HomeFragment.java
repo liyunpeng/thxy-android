@@ -41,10 +41,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
 
         this.listView = root.findViewById(R.id.lv);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -58,6 +56,9 @@ public class HomeFragment extends Fragment {
 
                 appData.currentCourseFileId = mList.get(position).getId();
                 appData.currentPostion = position;
+                appData.currentCourseId =  mList.get(position).getCourseId();
+                appData.currentCourseImageFileName =  mList.get(position).getFileName();
+
 
                 String titleArr[] = mList.get(position).getFileName().split("\\.");
                 intent.putExtra("title", titleArr[0]);

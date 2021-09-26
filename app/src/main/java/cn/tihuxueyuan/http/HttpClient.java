@@ -28,8 +28,8 @@ import cn.tihuxueyuan.model.CourseList;
 import okhttp3.RequestBody;
 
 public class HttpClient {
-//    private static final String BASE_URL = "http://10.0.2.2:8082/api/";
-    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
+    private static final String BASE_URL = "http://10.0.2.2:8082/api/";
+//    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
 //    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
     //    private static final String BASE_URL = "http://10.0.2.2:8082/api/findCourseFileByCourseIdOk";
     private static final String METHOD_GET_MUSIC_LIST = "baidu.ting.billboard.billList";
@@ -169,9 +169,9 @@ public class HttpClient {
                 });
     }
 
-    public static void getCourseFilesByCourseId(String courseId, final HttpCallback<CourseFileList> callback) {
+    public static void getCourseFilesByCourseId(int courseId, final HttpCallback<CourseFileList> callback) {
         Map<String, String> params = new HashMap<>();
-        params.put("course_id", courseId);
+        params.put("course_id", String.valueOf(courseId));
         params.put("user_code", Constant.appData.UserCode);
         OkHttpUtils.post().url(BASE_URL + "findCourseFileByCourseIdOk")
                 .params(params)

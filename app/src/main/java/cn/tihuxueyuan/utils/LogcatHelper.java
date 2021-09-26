@@ -23,15 +23,12 @@ public class LogcatHelper {
     private int mPId;
 
     public void init(Context context) {
-        if (Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {// 优先保存到SD卡中
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) { // 优先保存到SD卡中
             Log.d(TAG, "优先保存到SD卡中");
-            PATH_LOGCAT = Environment.getExternalStorageDirectory()
-                    .getAbsolutePath() + File.separator + "Documents/";
+            PATH_LOGCAT = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Documents/";
         } else {// 如果SD卡不存在，就保存到本应用的目录下
             Log.d(TAG, "如果SD卡不存在，就保存到本应用的目录下");
-            PATH_LOGCAT = context.getFilesDir().getAbsolutePath()
-                    + File.separator + "Documents/";
+            PATH_LOGCAT = context.getFilesDir().getAbsolutePath() + File.separator + "Documents/";
         }
 
 //        PATH_LOGCAT = Environment.getDataDirectory() + File.separator + "Thxy/";
@@ -40,10 +37,10 @@ public class LogcatHelper {
         File file = new File(PATH_LOGCAT);
 
         if (!file.exists()) {
-            Log.d(TAG, " 创建了log目录" );
+            Log.d(TAG, " 创建了log目录");
             file.mkdirs();
-        }else{
-            Log.d(TAG, " log目录已经存在，  不创建log目录" );
+        } else {
+            Log.d(TAG, " log目录已经存在，  不创建log目录");
         }
     }
 
@@ -85,12 +82,7 @@ public class LogcatHelper {
         public LogDumper(String pid, String dir) {
             mPID = pid;
             try {
-
-
-                out = new FileOutputStream(new File(dir, "log-"
-                        + getFileName() + ".log"));
-
-
+                out = new FileOutputStream(new File(dir, "log-" + getFileName() + ".log"));
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -118,7 +110,7 @@ public class LogcatHelper {
         @Override
         public void run() {
             try {
-                Log.d("thxy", " loghelper run ");
+                Log.d("thxy", " log helper run ");
                 logcatProc = Runtime.getRuntime().exec(cmds);
                 mReader = new BufferedReader(new InputStreamReader(
                         logcatProc.getInputStream()), 1024);
@@ -158,13 +150,11 @@ public class LogcatHelper {
                     }
                     out = null;
                 }
-
             }
-
         }
-
     }
-    public  String getFileName() {
+
+    public String getFileName() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String date = format.format(new Date(System.currentTimeMillis()));
         return date;// 2012年10月03日 23:41:31

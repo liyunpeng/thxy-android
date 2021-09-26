@@ -4,19 +4,19 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!--    <uses-permission android:name="android.permission.INTERNET" />-->
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- for mta statistics, not necessary-->
     <!--    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>-->
     <!--    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
     <!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
 
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
     <!--    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />-->
@@ -26,7 +26,6 @@
     <!--    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
     <!--    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
     <!--    <uses-permission android:name="android.permission.HIDE_OVERLAY_WINDOWS" />-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
     <!--    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
@@ -86,17 +85,14 @@
             android:enabled="true"
             android:exported="true"></service>
 
-  
+<!--        <receiver-->
+<!--            android:name="cn.tihuxueyuan.receiver.MediaButtonReceiver"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MEDIA_BUTTON" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
 
-        <receiver
-            android:name="cn.tihuxueyuan.receiver.MediaButtonReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
-
-        <!--        <service android:name="cn.tihuxueyuan.float_lib.service.FloatMonkService"/>-->
         <receiver
             android:name="cn.tihuxueyuan.receiver.HomeReceiver"
             android:exported="true">
