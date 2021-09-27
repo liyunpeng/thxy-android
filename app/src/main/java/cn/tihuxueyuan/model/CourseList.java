@@ -25,6 +25,8 @@ public class CourseList {
         private String ImgFileName;
         @SerializedName("store_path")
         private String storePath;
+        @SerializedName("type_id")
+        private String typeId;
 
         public String getTitle() {
             return title;
@@ -35,6 +37,7 @@ public class CourseList {
         }
 
         public String getImgFileName() { return ImgFileName;}
+
         public void setTitle(String title) {
             this.title = title;
         }

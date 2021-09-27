@@ -219,6 +219,33 @@ public class HttpClient {
                     }
                 });
     }
+
+    public static void getCourseById(String id, final HttpCallback<CourseList.Course> callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+
+        //  RequestBody r = RequestBody.create(MediaType.parse("application/json"), "aa");
+        OkHttpUtils.post().url(BASE_URL + "getCourseById")
+//                .params(params)
+                .addParams("id", id)
+                .build()
+                .execute(new JsonCallback<CourseList.Course>(CourseList.Course.class) {
+                    @Override
+                    public void onResponse(CourseList.Course response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
 }
 
 //    public static void getSplash( final HttpCallback<Splash> callback) {

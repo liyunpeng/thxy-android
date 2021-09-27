@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.tihuxueyuan.model.CourseList;
+import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.utils.Constant;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -51,6 +53,26 @@ public class JsonPost{
                 String result = response.body().string();
 //                returnHttpResult.clickReturnHttpResult(result);
                 Log.d(Constant.TAG, "onResponse: " + result);
+            }
+        });
+    }
+
+    public static void postHttpRequest( String url, String jsonStr,  final Callback callback) {
+        RequestBody requestBody = RequestBody.create(JSON, jsonStr);
+        Request request = new Request.Builder()
+                .post(requestBody)
+                .url(Constant.appData.baseUrl+ url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(Constant.TAG, "onFailure: 失败");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                callback.onResponse(call, response);
             }
         });
     }

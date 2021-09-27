@@ -54,15 +54,19 @@ public class MusicService extends Service {
     public Timer timer;
     private LiveDataBus.BusMutableLiveData<String> musicActivityLiveData;
     private LiveDataBus.BusMutableLiveData<String> baseActivityFloatLiveData;
-    private static Notification notification;
+    public static Notification notification;
     public static RemoteViews notificationRemoteViews;
-    private int NOTIFICATION_ID = 1;
+    public static int NOTIFICATION_ID = 1;
     public static NotificationManager notificationManager;
+    private AudioManager audioManager;
+    private IntentFilter intentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+    private NoisyAudioStreamReceiver myNoisyAudioStreamReceiver;
+    private AppData appData;
+    private int currentCourseId;
 
     private class NoisyAudioStreamReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
                 Log.d(TAG, "ACTION_AUDIO_BECOMING_NOISY 触发 ");
                 // Pause the playback
@@ -70,24 +74,18 @@ public class MusicService extends Service {
         }
     }
 
-    NoisyAudioStreamReceiver myNoisyAudioStreamReceiver;
-
     public MusicService() {
         myNoisyAudioStreamReceiver = new NoisyAudioStreamReceiver();
     }
 
-    AudioManager audioManager;
-    private IntentFilter intentFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-
-
-    private void startPlayback() {
-        registerReceiver(myNoisyAudioStreamReceiver, intentFilter);
-    }
-
-    private void stopPlayback() {
-
-        unregisterReceiver(myNoisyAudioStreamReceiver);
-    }
+//    private void startPlayback() {
+//        registerReceiver(myNoisyAudioStreamReceiver, intentFilter);
+//    }
+//
+//    private void stopPlayback() {
+//
+//        unregisterReceiver(myNoisyAudioStreamReceiver);
+//    }
 
     AudioManager.OnAudioFocusChangeListener afChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
@@ -120,20 +118,15 @@ public class MusicService extends Service {
         Context mContext = getApplicationContext();
         audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 // Request audio focus for playback
-
         int result = audioManager.requestAudioFocus(afChangeListener,
 // Use the music stream.
                 AudioManager.STREAM_MUSIC,
 // Request permanent focus.
                 AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-
 //            am.registerMediaButtonEventReceiver(recei);
-
 // Start playback.
-
         }
-
     }
 
 
@@ -141,10 +134,6 @@ public class MusicService extends Service {
     public IBinder onBind(Intent intent) {
         return new MusicControl();
     }
-
-    private AppData appData;
-
-    int currentCourseId;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -249,23 +238,7 @@ public class MusicService extends Service {
         baseActivityFloatLiveData = LiveDataBus.getInstance().with(Constant.BaseActivityFloatTextViewDataObserverTag, String.class);
     }
 
-    /**
-     * Activity的观察者
-     */
-//    private void activityObserver() {
-//        notification0LiveData = LiveDataBus.getInstance().with("notification_control", String.class);
-//        notificationLiveData.observe(MusicService.this, new Observer<String>() {
-//            @Override
-//            public void onChanged(String state) {
-//                //UI控制
-//                UIControl(state, TAG);
-//            }
-//        });
-//    }
 
-    /**
-     * 初始化自定义通知栏 的按钮点击事件
-     */
     private void initNotificationRemoteViews() {
         notificationRemoteViews = new RemoteViews(this.getPackageName(), R.layout.notification);
 
@@ -365,7 +338,6 @@ public class MusicService extends Service {
             }
         }
         notificationManager.cancel(NOTIFICATION_ID);
-
         musicActivityLiveData.postValue(CLOSE);
     }
 
@@ -566,12 +538,14 @@ public class MusicService extends Service {
         }
 
         public void play() {
+            registerReceiver(myNoisyAudioStreamReceiver, intentFilter);
             player.start();
             addTimer();
             updateOtherActivity(PLAY);
         }
 
         public void pause() {
+            unregisterReceiver(myNoisyAudioStreamReceiver);
             player.pause();
             updateOtherActivity(PAUSE);
         }
@@ -581,14 +555,17 @@ public class MusicService extends Service {
 
             String action;
             if (player.isPlaying()) {
-                player.pause();
-                action = PAUSE;
+//                player.pause();
+//                action = PAUSE;
+//
+                pause();
             } else {
-                player.start();
-                addTimer();
-                action = PLAY;
+//                player.start();
+//                addTimer();
+//                action = PLAY;
+                play();
             }
-            updateOtherActivity(action);
+//            updateOtherActivity(action);
         }
 
         private void updateOtherActivity(String action) {

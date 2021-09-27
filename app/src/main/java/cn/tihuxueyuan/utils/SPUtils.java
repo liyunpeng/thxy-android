@@ -1,6 +1,7 @@
 package cn.tihuxueyuan.utils;
 
 import static cn.tihuxueyuan.globaldata.AppData.notificationBitMap;
+import static cn.tihuxueyuan.service.MusicService.notification;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
 
@@ -273,7 +274,8 @@ public class SPUtils {
                         } else {
                             if (MusicService.notificationRemoteViews != null) {
                                 MusicService.notificationRemoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
-                                MusicService.notificationManager.notify();
+
+                                MusicService.notificationManager.notify(MusicService.NOTIFICATION_ID, notification);
                             }
                         }
                     }

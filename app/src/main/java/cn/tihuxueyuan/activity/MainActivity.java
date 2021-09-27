@@ -68,9 +68,10 @@ public class MainActivity extends BaseActivity {
     public ActivityMainBinding binding;
     private LiveDataBus.BusMutableLiveData<String> floatLiveData;
     Context mContext;
+    AudioManager mAudioManager;
+    ComponentName mComponent;
 
     private void initAppStatusListener() {
-
         ForegroundCallbacks.init(getApplication()).addListener(new ForegroundCallbacks.Listener() {
             @Override
             public void onBecameForeground() {
@@ -124,30 +125,25 @@ public class MainActivity extends BaseActivity {
 
                     if(  mAudioManager == null ) {
                         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-//构造一个ComponentName，指向MediaoButtonReceiver类
+                        //构造一个ComponentName，指向MediaoButtonReceiver类
                         mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
-
                     }
 
                     mAudioManager.registerMediaButtonEventReceiver(mComponent);
-                    //获得AudioManager对象
-//                    mAudioManager.registerMediaButtonEventReceiver(mComponent);
-
-// phone head unplugged
 
                 } else {
                     Log.d(TAG, "耳机检测：没有插入");
                     Toast.makeText(context, "耳机检测：没有插入", Toast.LENGTH_SHORT).show();
-
+                    if(  mAudioManager == null ) {
+                        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                        //构造一个ComponentName，指向MediaoButtonReceiver类
+                        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
+                    }
                     mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
                 }
             }
         }
     };
-
-    AudioManager mAudioManager;
-    ComponentName mComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,7 +180,7 @@ public class MainActivity extends BaseActivity {
         initAppStatusListener();
 
 //        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 222);
+//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 222);
 
 //        getOverlayPermission();
 //        try {
