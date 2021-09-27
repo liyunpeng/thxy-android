@@ -279,6 +279,7 @@ public class FloatingView extends RelativeLayout {
 
     /**
      * 移除该view
+     *
      */
     public void dismissFloatView() {
         mIsShow = false;

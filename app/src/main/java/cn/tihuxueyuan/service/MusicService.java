@@ -75,7 +75,7 @@ public class MusicService extends Service {
     }
 
     public MusicService() {
-        myNoisyAudioStreamReceiver = new NoisyAudioStreamReceiver();
+//        myNoisyAudioStreamReceiver = new NoisyAudioStreamReceiver();
     }
 
 //    private void startPlayback() {
@@ -263,9 +263,6 @@ public class MusicService extends Service {
         notificationRemoteViews.setOnClickPendingIntent(R.id.btn_notification_close, closePendingIntent);
     }
 
-    /**
-     * 初始化通知
-     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("NotificationTrampoline")
     private void initNotification() {
@@ -538,14 +535,14 @@ public class MusicService extends Service {
         }
 
         public void play() {
-            registerReceiver(myNoisyAudioStreamReceiver, intentFilter);
+//            registerReceiver(myNoisyAudioStreamReceiver, intentFilter);
             player.start();
             addTimer();
             updateOtherActivity(PLAY);
         }
 
         public void pause() {
-            unregisterReceiver(myNoisyAudioStreamReceiver);
+//            unregisterReceiver(myNoisyAudioStreamReceiver);
             player.pause();
             updateOtherActivity(PAUSE);
         }

@@ -55,11 +55,10 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private static LiveDataBus.BusMutableLiveData<String> courseListActivityLiveData;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             super.onCreate(savedInstanceState);
-        }
 
         courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, String.class);
 //        if (isBluetoothA2dpOn()) {

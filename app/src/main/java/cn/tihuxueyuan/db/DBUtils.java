@@ -61,7 +61,22 @@ public class DBUtils {
         }
     }
 
-    //获取个人资料信息
+    public int getFileCountByCourseId( int courseId){
+        String sql = "SELECT count(*) FROM " + DBOpenHelper.COURSE_FILE + " WHERE course_id =?";
+        String args[] = {String.valueOf(courseId)};
+        Cursor cursor = db.rawQuery(sql, args);
+
+        if (cursor != null) {
+            return cursor.getCount();
+
+        }else{
+            return -1;
+
+        }
+
+
+    }
+
     @SuppressLint("Range")
     public List<CourseFileList.CourseFile> getSqlite3CourseFileList(int courseId) {
         String sql = "SELECT * FROM " + DBOpenHelper.COURSE_FILE + " WHERE course_id =?";
@@ -69,7 +84,7 @@ public class DBUtils {
         //You may include ?s in where clause in the query, which will be replaced by the values from selectionArgs.
         String args[] = {String.valueOf(courseId)};
         List<CourseFileList.CourseFile> lc = new ArrayList<>();
-        ;
+
         Cursor cursor = db.rawQuery(sql, args);
         List<CourseFileList.CourseFile> beans = null;
         //Move the cursor to the next row.
@@ -88,6 +103,7 @@ public class DBUtils {
             Log.d(Constant.TAG, " sqlite mp3: " + bean.mp3_file_name);
             lc.add(bean);
         }
+
         cursor.close();
         return lc;
     }

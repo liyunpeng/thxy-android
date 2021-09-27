@@ -9,7 +9,6 @@ import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.appData;
 import static cn.tihuxueyuan.utils.Constant.logcatHelper;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
@@ -18,7 +17,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -28,9 +26,6 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.tihuxueyuan.R;
@@ -39,7 +34,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -69,7 +63,7 @@ public class MainActivity extends BaseActivity {
     private LiveDataBus.BusMutableLiveData<String> floatLiveData;
     Context mContext;
     AudioManager mAudioManager;
-    ComponentName mComponent;
+    ComponentName mRemoteControlReceiverComponent;
 
     private void initAppStatusListener() {
         ForegroundCallbacks.init(getApplication()).addListener(new ForegroundCallbacks.Listener() {
@@ -121,39 +115,39 @@ public class MainActivity extends BaseActivity {
             if (action.equals(Intent.ACTION_HEADSET_PLUG)) {
                 if (intent.getIntExtra("state", 0) == 1) {
                     Log.d(TAG, "耳机检测：插入");
-                    Toast.makeText(context, "耳机检测：插入 ", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "耳机检测：插入 ", Toast.LENGTH_SHORT).show();
 
-                    if(  mAudioManager == null ) {
-                        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                        //构造一个ComponentName，指向MediaoButtonReceiver类
-                        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
-                    }
+//                    if(  mAudioManager == null ) {
+//                        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//                        //构造一个ComponentName，指向MediaoButtonReceiver类
+//                        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
+//                    }
+//
+//                    mAudioManager.registerMediaButtonEventReceiver(mComponent);
 
-                    mAudioManager.registerMediaButtonEventReceiver(mComponent);
+//                            mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//                    registerMusicButton();
+
 
                 } else {
                     Log.d(TAG, "耳机检测：没有插入");
-                    Toast.makeText(context, "耳机检测：没有插入", Toast.LENGTH_SHORT).show();
-                    if(  mAudioManager == null ) {
-                        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                        //构造一个ComponentName，指向MediaoButtonReceiver类
-                        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
-                    }
-                    mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
+//                    Toast.makeText(context, "耳机检测：没有插入", Toast.LENGTH_SHORT).show();
+//                    if(  mAudioManager == null ) {
+//                        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//                        //构造一个ComponentName，指向MediaoButtonReceiver类
+//                        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
+//                    }
+//                    mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
+//                    unregisterButtonReceiver();
                 }
             }
         }
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (SDK_INT >= Build.VERSION_CODES.Q) {
-            super.onCreate(savedInstanceState);
-        }
-        logcatHelper = LogcatHelper.getInstance(getApplicationContext());
-        logcatHelper.start();
-        appData = (AppData) getApplication();
-
+        super.onCreate(savedInstanceState);
         this.context = this.getApplicationContext();
 //        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 //
@@ -166,14 +160,16 @@ public class MainActivity extends BaseActivity {
 //
 ////        mAudioManager.registerMediaButtonEventReceiver(mComponent);
 //
-//        registerReceiver(headSetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+        logcatHelper = LogcatHelper.getInstance(getApplicationContext());
+        logcatHelper.start();
+        appData = (AppData) getApplication();
+        registerReceiver(headSetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
 
 //        mAudioManager.registerAudioDeviceCallback();
 //注销方法
 //        mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
 
         String curProcess = getProcessName(this, Process.myPid());
-
         if (!TextUtils.equals(curProcess, "cn.tihuxueyuan")) {
             return;
         }
@@ -201,8 +197,8 @@ public class MainActivity extends BaseActivity {
 
         mContext = this.getApplicationContext();
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration
+                .Builder(R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -214,9 +210,7 @@ public class MainActivity extends BaseActivity {
 
         registerMusicReceiver();
         registerHomeKeyReceiver();
-//        getApplication() .addObserver(new CheckObserver());
-
-//        ProcessLifecycleOwner.get().lifecycle.addObserver(checkObserver)
+        registerHeadsetButtonReceiver();
     }
 
     // 含有全部的权限
@@ -343,11 +337,9 @@ public class MainActivity extends BaseActivity {
                 Toast.makeText(this, "再按一次返回键退出", Toast.LENGTH_SHORT).show();
                 lastBackTime = currentBackTime;
             } else {  //如果两次按下的时间差小于2秒，则退出程序
-//                MyApplication.getInstance().exit();
                 unregisterHomeKeyReceiver(this);
-//                if (Constant.floatingControl != null) {
-//                    Constant.floatingControl.remove();
-//                }
+                unregisterHeadsetButtonReceiver();
+
                 if (Constant.musicControl != null) {
                     Constant.musicControl.release();
                 }
@@ -450,19 +442,40 @@ public class MainActivity extends BaseActivity {
 //        mWM.addView(mView, params);
 //    }
 
-    private  void registerHomeKeyReceiver() {
+    private void registerHomeKeyReceiver() {
         Log.i(TAG, "注册HomeKeyReceiver");
         if (appData.mHomeKeyReceiver == null) {
             Log.i(TAG, "保证只注册一次 home 键的receiver ");
             appData.mHomeKeyReceiver = new HomeReceiver();
-//            final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-            final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
-//            homeFilter.addAction(Intent.ACTION_MEDIA_BAD_REMOVAL);
-//            homeFilter.addAction(Intent.ACTION_MEDIA_CHECKING);
-//            homeFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
-//            homeFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
-//            homeFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
+            final IntentFilter homeFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
             registerReceiver(appData.mHomeKeyReceiver, homeFilter);
+        }
+    }
+
+    private void registerHeadsetButtonReceiver() {
+        Log.i(TAG, "注册耳机事件 的receiver");
+        if (appData.mButtonReceiver == null) {
+            Log.i(TAG, "保证只注册一次耳机事件 的receiver ");
+            appData.mButtonReceiver = new MediaButtonReceiver();
+            final IntentFilter homeFilter1 = new IntentFilter(Intent.ACTION_MEDIA_BUTTON);
+            registerReceiver(appData.mButtonReceiver, homeFilter1);
+        }
+
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mRemoteControlReceiverComponent = new ComponentName(this, MediaButtonReceiver.class);
+//        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());  这个是无效的， 试过很多次， 发现这个坑
+        mAudioManager.registerMediaButtonEventReceiver(mRemoteControlReceiverComponent);
+    }
+
+
+    private void unregisterHeadsetButtonReceiver() {
+        Log.i(TAG, "注销耳机事件 的receiver");
+        if (null != mRemoteControlReceiverComponent) {
+            mAudioManager.unregisterMediaButtonEventReceiver(mRemoteControlReceiverComponent);
+        }
+
+        if (null != appData.mButtonReceiver) {
+            this.unregisterReceiver(appData.mButtonReceiver);
         }
     }
 
@@ -470,6 +483,8 @@ public class MainActivity extends BaseActivity {
         Log.i(TAG, "注销HomeKeyReceiver");
         if (null != appData.mHomeKeyReceiver) {
             context.unregisterReceiver(appData.mHomeKeyReceiver);
+
+
         }
     }
 

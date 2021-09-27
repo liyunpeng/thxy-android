@@ -11,6 +11,7 @@ import java.util.Map;
 import cn.tihuxueyuan.activity.MainActivity;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.receiver.HomeReceiver;
+import cn.tihuxueyuan.receiver.MediaButtonReceiver;
 
 public class AppData extends Application {
     public static int currentPostion = -1;
@@ -30,6 +31,7 @@ public class AppData extends Application {
 
     public static MainActivity.MusicReceiver musicReceiver = null;
     public static HomeReceiver mHomeKeyReceiver = null;
+    public static MediaButtonReceiver mButtonReceiver = null;
     public static List<CourseFileList.CourseFile> courseFileList = new ArrayList<>();
     public static Map<Integer, CourseFileList.CourseFile> courseFileMap = new HashMap<>();
 

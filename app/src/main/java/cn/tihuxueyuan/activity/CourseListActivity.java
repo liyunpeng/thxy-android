@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.activity;
 
+import static cn.tihuxueyuan.globaldata.AppData.currentCourseId;
 import static cn.tihuxueyuan.globaldata.AppData.notificationBitMap;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
@@ -337,6 +338,15 @@ D/tag1: parseNetworkResponse:
     int lastListenedCourseFileId;
 
     public void httpGetCourseFiles() {
+
+        mList = Constant.dbUtils.getSqlite3CourseFileList(currentCouseId);
+
+        if ( mList != null && mList.size() > 0 ) {
+            Log.d(TAG, "不走网络， 直接刷新列表");
+            refreshListView();
+            return;
+        }
+
         HttpClient.getCourseFilesByCourseId(currentCouseId, new HttpCallback<CourseFileList>() {
             @Override
             public void onSuccess(CourseFileList response) {
@@ -351,7 +361,11 @@ D/tag1: parseNetworkResponse:
                 Log.d(Constant.TAG, " 上次播放 lastListenedCourseFileId :" + lastListenedCourseFileId);
                 refreshListView();
 
-//                Constant.dbUtils.saveCourseFiles();
+                int count = Constant.dbUtils.getFileCountByCourseId(currentCourseId);
+                if (count <= 0 ){
+                    Log.d(TAG, "保存到本地数据库");
+                    Constant.dbUtils.saveCourseFiles();
+                }
 
                 createFlag = 1;
                 order = true;

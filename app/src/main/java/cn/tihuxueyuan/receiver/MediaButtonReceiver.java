@@ -31,11 +31,16 @@ public class MediaButtonReceiver extends BroadcastReceiver {
                     //播放上一首
                     break;
                 case KeyEvent.KEYCODE_HEADSETHOOK:
+//                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
                     //中间按钮,暂停or播放
                     //可以通过发送一个新的广播通知正在播放的视频页面,暂停或者播放视频
+                    // 要动态注册与静态注册结合才可以实现耳机中键的监听。
                     Log.d(TAG, " 判断耳机为中键");
                     if ( Constant.musicControl != null ){
-                        Constant.musicControl.playOrPause();
+                        if (KeyEvent.ACTION_UP==event.getAction()) {
+                            Log.d(TAG, " 耳机 按键抬起事件 ");
+                            Constant.musicControl.playOrPause();
+                        }
                     }
                     break;
                 default:
