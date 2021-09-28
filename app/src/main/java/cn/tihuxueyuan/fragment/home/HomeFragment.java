@@ -128,10 +128,6 @@ public class HomeFragment extends Fragment {
 
 
                             Gson gson=new Gson();
-                            //1、
-                            //解析对象：第一个参数：待解析的字符串 第二个参数结果数据类型的Class对象
-
-
                             CustomResponse course =gson.fromJson(result, CustomResponse.class);
 
                             intent.putExtra("music_url", musicUrl);

@@ -468,6 +468,7 @@ public class MainActivity extends BaseActivity {
     }
 
 
+
     private void unregisterHeadsetButtonReceiver() {
         Log.i(TAG, "注销耳机事件 的receiver");
         if (null != mRemoteControlReceiverComponent) {

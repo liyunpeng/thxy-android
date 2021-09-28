@@ -11,17 +11,25 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.model.ListendFile;
+import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.service.MusicService;
 import okhttp3.Call;
 
@@ -280,5 +288,73 @@ public class SPUtils {
                         }
                     }
                 });
+    }
+
+    public static void updateUserListened(String code, int courseId, int fileId, int listenedInt) {
+        UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
+
+        Gson gson = new Gson();
+        ListendFile[] lf = gson.fromJson(u.listenedFiles, ListendFile[].class);
+
+        Convert convertInstance = Convert.getInstance();
+        Map<Integer, ListendFile> listenedFileMap = convertInstance.listToMap3(lf);
+
+        ListendFile[] lf1;
+        if (listenedFileMap.get(fileId) != null) {
+            listenedFileMap.get(fileId).listenedPercent = listenedInt;
+            lf1 = new ListendFile[lf.length];
+        } else {
+            ListendFile f = new ListendFile();
+            f.listenedPercent = listenedInt;
+            f.courseFileId = fileId;
+            f.position = 11;
+            listenedFileMap.put(fileId, f);
+            lf1 = new ListendFile[lf.length + 1];
+        }
+
+
+        int i = 0;
+        for (ListendFile c : listenedFileMap.values()) {
+            lf1[i] = c;
+            i++;
+        }
+
+        String listened1 = gson.toJson(listenedFileMap);
+
+        if (u == null) {
+            Constant.dbUtils.insertUserListenedCourse(code, courseId, listened1);
+        } else {
+            Constant.dbUtils.updateUserListenedCourse(code, courseId, listened1);
+        }
+    }
+
+    public static void updateUserListenedV1(String code, int courseId, int fileId, int listenedInt, int postion) {
+        UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
+        Gson gson = new Gson();
+
+        if (u == null) {
+            Map<Integer, ListendFile> listenedFileMap  = new HashMap<>();
+            ListendFile f = new ListendFile();
+            f.listenedPercent = listenedInt;
+            f.courseFileId = fileId;
+            f.position = postion;
+            listenedFileMap.put(fileId, f);
+            String listened1 = gson.toJson(listenedFileMap);
+            Constant.dbUtils.insertUserListenedCourse(code, courseId, listened1);
+        } else {
+            Map<Integer, ListendFile> listenedFileMap = gson.fromJson(u.listenedFiles, new TypeToken<Map<Integer, ListendFile>>() {}.getType());
+            if (listenedFileMap != null && listenedFileMap.get(fileId) != null) {
+                listenedFileMap.get(fileId).listenedPercent = listenedInt;
+            } else {
+                ListendFile f = new ListendFile();
+                f.listenedPercent = listenedInt;
+                f.courseFileId = fileId;
+                f.position = postion;
+                listenedFileMap.put(fileId, f);
+            }
+
+            String listened1 = gson.toJson(listenedFileMap);
+            Constant.dbUtils.updateUserListenedCourse(code, courseId, listened1);
+        }
     }
 }

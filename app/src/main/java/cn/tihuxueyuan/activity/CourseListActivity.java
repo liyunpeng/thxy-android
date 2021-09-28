@@ -1,6 +1,7 @@
 package cn.tihuxueyuan.activity;
 
 import static cn.tihuxueyuan.globaldata.AppData.currentCourseId;
+import static cn.tihuxueyuan.globaldata.AppData.currentPostion;
 import static cn.tihuxueyuan.globaldata.AppData.notificationBitMap;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
@@ -249,14 +250,17 @@ D/tag1: parseNetworkResponse:
                 Log.d(TAG, " CourseListActivity 观察者监控到消息 = " + value);
 
                 if (mList != null && mList.size() > Constant.appData.currentPostion) {
-                    mList.get(Constant.appData.currentPostion).listenedPercent = Integer.parseInt(value);
+                    int listenedPercent = Integer.parseInt(value);
+                    mList.get(Constant.appData.currentPostion).listenedPercent = listenedPercent;
+
+                    SPUtils.updateUserListenedV1(
+                            Constant.appData.UserCode,
+                            Constant.appData.currentCourseId,
+                            Constant.appData.currentCourseFileId,
+                            listenedPercent,
+                            currentPostion);
                     mAdapter.notifyDataSetChanged();
                 }
-
-//                switch (state) {
-//                    default:
-//                        break;
-//                }
             }
         });
     }

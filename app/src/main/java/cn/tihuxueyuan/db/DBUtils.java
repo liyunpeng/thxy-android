@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.Constant;
 
 public class DBUtils {
@@ -22,7 +23,7 @@ public class DBUtils {
      * 实例化SQLiteHelper类，从中得到一个读写的数据库
      **/
     public DBUtils(Context context) {
-        helper = new DBOpenHelper(context, "abcde.db", null, 1);
+        helper = new DBOpenHelper(context, "abcdef.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -61,20 +62,64 @@ public class DBUtils {
         }
     }
 
-    public int getFileCountByCourseId( int courseId){
-        String sql = "SELECT count(*) FROM " + DBOpenHelper.COURSE_FILE + " WHERE course_id =?";
-        String args[] = {String.valueOf(courseId)};
+    @SuppressLint("Range")
+    public UserListenedCourse getUserListenedCourseByUserCodeAndCourseId(String code , int courseId )
+    {
+        String sql = "SELECT * FROM " + DBOpenHelper.USER_LISTENED_COURSE + " WHERE code=? and course_id=? ";
+        String args[] = { code, String.valueOf(courseId)};
+
         Cursor cursor = db.rawQuery(sql, args);
 
-        if (cursor != null) {
-            return cursor.getCount();
-
+        if (  cursor != null && cursor.getCount() > 0 ) {
+            cursor.moveToFirst();
+            UserListenedCourse u = new UserListenedCourse();
+            u.code = cursor.getString(cursor.getColumnIndex("code"));
+            u.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
+            u.listenedFiles = cursor.getString(cursor.getColumnIndex("listened_files"));
+            u.lastListenedCourseFileId = cursor.getInt(cursor.getColumnIndex("last_listened_course_file_id"));
+            return u;
         }else{
-            return -1;
-
+            return null;
         }
+    }
+
+    public void insertUserListenedCourse(String code , int courseId, String listenedFiles ) {
+        ContentValues cv = new ContentValues();
+        cv.put("code", code);
+        cv.put("course_id", courseId);
+        cv.put("listened_files", listenedFiles);
+        db.insert(DBOpenHelper.USER_LISTENED_COURSE, null, cv);
+    }
+
+    public void updateUserListenedCourse(String code , int courseId, String listenedFiles ) {
+        ContentValues cv = new ContentValues();
+//        cv.put("code", code);
+//        cv.put("course_id", courseId);
+        cv.put("listened_files", listenedFiles);
+
+        /*
+        ContentValues values = new ContentValues();
+
+values.put("price", 10.99);
+
+db.update("Book", values, "name = ?", new String[] { "The DaVinci Code" });
 
 
+         */
+        String args[] = { code, String.valueOf(courseId)};
+
+        db.update(DBOpenHelper.USER_LISTENED_COURSE, cv,  " code=? and course_id = ?", args);
+    }
+
+    public int getFileCountByCourseId(int courseId) {
+        String sql = "SELECT count(id) FROM " + DBOpenHelper.COURSE_FILE + " WHERE course_id =?";
+        String args[] = {String.valueOf(courseId)};
+        Cursor cursor = db.rawQuery(sql, args);
+        cursor.moveToFirst();
+
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
     }
 
     @SuppressLint("Range")
@@ -95,7 +140,7 @@ public class DBUtils {
             bean.mp3_file_name = cursor.getString(cursor.getColumnIndex("mp3_file_name"));
             bean.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
             bean.number = cursor.getInt(cursor.getColumnIndex("number"));
-            bean.id = cursor.getInt(cursor.getColumnIndex("_id"));
+            bean.id = cursor.getInt(cursor.getColumnIndex("id"));
 //            bean.nickName = cursor.getString(cursor.getColumnIndex("nickName"));
 //            bean.sex = cursor.getString(cursor.getColumnIndex("sex"));
 //            bean.signature = cursor.getString(cursor.getColumnIndex("signature"));
