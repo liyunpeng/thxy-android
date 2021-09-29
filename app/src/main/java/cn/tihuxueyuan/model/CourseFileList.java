@@ -20,6 +20,8 @@ public class CourseFileList {
     }
 
     public static class CourseFile {
+        @SerializedName("course_file_id")
+        public int courseFileId;
         @SerializedName("id")
         public int id;
         @SerializedName("mp3_file_name")

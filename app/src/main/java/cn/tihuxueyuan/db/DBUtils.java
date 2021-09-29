@@ -23,7 +23,7 @@ public class DBUtils {
      * 实例化SQLiteHelper类，从中得到一个读写的数据库
      **/
     public DBUtils(Context context) {
-        helper = new DBOpenHelper(context, "abcdef.db", null, 1);
+        helper = new DBOpenHelper(context, "abcdefg.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -55,6 +55,7 @@ public class DBUtils {
     public void saveCourseFiles() {
         for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
             ContentValues cv = new ContentValues();
+            cv.put("course_file_id", c.getId());
             cv.put("course_id", c.getCourseId());
             cv.put("number", c.getNumber());
             cv.put("mp3_file_name", c.getMp3FileName());
@@ -141,6 +142,7 @@ db.update("Book", values, "name = ?", new String[] { "The DaVinci Code" });
             bean.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
             bean.number = cursor.getInt(cursor.getColumnIndex("number"));
             bean.id = cursor.getInt(cursor.getColumnIndex("id"));
+            bean.courseFileId = cursor.getInt(cursor.getColumnIndex("course_file_id"));
 //            bean.nickName = cursor.getString(cursor.getColumnIndex("nickName"));
 //            bean.sex = cursor.getString(cursor.getColumnIndex("sex"));
 //            bean.signature = cursor.getString(cursor.getColumnIndex("signature"));

@@ -39,8 +39,10 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 + "name VARCHAR "
                 + ")");
 
+        // sqlit3 要与 服务器数据库一致， 因为sqlite3自增id不能与服务器一致，用course_id 对应记录服务串数据库表的id
         db.execSQL("CREATE TABLE IF NOT EXISTS  " + COURSE + " ( "
                 + "id  INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "course_id INT, "
                 + "type_id INT, "
                 + "title VARCHAR, "
                 + "img_file_name VARCHAR "
@@ -48,6 +50,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE IF NOT EXISTS  " + COURSE_FILE + " ( "
                 + "id  INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "course_file_id INT, "
                 + "course_id INT, "
                 + "number INT, "
                 + "mp3_file_name VARCHAR, "
@@ -56,6 +59,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE IF NOT EXISTS  " + USER_LISTENED_COURSE + " ( "
                 + "id  INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "user_listened_course_id INT, "
                 + "code VARCHAR, "
                 + "course_id INT, "
                 + "last_listened_course_file_id INT, "

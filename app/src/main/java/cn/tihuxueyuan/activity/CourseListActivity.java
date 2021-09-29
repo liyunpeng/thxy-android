@@ -34,6 +34,7 @@ import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
+import cn.tihuxueyuan.model.ListendFile;
 import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
@@ -42,6 +43,7 @@ import okhttp3.Call;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class CourseListActivity extends BaseActivity {
     private android.widget.ListView courseListView;
@@ -346,7 +348,16 @@ D/tag1: parseNetworkResponse:
         mList = Constant.dbUtils.getSqlite3CourseFileList(currentCouseId);
 
         if ( mList != null && mList.size() > 0 ) {
-            Log.d(TAG, "不走网络， 直接刷新列表");
+            Log.d(TAG, "不走网络， 从本地sqlite3数据库读取， 刷新列表");
+            Map<Integer, ListendFile> listendFileMap =  SPUtils.getUserListened(appData.UserCode,  currentCouseId);
+
+            for ( CourseFile courseFile : mList){
+                ListendFile listendFile = listendFileMap.get(courseFile.courseFileId);
+                if (  listendFile != null ){
+                    courseFile.listenedPercent = listendFile.listenedPercent;
+                    courseFile.listenedPosition = listendFile.position;
+                }
+            }
             refreshListView();
             return;
         }

@@ -328,6 +328,18 @@ public class SPUtils {
         }
     }
 
+    public static Map<Integer, ListendFile> getUserListened(String code, int courseId) {
+        UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
+        Gson gson = new Gson();
+
+        if (u == null) {
+            return null;
+        }
+
+        Map<Integer, ListendFile> listenedFileMap = gson.fromJson(u.listenedFiles, new TypeToken<Map<Integer, ListendFile>>() {}.getType());
+        return listenedFileMap;
+    }
+
     public static void updateUserListenedV1(String code, int courseId, int fileId, int listenedInt, int postion) {
         UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
         Gson gson = new Gson();
