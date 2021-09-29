@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.Constant;
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -179,6 +180,56 @@ public class HttpClient {
                 .execute(new JsonCallback<CourseFileList>(CourseFileList.class) {
                     @Override
                     public void onResponse(CourseFileList response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+    public static void getCourseFilesByCourseIdV1(int courseId, final HttpCallback<CourseFileList> callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("course_id", String.valueOf(courseId));
+//        params.put("user_code", Constant.appData.UserCode);
+        OkHttpUtils.post().url(BASE_URL + "findCourseFileByCourseIdOkhttpV1")
+                .params(params)
+                .build()
+                .execute(new JsonCallback<CourseFileList>(CourseFileList.class) {
+                    @Override
+                    public void onResponse(CourseFileList response, int id) {
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        callback.onFail(e);
+                    }
+
+                    @Override
+                    public void onAfter(int id) {
+                        callback.onFinish();
+                    }
+                });
+    }
+
+    public static void getUserListenedFilesByCodeAndCourseIdV1(int courseId, final HttpCallback<UserListenedCourse> callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("course_id", String.valueOf(courseId));
+        params.put("user_code", Constant.appData.UserCode);
+        OkHttpUtils.post().url(BASE_URL + "findUserListenedFilesByCodeAndCourseId")
+                .params(params)
+                .build()
+                .execute(new JsonCallback<UserListenedCourse>(UserListenedCourse.class) {
+                    @Override
+                    public void onResponse(UserListenedCourse response, int id) {
                         callback.onSuccess(response);
                     }
 
