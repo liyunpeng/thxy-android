@@ -19,6 +19,7 @@ public abstract class JsonCallback<T> extends Callback<T> {
         gson = new Gson();
     }
 
+
     @Override
     public T parseNetworkResponse(Response response, int id) throws IOException {
         try {

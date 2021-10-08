@@ -23,7 +23,7 @@ public class DBUtils {
      * 实例化SQLiteHelper类，从中得到一个读写的数据库
      **/
     public DBUtils(Context context) {
-        helper = new DBOpenHelper(context, "abcdefghi.db", null, 1);
+        helper = new DBOpenHelper(context, "abcdefghijk.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -56,6 +56,7 @@ public class DBUtils {
         for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
             ContentValues cv = new ContentValues();
             cv.put("course_file_id", c.getId());
+            cv.put("id", c.getId());
             cv.put("course_id", c.getCourseId());
             cv.put("number", c.getNumber());
             cv.put("mp3_file_name", c.getMp3FileName());
@@ -90,6 +91,16 @@ public class DBUtils {
         cv.put("course_id", courseId);
         cv.put("listened_files", listenedFiles);
         db.insert(DBOpenHelper.USER_LISTENED_COURSE, null, cv);
+        /*
+                db.execSQL("CREATE TABLE IF NOT EXISTS  " + USER_LISTENED_COURSE + " ( "
+                + "id  INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "user_listened_course_id INT, "
+                + "code VARCHAR, "
+                + "course_id INT, "
+                + "last_listened_course_file_id INT, "
+                + "listened_files INT "
+                + ")");
+         */
     }
 
     public void updateUserListenedCourse(String code , int courseId, String listenedFiles ) {

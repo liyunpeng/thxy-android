@@ -99,6 +99,8 @@ public class CourseListActivity extends BaseActivity {
 
 
             httpGetListenedFile();
+
+//            httpGetCourseFilesV1();
         }
 
         Log.d("tag2", "onCreate: currentCouseId: " + currentCouseId);
@@ -235,7 +237,7 @@ D/tag1: parseNetworkResponse:
                 mAdapter.notifyDataSetChanged();
             }
             freshLastPlay();
-        }else{
+        } else {
             Log.d(TAG, " 课程列表 onResume 不刷新");
         }
 
@@ -353,15 +355,18 @@ D/tag1: parseNetworkResponse:
         if (mList != null && mList.size() > 0) {
             Log.d(TAG, "mList 不为空，不走网络， 从本地sqlite3数据库读取， 刷新列表");
             Map<Integer, ListenedFile> listendFileMap = SPUtils.getUserListened(appData.UserCode, currentCouseId);
-            for (CourseFile courseFile : mList) {
-                courseFile.courseFileId = courseFile.getId();
+            if (listendFileMap != null) {
+                for (CourseFile courseFile : mList) {
+                    courseFile.courseFileId = courseFile.getId();
 
-                ListenedFile listenedFile = listendFileMap.get(courseFile.courseFileId);
-                if (listenedFile != null) {
-                    courseFile.listenedPercent = listenedFile.listenedPercent;
-                    courseFile.listenedPosition = listenedFile.position;
+                    ListenedFile listenedFile = listendFileMap.get(courseFile.courseFileId);
+                    if (listenedFile != null) {
+                        courseFile.listenedPercent = listenedFile.listenedPercent;
+                        courseFile.listenedPosition = listenedFile.position;
+                    }
                 }
             }
+
             refreshListView();
             return true;
         } else {
@@ -430,8 +435,6 @@ D/tag1: parseNetworkResponse:
                         if (listenedFile != null) {
                             courseFile.listenedPercent = listenedFile.listenedPercent;
                             courseFile.listenedPosition = listenedFile.position;
-
-//                            courseFile. = listendFile.position;
                         }
                     }
                 }
@@ -446,11 +449,14 @@ D/tag1: parseNetworkResponse:
             }
         });
     }
+
     Map<Integer, ListenedFile> currentListenedFileMap = null;
+
     private void httpGetListenedFile() {
         HttpClient.getUserListenedFilesByCodeAndCourseIdV1(currentCouseId, new HttpCallback<UserListenedCourse>() {
             @Override
             public void onSuccess(UserListenedCourse response) {
+                Log.d(TAG, "httpGetListenedFile onSuccess ");
 //                if (response == null || response.getCourseFileList() == null || response.getCourseFileList().isEmpty()) {
 //                    onFail(null);
 //                    return;
@@ -470,9 +476,10 @@ D/tag1: parseNetworkResponse:
 //                createFlag = 1;
 //                courseListOrder = true;
 
-                if (response != null)  {
+                if (response != null) {
                     Gson gson = new Gson();
-                    currentListenedFileMap = gson.fromJson(response.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
+                    currentListenedFileMap = gson.fromJson(response.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {
+                    }.getType());
                 }
                 httpGetCourseFilesV1();
 
@@ -485,7 +492,6 @@ D/tag1: parseNetworkResponse:
             }
         });
     }
-
 
 
 }
