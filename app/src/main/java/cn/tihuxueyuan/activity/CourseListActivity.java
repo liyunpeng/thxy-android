@@ -28,12 +28,11 @@ import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
-import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
-import cn.tihuxueyuan.model.ListendFile;
+import cn.tihuxueyuan.model.ListenedFile;
 import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
@@ -202,7 +201,6 @@ public class CourseListActivity extends BaseActivity {
                     lastPlayTextView.setVisibility(View.VISIBLE);
                 }
             }
-
         } else {
             Log.d(TAG, " freshLastPlay 设置为 不可见 " + " appData.lastCourseId  = " + appData.lastCourseId +
                     ", lastListenedCourseFileId=" + lastListenedCourseFileId +
@@ -232,10 +230,13 @@ D/tag1: parseNetworkResponse:
         super.onResume();
         if (createFlag == 1 && mList != null && mList.size() > appData.currentPostion) {
             // 从悬浮窗进入音乐界面， 再回到列表界面时，如果是其他课程列表，不刷新
+            Log.d(TAG, " 课程列表 onResume 刷新");
             if (currentCouseId == Constant.musicControl.getCurrentCourseId()) {
                 mAdapter.notifyDataSetChanged();
             }
             freshLastPlay();
+        }else{
+            Log.d(TAG, " 课程列表 onResume 不刷新");
         }
 
         if (courseListOrder == true) {
@@ -297,10 +298,11 @@ D/tag1: parseNetworkResponse:
                 String duration = courseFile.getDuration();
                 int color = Color.parseColor("#000000");
                 if (currentCouseId == appData.currentMusicCourseId &&
-                        appData.currentPostion >= 0 && Constant.appData.currentPostion < Constant.appData.courseFileList.size()
-                ) {
+                        appData.currentPostion >= 0 &&
+                        Constant.appData.currentPostion < Constant.appData.courseFileList.size()) {
                     if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId) != null) {
-                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.getId()) {
+//                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.getId()) {
+                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.courseFileId) {
                             color = Color.parseColor("#FF0000");
                         }
                     } else {
@@ -345,23 +347,25 @@ D/tag1: parseNetworkResponse:
 
     int lastListenedCourseFileId;
 
-
     private boolean getCourseListFromSqlite3() {
         mList = Constant.dbUtils.getSqlite3CourseFileList(currentCouseId);
 
         if (mList != null && mList.size() > 0) {
-            Log.d(TAG, "不走网络， 从本地sqlite3数据库读取， 刷新列表");
-            Map<Integer, ListendFile> listendFileMap = SPUtils.getUserListened(appData.UserCode, currentCouseId);
+            Log.d(TAG, "mList 不为空，不走网络， 从本地sqlite3数据库读取， 刷新列表");
+            Map<Integer, ListenedFile> listendFileMap = SPUtils.getUserListened(appData.UserCode, currentCouseId);
             for (CourseFile courseFile : mList) {
-                ListendFile listendFile = listendFileMap.get(courseFile.courseFileId);
-                if (listendFile != null) {
-                    courseFile.listenedPercent = listendFile.listenedPercent;
-                    courseFile.listenedPosition = listendFile.position;
+                courseFile.courseFileId = courseFile.getId();
+
+                ListenedFile listenedFile = listendFileMap.get(courseFile.courseFileId);
+                if (listenedFile != null) {
+                    courseFile.listenedPercent = listenedFile.listenedPercent;
+                    courseFile.listenedPosition = listenedFile.position;
                 }
             }
             refreshListView();
             return true;
         } else {
+            Log.d(TAG, "mList 为空， 走网络， 从本地sqlite3数据库读取， 刷新列表");
             return false;
         }
     }
@@ -421,10 +425,13 @@ D/tag1: parseNetworkResponse:
 
                 if (currentListenedFileMap != null) {
                     for (CourseFile courseFile : mList) {
-                        ListendFile listendFile = currentListenedFileMap.get(courseFile.courseFileId);
-                        if (listendFile != null) {
-                            courseFile.listenedPercent = listendFile.listenedPercent;
-                            courseFile.listenedPosition = listendFile.position;
+                        courseFile.courseFileId = courseFile.id;
+                        ListenedFile listenedFile = currentListenedFileMap.get(courseFile.courseFileId);
+                        if (listenedFile != null) {
+                            courseFile.listenedPercent = listenedFile.listenedPercent;
+                            courseFile.listenedPosition = listenedFile.position;
+
+//                            courseFile. = listendFile.position;
                         }
                     }
                 }
@@ -439,7 +446,7 @@ D/tag1: parseNetworkResponse:
             }
         });
     }
-    Map<Integer, ListendFile> currentListenedFileMap = null;
+    Map<Integer, ListenedFile> currentListenedFileMap = null;
     private void httpGetListenedFile() {
         HttpClient.getUserListenedFilesByCodeAndCourseIdV1(currentCouseId, new HttpCallback<UserListenedCourse>() {
             @Override
@@ -463,16 +470,18 @@ D/tag1: parseNetworkResponse:
 //                createFlag = 1;
 //                courseListOrder = true;
 
-
-                Gson gson = new Gson();
-
-                currentListenedFileMap = gson.fromJson(response.listenedFiles, new TypeToken<Map<Integer, ListendFile>>() {}.getType());
+                if (response != null)  {
+                    Gson gson = new Gson();
+                    currentListenedFileMap = gson.fromJson(response.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
+                }
                 httpGetCourseFilesV1();
+
             }
 
             @Override
             public void onFail(Exception e) {
                 Log.d(Constant.TAG, "getCourseFiles exception=" + e);
+                httpGetCourseFilesV1();
             }
         });
     }

@@ -11,24 +11,19 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.model.CourseFileList;
-import cn.tihuxueyuan.model.ListendFile;
+import cn.tihuxueyuan.model.ListenedFile;
 import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.service.MusicService;
 import okhttp3.Call;
@@ -294,27 +289,27 @@ public class SPUtils {
         UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
 
         Gson gson = new Gson();
-        ListendFile[] lf = gson.fromJson(u.listenedFiles, ListendFile[].class);
+        ListenedFile[] lf = gson.fromJson(u.listenedFiles, ListenedFile[].class);
 
         Convert convertInstance = Convert.getInstance();
-        Map<Integer, ListendFile> listenedFileMap = convertInstance.listToMap3(lf);
+        Map<Integer, ListenedFile> listenedFileMap = convertInstance.listToMap3(lf);
 
-        ListendFile[] lf1;
+        ListenedFile[] lf1;
         if (listenedFileMap.get(fileId) != null) {
             listenedFileMap.get(fileId).listenedPercent = listenedInt;
-            lf1 = new ListendFile[lf.length];
+            lf1 = new ListenedFile[lf.length];
         } else {
-            ListendFile f = new ListendFile();
+            ListenedFile f = new ListenedFile();
             f.listenedPercent = listenedInt;
             f.courseFileId = fileId;
             f.position = 11;
             listenedFileMap.put(fileId, f);
-            lf1 = new ListendFile[lf.length + 1];
+            lf1 = new ListenedFile[lf.length + 1];
         }
 
 
         int i = 0;
-        for (ListendFile c : listenedFileMap.values()) {
+        for (ListenedFile c : listenedFileMap.values()) {
             lf1[i] = c;
             i++;
         }
@@ -328,7 +323,7 @@ public class SPUtils {
         }
     }
 
-    public static Map<Integer, ListendFile> getUserListened(String code, int courseId) {
+    public static Map<Integer, ListenedFile> getUserListened(String code, int courseId) {
         UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
         Gson gson = new Gson();
 
@@ -336,7 +331,7 @@ public class SPUtils {
             return null;
         }
 
-        Map<Integer, ListendFile> listenedFileMap = gson.fromJson(u.listenedFiles, new TypeToken<Map<Integer, ListendFile>>() {}.getType());
+        Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(u.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
         return listenedFileMap;
     }
 
@@ -345,8 +340,8 @@ public class SPUtils {
         Gson gson = new Gson();
 
         if (u == null) {
-            Map<Integer, ListendFile> listenedFileMap  = new HashMap<>();
-            ListendFile f = new ListendFile();
+            Map<Integer, ListenedFile> listenedFileMap  = new HashMap<>();
+            ListenedFile f = new ListenedFile();
             f.listenedPercent = listenedInt;
             f.courseFileId = fileId;
             f.position = postion;
@@ -354,11 +349,11 @@ public class SPUtils {
             String listened1 = gson.toJson(listenedFileMap);
             Constant.dbUtils.insertUserListenedCourse(code, courseId, listened1);
         } else {
-            Map<Integer, ListendFile> listenedFileMap = gson.fromJson(u.listenedFiles, new TypeToken<Map<Integer, ListendFile>>() {}.getType());
+            Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(u.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
             if (listenedFileMap != null && listenedFileMap.get(fileId) != null) {
                 listenedFileMap.get(fileId).listenedPercent = listenedInt;
             } else {
-                ListendFile f = new ListendFile();
+                ListenedFile f = new ListenedFile();
                 f.listenedPercent = listenedInt;
                 f.courseFileId = fileId;
                 f.position = postion;

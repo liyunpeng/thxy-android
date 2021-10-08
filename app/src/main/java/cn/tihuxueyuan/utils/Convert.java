@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cn.tihuxueyuan.model.CourseFileList;
-import cn.tihuxueyuan.model.ListendFile;
+import cn.tihuxueyuan.model.ListenedFile;
 
 public  class Convert<T> {
 
@@ -48,17 +48,17 @@ public  class Convert<T> {
         }
     }
 
-    public Map<Integer, ListendFile> listToMap3(ListendFile[] aa) {
-        Map<Integer, ListendFile> m = new AbstractMap<Integer, ListendFile>() {
+    public Map<Integer, ListenedFile> listToMap3(ListenedFile[] aa) {
+        Map<Integer, ListenedFile> m = new AbstractMap<Integer, ListenedFile>() {
             @NonNull
             @Override
-            public Set<Entry<Integer, ListendFile>> entrySet() {
+            public Set<Entry<Integer, ListenedFile>> entrySet() {
                 return null;
             }
         };
         m.clear();
 
-        for (ListendFile c : aa) {
+        for (ListenedFile c : aa) {
             int i = c.courseFileId;
             m.put(i, c);
         }
