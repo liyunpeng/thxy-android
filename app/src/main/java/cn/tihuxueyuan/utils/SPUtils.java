@@ -232,11 +232,12 @@ public class SPUtils {
 
     // list 转 map
     public static void listToMap() {
-        Map<Integer, CourseFileList.CourseFile> m = Constant.appData.courseFileMap;
-        m.clear();
+//        Map<Integer, CourseFileList.CourseFile> m = Constant.appData.courseFileMap;
+//        m.clear();
+        Constant.appData.courseFileMap = new HashMap<>();
         for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
             int i = c.getId();
-            m.put(i, c);
+            Constant.appData.courseFileMap.put(i, c);
         }
     }
 

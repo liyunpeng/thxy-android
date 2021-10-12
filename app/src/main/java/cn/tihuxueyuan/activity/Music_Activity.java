@@ -108,6 +108,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             appData.currentPostion = getIntent().getIntExtra("current_position", 0);
             musicTitle = getIntent().getStringExtra("title");
             appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
+            Log.d(TAG, "设置 app.currentCourseFileId= " + appData.currentCourseFileId);
             bindMusicService();
         } else {
 //            bootstrapReflect();

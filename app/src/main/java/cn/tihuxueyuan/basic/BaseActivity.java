@@ -28,17 +28,17 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         String className = this.getLocalClassName();
-        if ( !className.contains("Music")) {
+//        if ( !className.contains("Music")) {
             floatViewObserver();
-        }
+//        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (customFloatViewText.contains("123")){
+//        if (customFloatViewText.contains("123")){
             customFloatViewText = Constant.currentMusicName;
-        }
+//        }
         String className = this.getLocalClassName();
         Log.d(Constant.TAG, "BaseActivity onResume classname =" + this.getLocalClassName());
 

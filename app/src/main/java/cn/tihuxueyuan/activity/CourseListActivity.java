@@ -96,10 +96,7 @@ public class CourseListActivity extends BaseActivity {
 
         if (!getCourseListFromSqlite3()) {
             // 本地没获取到，再走网络获取
-
-
             httpGetListenedFile();
-
 //            httpGetCourseFilesV1();
         }
 
@@ -230,12 +227,14 @@ D/tag1: parseNetworkResponse:
     @Override
     public void onResume() {
         super.onResume();
-        if (createFlag == 1 && mList != null && mList.size() > appData.currentPostion) {
+//        if (createFlag == 1 && mList != null && mList.size() > appData.currentPostion) {
+        if ( mList != null && mList.size() > appData.currentPostion) {
             // 从悬浮窗进入音乐界面， 再回到列表界面时，如果是其他课程列表，不刷新
             Log.d(TAG, " 课程列表 onResume 刷新");
-            if (currentCouseId == Constant.musicControl.getCurrentCourseId()) {
+//            if (currentCouseId == Constant.musicControl.getCurrentCourseId()) {
+                Log.d(TAG, " 课程列表 onResume 刷新, 调用 notifyDataSetChanged ");
                 mAdapter.notifyDataSetChanged();
-            }
+//            }
             freshLastPlay();
         } else {
             Log.d(TAG, " 课程列表 onResume 不刷新");
@@ -304,7 +303,8 @@ D/tag1: parseNetworkResponse:
                         Constant.appData.currentPostion < Constant.appData.courseFileList.size()) {
                     if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId) != null) {
 //                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.getId()) {
-                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.courseFileId) {
+//                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.courseFileId) {
+                        if (Constant.appData.currentCourseFileId  == courseFile.courseFileId) {
                             color = Color.parseColor("#FF0000");
                         }
                     } else {
@@ -367,7 +367,14 @@ D/tag1: parseNetworkResponse:
                 }
             }
 
+            appData.courseFileList = mList;
+            SPUtils.listToMap();
+//            lastListenedCourseFileId = response.getLastListenedCourseFileId();
+
             refreshListView();
+
+            createFlag = 1;
+            courseListOrder = true;
             return true;
         } else {
             Log.d(TAG, "mList 为空， 走网络， 从本地sqlite3数据库读取， 刷新列表");

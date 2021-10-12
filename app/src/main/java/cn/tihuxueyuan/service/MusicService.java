@@ -129,7 +129,6 @@ public class MusicService extends Service {
         }
     }
 
-
     @Override
     public IBinder onBind(Intent intent) {
         return new MusicControl();
@@ -153,6 +152,7 @@ public class MusicService extends Service {
                 currentCourseId = appData.courseFileMap.get(appData.currentCourseFileId).getCourseId();
                 String fileName = appData.courseFileMap.get(appData.currentCourseFileId).getFileName();
                 Constant.currentMusicName = SPUtils.getTitleFromName(fileName);
+
                 if (pos > 0) {
                     Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
                     if (percent == 100) {
