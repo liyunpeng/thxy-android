@@ -33,6 +33,7 @@ import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.model.ListenedFile;
+import cn.tihuxueyuan.model.Sqlite3UserCourse;
 import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
@@ -354,7 +355,8 @@ D/tag1: parseNetworkResponse:
 
         if (mList != null && mList.size() > 0) {
             Log.d(TAG, "mList 不为空，不走网络， 从本地sqlite3数据库读取， 刷新列表");
-            Map<Integer, ListenedFile> listendFileMap = SPUtils.getUserListened(appData.UserCode, currentCouseId);
+            Sqlite3UserCourse sqlite3UserCourse = SPUtils.getUserListened(appData.UserCode, currentCouseId);
+            Map<Integer, ListenedFile> listendFileMap = sqlite3UserCourse.listenedFileMap;
             if (listendFileMap != null) {
                 for (CourseFile courseFile : mList) {
                     courseFile.courseFileId = courseFile.getId();
@@ -369,7 +371,7 @@ D/tag1: parseNetworkResponse:
 
             appData.courseFileList = mList;
             SPUtils.listToMap();
-//            lastListenedCourseFileId = response.getLastListenedCourseFileId();
+            lastListenedCourseFileId = sqlite3UserCourse.lastListenedCourseFileId;
 
             refreshListView();
 
@@ -489,7 +491,6 @@ D/tag1: parseNetworkResponse:
                     }.getType());
                 }
                 httpGetCourseFilesV1();
-
             }
 
             @Override

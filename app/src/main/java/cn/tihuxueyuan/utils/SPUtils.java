@@ -24,6 +24,7 @@ import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.ListenedFile;
+import cn.tihuxueyuan.model.Sqlite3UserCourse;
 import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.service.MusicService;
 import okhttp3.Call;
@@ -324,16 +325,22 @@ public class SPUtils {
         }
     }
 
-    public static Map<Integer, ListenedFile> getUserListened(String code, int courseId) {
+//    public static Map<Integer, ListenedFile> getUserListened(String code, int courseId) {
+    public static Sqlite3UserCourse getUserListened(String code, int courseId) {
         UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
         Gson gson = new Gson();
+        Sqlite3UserCourse s = new Sqlite3UserCourse();
 
         if (u == null) {
             return null;
         }
 
         Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(u.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
-        return listenedFileMap;
+
+        s.lastListenedCourseFileId = u.lastListenedCourseFileId;
+        s.listenedFileMap = listenedFileMap;
+
+        return s;
     }
 
     public static void updateUserListenedV1(String code, int courseId, int fileId, int listenedInt, int postion) {
