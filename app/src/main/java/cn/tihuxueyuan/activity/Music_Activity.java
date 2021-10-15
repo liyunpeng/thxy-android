@@ -275,7 +275,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     public static Handler handler = new Handler() {//创建消息处理器对象
         //在主线程中处理从子线程发送过来的消息
 
-        int lastPercent;
+        public int lastPercent;
 
         @Override
         public void handleMessage(Message msg) {
@@ -319,7 +319,11 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             if (duration > 0) {
                 currentPercent = (currentPosition * 100 / duration);
 
-                if (currentPercent != lastPercent) {
+                if (currentPercent == 0) {
+                    currentPercent = 1;
+                }
+
+                if (currentPercent != lastPercent || (currentPercent == 1 && lastPercent != 1) ) {
                     String listenedPercent = Integer.toString(currentPercent);
 
                     Log.d(TAG, "handleMessage  listenedPercent = " + listenedPercent

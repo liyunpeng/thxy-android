@@ -20,7 +20,7 @@ public class CourseTypeList {
         @SerializedName("name")
         private String name;
         @SerializedName("id")
-        private String id;
+        private int id;
 
         public String getName() {
             return name;
@@ -38,11 +38,11 @@ public class CourseTypeList {
 //            this.artistname = artistname;
 //        }
 
-        public String getId() {
+        public int getId() {
             return id;
         }
 
-        public void setId(String Id) {
+        public void setId(int id) {
             this.id = id;
         }
     }

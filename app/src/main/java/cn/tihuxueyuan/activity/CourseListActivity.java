@@ -246,7 +246,6 @@ D/tag1: parseNetworkResponse:
         } else {
             reverseTextView.setText("倒序");
         }
-
     }
 
     private void courseListActivityObserver() {

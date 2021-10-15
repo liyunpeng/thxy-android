@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.model.CourseList;
+import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.Constant;
 
@@ -23,7 +25,7 @@ public class DBUtils {
      * 实例化SQLiteHelper类，从中得到一个读写的数据库
      **/
     public DBUtils(Context context) {
-        helper = new DBOpenHelper(context, "abcdefghijk.db", null, 1);
+        helper = new DBOpenHelper(context, "abcdefghijklmno.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -52,6 +54,27 @@ public class DBUtils {
         db.insert(DBOpenHelper.U_USER_INFO, null, cv);
     }
 
+    public void saveCourseTypes(List<CourseTypeList.CourseType> cc) {
+        for (CourseTypeList.CourseType c : cc) {
+            ContentValues cv = new ContentValues();
+            cv.put("name", c.getName());
+            cv.put("id", c.getId());
+            db.insert(DBOpenHelper.COURSE_TYPE, null, cv);
+        }
+    }
+
+    public void saveCourseList(List<CourseList.Course> cc) {
+        for (CourseList.Course c : cc) {
+            ContentValues cv = new ContentValues();
+            cv.put("title", c.getTitle());
+            cv.put("img_file_name", c.getImgFileName());
+            cv.put("type_id", c.getTypeId());
+            cv.put("course_id", c.getId());
+            cv.put("id", c.getId());
+            db.insert(DBOpenHelper.COURSE, null, cv);
+        }
+    }
+
     public void saveCourseFiles() {
         for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
             ContentValues cv = new ContentValues();
@@ -65,14 +88,44 @@ public class DBUtils {
     }
 
     @SuppressLint("Range")
-    public UserListenedCourse getUserListenedCourseByUserCodeAndCourseId(String code , int courseId )
-    {
+    public List<CourseTypeList.CourseType> getCourseTypes() {
+        String sql = "SELECT * FROM " + DBOpenHelper.COURSE_TYPE;
+        List<CourseTypeList.CourseType> lc = new ArrayList<>();
+        Cursor cursor = db.rawQuery(sql, null);
+        while (cursor.moveToNext()) {
+            CourseTypeList.CourseType bean = new CourseTypeList.CourseType();
+            bean.setName(cursor.getString(cursor.getColumnIndex("name")));
+            bean.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            lc.add(bean);
+        }
+        cursor.close();
+        return lc;
+    }
+
+    @SuppressLint("Range")
+    public List<CourseList.Course> getCourseList(int typeId) {
+        String sql = "SELECT * FROM " + DBOpenHelper.COURSE + " WHERE type_id =?";
+        String args[] = {String.valueOf(typeId)};
+        List<CourseList.Course> lc = new ArrayList<>();
+        Cursor cursor = db.rawQuery(sql, null);
+        while (cursor.moveToNext()) {
+            CourseList.Course course = new CourseList.Course();
+            course.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            course.setTypeId(cursor.getInt(cursor.getColumnIndex("type_id")));
+            course.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            course.setImgFileName(cursor.getString(cursor.getColumnIndex("img_file_name")));
+            lc.add(course);
+        }
+        cursor.close();
+        return lc;
+    }
+
+    @SuppressLint("Range")
+    public UserListenedCourse getUserListenedCourseByUserCodeAndCourseId(String code, int courseId) {
         String sql = "SELECT * FROM " + DBOpenHelper.USER_LISTENED_COURSE + " WHERE code=? and course_id=? ";
-        String args[] = { code, String.valueOf(courseId)};
-
+        String args[] = {code, String.valueOf(courseId)};
         Cursor cursor = db.rawQuery(sql, args);
-
-        if (  cursor != null && cursor.getCount() > 0 ) {
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             UserListenedCourse u = new UserListenedCourse();
             u.code = cursor.getString(cursor.getColumnIndex("code"));
@@ -80,15 +133,16 @@ public class DBUtils {
             u.listenedFiles = cursor.getString(cursor.getColumnIndex("listened_files"));
             u.lastListenedCourseFileId = cursor.getInt(cursor.getColumnIndex("last_listened_course_file_id"));
             return u;
-        }else{
+        } else {
             return null;
         }
     }
 
-    public void insertUserListenedCourse(String code , int courseId, String listenedFiles ) {
+    public void insertUserListenedCourse(String code, int courseId, String listenedFiles) {
         ContentValues cv = new ContentValues();
         cv.put("code", code);
         cv.put("course_id", courseId);
+        cv.put("id", courseId);
         cv.put("listened_files", listenedFiles);
         db.insert(DBOpenHelper.USER_LISTENED_COURSE, null, cv);
         /*
@@ -103,7 +157,7 @@ public class DBUtils {
          */
     }
 
-    public void updateUserListenedCourse(String code , int courseId, String listenedFiles ) {
+    public void updateUserListenedCourse(String code, int courseId, String listenedFiles) {
         ContentValues cv = new ContentValues();
 //        cv.put("code", code);
 //        cv.put("course_id", courseId);
@@ -118,9 +172,9 @@ db.update("Book", values, "name = ?", new String[] { "The DaVinci Code" });
 
 
          */
-        String args[] = { code, String.valueOf(courseId)};
+        String args[] = {code, String.valueOf(courseId)};
 
-        db.update(DBOpenHelper.USER_LISTENED_COURSE, cv,  " code=? and course_id = ?", args);
+        db.update(DBOpenHelper.USER_LISTENED_COURSE, cv, " code=? and course_id = ?", args);
     }
 
     public int getFileCountByCourseId(int courseId) {
@@ -133,6 +187,28 @@ db.update("Book", values, "name = ?", new String[] { "The DaVinci Code" });
         cursor.close();
         return count;
     }
+
+    public int getCourseTypeCount() {
+        String sql = "SELECT count(id) FROM " + DBOpenHelper.COURSE_TYPE;
+        Cursor cursor = db.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
+    }
+
+    public int getCourseListCountByTypeId(int typeId) {
+        String sql = "SELECT count(id) FROM " + DBOpenHelper.COURSE + " WHERE type_id =?";
+        String args[] = {String.valueOf(typeId)};
+        Cursor cursor = db.rawQuery(sql, args);
+        cursor.moveToFirst();
+
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
+    }
+
 
     @SuppressLint("Range")
     public List<CourseFileList.CourseFile> getSqlite3CourseFileList(int courseId) {

@@ -245,9 +245,9 @@ public class HttpClient {
                 });
     }
 
-    public static void getCourseByTypeId(String typeId, final HttpCallback<CourseList> callback) {
+    public static void getCourseByTypeId(int typeId, final HttpCallback<CourseList> callback) {
         Map<String, String> params = new HashMap<>();
-        params.put("id", typeId);
+        params.put("id", String.valueOf(typeId));
 
         //  RequestBody r = RequestBody.create(MediaType.parse("application/json"), "aa");
         OkHttpUtils.post().url(BASE_URL + "findCourseByTypeIdOk")

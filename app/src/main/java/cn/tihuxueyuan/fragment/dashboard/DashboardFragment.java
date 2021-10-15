@@ -1,6 +1,7 @@
 package cn.tihuxueyuan.fragment.dashboard;
 
-import android.annotation.SuppressLint;
+import static cn.tihuxueyuan.utils.Constant.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,8 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.activity.CourseListActivity;
-import cn.tihuxueyuan.activity.Music_Activity;
-import cn.tihuxueyuan.activity.OkhttpClientActivity;
 import cn.tihuxueyuan.adapter.TabAdapterA;
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.databinding.FragmentDashboardBinding;
@@ -32,7 +31,6 @@ import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.listenner.RecyclerViewClickListener2;
 import cn.tihuxueyuan.model.CourseList;
 import cn.tihuxueyuan.model.CourseList.Course;
-import cn.tihuxueyuan.model.SearchMusic;
 import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.adapter.GridRecycleAdapter;
 import cn.tihuxueyuan.model.CourseTypeList.CourseType;
@@ -66,7 +64,28 @@ public class DashboardFragment extends Fragment {
         recyclerView = root.findViewById(R.id.recycler_view);
 
         initRecycleView();
-        initCourseType();
+
+        courseTypeList = Constant.dbUtils.getCourseTypes();
+        if (courseList == null || courseTypeList.size() <=0) {
+            httpGetCourseType();
+        }else{
+            refreshView();
+
+            courseList = Constant.dbUtils.getCourseList(courseTypeList.get(0).getId());
+
+            if (courseList == null || courseList.size() <= 0) {
+                httpGetCourseByType(courseTypeList.get(0).getId());
+            }else{
+                Log.d(TAG, " 课程列表取sqlite3数据库");
+                if (recyclerView.getAdapter() == null) {
+                    recyclerView.setAdapter(recycleAdapter);
+                }
+                recycleAdapter.setList(courseList);
+                recycleAdapter.notifyDataSetChanged();
+            }
+
+
+        }
         return root;
     }
 
@@ -118,7 +137,7 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onTabSelected(TabView tab, int position) {
                 Log.d(Constant.TAG, "onTabSelected:  id :" + courseTypeList.get(position).getId());
-                getCourseByType(courseTypeList.get(position).getId());
+                httpGetCourseByType(courseTypeList.get(position).getId());
 //                recycleAdapter.setList(recyclelist.get(position).getItemName());
             }
 
@@ -129,7 +148,7 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-    public void getCourseByType(String typeId) {
+    public void httpGetCourseByType(int typeId) {
         HttpClient.getCourseByTypeId(typeId, new HttpCallback<CourseList>() {
             @Override
             public void onSuccess(CourseList response) {
@@ -145,6 +164,11 @@ public class DashboardFragment extends Fragment {
                 recycleAdapter.setList(courseList);
                 recycleAdapter.notifyDataSetChanged();
 
+                int count = Constant.dbUtils.getCourseListCountByTypeId( typeId);
+                if (count <= 0) {
+                    Log.d(TAG, "类型保存到本地数据库");
+                    Constant.dbUtils.saveCourseList(courseList);
+                }
             }
 
             @Override
@@ -154,7 +178,7 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-    public void initCourseType() {
+    public void httpGetCourseType() {
         HttpClient.getCourseTypes("", new HttpCallback<CourseTypeList>() {
             @Override
             public void onSuccess(CourseTypeList response) {
@@ -164,7 +188,14 @@ public class DashboardFragment extends Fragment {
                 }
                 courseTypeList = response.getCourseType();
                 refreshView();
-                getCourseByType(courseTypeList.get(0).getId());
+
+                int count = Constant.dbUtils.getCourseTypeCount();
+                if (count <= 0) {
+                    Log.d(TAG, "类型保存到本地数据库");
+                    Constant.dbUtils.saveCourseTypes(courseTypeList);
+                }
+
+                httpGetCourseByType(courseTypeList.get(0).getId());
             }
 
             @Override

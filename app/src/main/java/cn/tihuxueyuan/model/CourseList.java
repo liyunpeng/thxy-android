@@ -26,7 +26,11 @@ public class CourseList {
         @SerializedName("store_path")
         private String storePath;
         @SerializedName("type_id")
-        private String typeId;
+        private int typeId;
+
+        public int getTypeId() {
+            return typeId;
+        }
 
         public String getTitle() {
             return title;
@@ -42,6 +46,18 @@ public class CourseList {
             this.title = title;
         }
 
+        public void setTypeId(int typeId) {
+            this.typeId = typeId;
+        }
+
+//        public void setCourseId(int typeId) {
+//            this.typeId = typeId;
+//        }
+
+        public void setImgFileName(String imgFileName) {
+            this.ImgFileName = imgFileName;
+        }
+
 //        public String getArtistname() {
 //            return artistname;
 //        }
@@ -54,7 +70,7 @@ public class CourseList {
             return id;
         }
 
-        public void setId(String Id) {
+        public void setId(int Id) {
             this.id = id;
         }
     }
