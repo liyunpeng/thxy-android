@@ -291,7 +291,6 @@ D/tag1: parseNetworkResponse:
                 }
             }
         });
-
         mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
@@ -341,13 +340,14 @@ D/tag1: parseNetworkResponse:
                 holder.getView(R.id.duration).setVisibility(View.GONE);
             }
         };
+
 //        courseListView.set
         courseListView.setAdapter(mAdapter);
 
         mAdapter.notifyDataSetChanged();
     }
 
-    int lastListenedCourseFileId;
+    int lastListenedCourseFileId = -1;
 
     private boolean getCourseListFromSqlite3() {
         mList = Constant.dbUtils.getSqlite3CourseFileList(currentCouseId);
@@ -355,23 +355,24 @@ D/tag1: parseNetworkResponse:
         if (mList != null && mList.size() > 0) {
             Log.d(TAG, "mList 不为空，不走网络， 从本地sqlite3数据库读取， 刷新列表");
             Sqlite3UserCourse sqlite3UserCourse = SPUtils.getUserListened(appData.UserCode, currentCouseId);
-            Map<Integer, ListenedFile> listendFileMap = sqlite3UserCourse.listenedFileMap;
-            if (listendFileMap != null) {
-                for (CourseFile courseFile : mList) {
-                    courseFile.courseFileId = courseFile.getId();
+            if (sqlite3UserCourse != null) {
+                Map<Integer, ListenedFile> listendFileMap = sqlite3UserCourse.listenedFileMap;
+                if (listendFileMap != null) {
+                    for (CourseFile courseFile : mList) {
+                        courseFile.courseFileId = courseFile.getId();
 
-                    ListenedFile listenedFile = listendFileMap.get(courseFile.courseFileId);
-                    if (listenedFile != null) {
-                        courseFile.listenedPercent = listenedFile.listenedPercent;
-                        courseFile.listenedPosition = listenedFile.position;
+                        ListenedFile listenedFile = listendFileMap.get(courseFile.courseFileId);
+                        if (listenedFile != null) {
+                            courseFile.listenedPercent = listenedFile.listenedPercent;
+                            courseFile.listenedPosition = listenedFile.position;
+                        }
                     }
                 }
+                lastListenedCourseFileId = sqlite3UserCourse.lastListenedCourseFileId;
             }
 
             appData.courseFileList = mList;
             SPUtils.listToMap();
-            lastListenedCourseFileId = sqlite3UserCourse.lastListenedCourseFileId;
-
             refreshListView();
 
             createFlag = 1;

@@ -130,6 +130,7 @@ public class DBUtils {
             UserListenedCourse u = new UserListenedCourse();
             u.code = cursor.getString(cursor.getColumnIndex("code"));
             u.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
+            u.id = cursor.getInt(cursor.getColumnIndex("id"));
             u.listenedFiles = cursor.getString(cursor.getColumnIndex("listened_files"));
             u.lastListenedCourseFileId = cursor.getInt(cursor.getColumnIndex("last_listened_course_file_id"));
             return u;

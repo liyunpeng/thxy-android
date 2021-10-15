@@ -7,6 +7,9 @@ public class UserListenedCourse {
     @SerializedName("code")
     public   String code;
 
+    @SerializedName("id")
+    public int id;
+
     @SerializedName("course_id")
     public int courseId;
 

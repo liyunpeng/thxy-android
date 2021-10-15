@@ -335,7 +335,8 @@ public class SPUtils {
             return null;
         }
 
-        Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(u.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
+        Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(
+                u.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
 
         s.lastListenedCourseFileId = u.lastListenedCourseFileId;
         s.listenedFileMap = listenedFileMap;
