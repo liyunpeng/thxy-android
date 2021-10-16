@@ -272,6 +272,7 @@ public class FloatingView extends RelativeLayout {
         mFloatBallParams.x = mScreenWidth - floatViewHeight;
         mFloatBallParams.y = mScreenHeight - floatViewWidth;
 
+
         mWindowManager.addView(this, mFloatBallParams);
         //吸附贴边计算和动画
 //        welt();

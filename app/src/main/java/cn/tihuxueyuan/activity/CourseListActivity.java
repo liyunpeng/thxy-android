@@ -122,7 +122,23 @@ public class CourseListActivity extends BaseActivity {
                 mAdapter.notifyDataSetChanged();
             }
         });
+
+        if (courseListOrder == true) {
+            Constant.order = true;
+            Collections.sort(mList, new ComparatorValues());
+//            reverseTextView.setText(" 倒序");
+        } else {
+//            courseListOrder = true;
+            Constant.order = false;
+            Collections.sort(mList, new ComparatorValues());
+//            reverseTextView.setText(" 正序");
+        }
+
+
         SPUtils.httpGetCourseImage(imageView);
+
+
+
     }
 
     @Override
@@ -186,9 +202,12 @@ public class CourseListActivity extends BaseActivity {
             if (musicControl != null) {
                 if (currentCouseId != musicControl.getCurrentCourseId()) {
                     Log.d(TAG, " freshLastPlay 当前课程列表的courseId  和 当前正在播放的courseId 不同， 设置为可见");
-                    String lastTitle = SPUtils.getTitleFromName(appData.courseFileMap.get(lastListenedCourseFileId).getFileName());
-                    lastPlayTextView.setText("上次播放: " + lastTitle);
-                    lastPlayTextView.setVisibility(View.VISIBLE);
+                    if (appData.courseFileMap != null && appData.courseFileMap.get(lastListenedCourseFileId) != null ) {
+                        String lastTitle = SPUtils.getTitleFromName(appData.courseFileMap.get(lastListenedCourseFileId).getFileName());
+                        lastPlayTextView.setText("上次播放: " + lastTitle);
+                        lastPlayTextView.setVisibility(View.VISIBLE);
+                    }
+
                 } else {
                     Log.d(TAG, " freshLastPlay 当前课程列表的courseId  和 当前正在播放的courseId 相同， 设置为不可见");
                     lastPlayTextView.setVisibility(View.INVISIBLE);
@@ -229,12 +248,15 @@ D/tag1: parseNetworkResponse:
     public void onResume() {
         super.onResume();
 //        if (createFlag == 1 && mList != null && mList.size() > appData.currentPostion) {
-        if ( mList != null && mList.size() > appData.currentPostion) {
+        if (mList != null && mList.size() > appData.currentPostion) {
             // 从悬浮窗进入音乐界面， 再回到列表界面时，如果是其他课程列表，不刷新
             Log.d(TAG, " 课程列表 onResume 刷新");
 //            if (currentCouseId == Constant.musicControl.getCurrentCourseId()) {
-                Log.d(TAG, " 课程列表 onResume 刷新, 调用 notifyDataSetChanged ");
+            Log.d(TAG, " 课程列表 onResume 刷新, 调用 notifyDataSetChanged ");
+            if (mAdapter != null) {
                 mAdapter.notifyDataSetChanged();
+                courseListView.setSelection(appData.currentPostion);
+            }
 //            }
             freshLastPlay();
         } else {
@@ -303,7 +325,7 @@ D/tag1: parseNetworkResponse:
                     if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId) != null) {
 //                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.getId()) {
 //                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.courseFileId) {
-                        if (Constant.appData.currentCourseFileId  == courseFile.courseFileId) {
+                        if (Constant.appData.currentCourseFileId == courseFile.courseFileId) {
                             color = Color.parseColor("#FF0000");
                         }
                     } else {
