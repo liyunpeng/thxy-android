@@ -472,6 +472,17 @@ D/tag1: parseNetworkResponse:
 
                 createFlag = 1;
                 courseListOrder = true;
+
+                if (courseListOrder == true) {
+                    Constant.order = true;
+                    Collections.sort(mList, new ComparatorValues());
+//            reverseTextView.setText(" 倒序");
+                } else {
+//            courseListOrder = true;
+                    Constant.order = false;
+                    Collections.sort(mList, new ComparatorValues());
+//            reverseTextView.setText(" 正序");
+                }
             }
 
             @Override
