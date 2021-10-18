@@ -35,6 +35,7 @@ import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
+import cn.tihuxueyuan.model.ListenedFile;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.utils.Constant;
@@ -52,7 +53,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     private boolean isUnbind = false; //记录服务是否被解绑
     private AppData appData;
     private LiveDataBus.BusMutableLiveData<String> musicActivityLiveData;
-    private static LiveDataBus.BusMutableLiveData<String> courseListActivityLiveData;
+    private static LiveDataBus.BusMutableLiveData<ListenedFile> courseListActivityLiveData;
 
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -60,7 +61,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-        courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, String.class);
+        courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, ListenedFile.class);
 //        if (isBluetoothA2dpOn()) {
 //
 //// Adjust output for Bluetooth.
@@ -324,6 +325,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 }
 
                 if (currentPercent != lastPercent || (currentPercent == 1 && lastPercent != 1) ) {
+
                     String listenedPercent = Integer.toString(currentPercent);
 
                     Log.d(TAG, "handleMessage  listenedPercent = " + listenedPercent
@@ -331,7 +333,10 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                             + ", cp=" + currentPercent
                     );
 
-                    courseListActivityLiveData.postValue(listenedPercent);
+                    ListenedFile l = new ListenedFile();
+                    l.listenedPercent = currentPercent;
+                    l.position = currentPosition;
+                    courseListActivityLiveData.postValue(l);
                 }
 
             }

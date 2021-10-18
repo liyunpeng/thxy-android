@@ -159,8 +159,11 @@ public class MusicService extends Service {
                         Log.d(TAG, " 上次已听完， 这次seekto开始位置，重新听 ");
                         player.seekTo(0);
                     } else {
+                        Log.d(TAG, " seek to pos= "+ pos);
                         player.seekTo(pos);
                     }
+                }else{
+                    player.seekTo(0);
                 }
                 player.start();
                 musicControl.setText();

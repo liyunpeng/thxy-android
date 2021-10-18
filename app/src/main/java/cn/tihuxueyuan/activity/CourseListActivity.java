@@ -57,7 +57,7 @@ public class CourseListActivity extends BaseActivity {
     private TextView reverseTextView;
     private TextView titleView;
     private ImageView imageView;
-    private LiveDataBus.BusMutableLiveData<String> courseListActivityLiveData;
+    private LiveDataBus.BusMutableLiveData<ListenedFile> courseListActivityLiveData;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -271,22 +271,21 @@ D/tag1: parseNetworkResponse:
     }
 
     private void courseListActivityObserver() {
-        courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, String.class);
-        courseListActivityLiveData.observe(CourseListActivity.this, true, new Observer<String>() {
+        courseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, ListenedFile.class);
+        courseListActivityLiveData.observe(CourseListActivity.this, true, new Observer<ListenedFile>() {
             @Override
-            public void onChanged(String value) {
+            public void onChanged(ListenedFile value) {
                 Log.d(TAG, " CourseListActivity 观察者监控到消息 = " + value);
-
                 if (mList != null && mList.size() > Constant.appData.currentPostion) {
-                    int listenedPercent = Integer.parseInt(value);
-                    mList.get(Constant.appData.currentPostion).listenedPercent = listenedPercent;
+                    mList.get(Constant.appData.currentPostion).listenedPercent = value.listenedPercent;
+                    mList.get(Constant.appData.currentPostion).listenedPosition = value.position;
 
                     SPUtils.updateUserListenedV1(
                             Constant.appData.UserCode,
                             Constant.appData.currentCourseId,
                             Constant.appData.currentCourseFileId,
-                            listenedPercent,
-                            currentPostion);
+                            value.listenedPercent,
+                            value.position);
                     mAdapter.notifyDataSetChanged();
                 }
             }
