@@ -141,7 +141,7 @@ public class MusicService extends Service {
         Log.d(TAG, "MusicService onCreate");
         initNotificationRemoteViews();
         initNotification();
-        appData = (AppData) getApplication();
+        appData = Constant.appData;
         player = new MediaPlayer();
         initAudioLoseListener();
         player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -153,6 +153,7 @@ public class MusicService extends Service {
                 String fileName = appData.courseFileMap.get(appData.currentCourseFileId).getFileName();
                 Constant.currentMusicName = SPUtils.getTitleFromName(fileName);
 
+                Log.d(TAG, " player onPrepared...");
                 if (pos > 0) {
                     Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
                     if (percent == 100) {
@@ -163,6 +164,9 @@ public class MusicService extends Service {
                         player.seekTo(pos);
                     }
                 } else {
+                    Log.d(TAG, "pos=0, percent=" + percent +
+                            ", currentCourseFileId=" +  appData.currentCourseFileId +
+                            ", fileName=" + fileName);
                     player.seekTo(0);
                 }
                 player.start();

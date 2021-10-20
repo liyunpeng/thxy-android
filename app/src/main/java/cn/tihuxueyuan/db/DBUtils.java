@@ -25,7 +25,7 @@ public class DBUtils {
      * 实例化SQLiteHelper类，从中得到一个读写的数据库
      **/
     public DBUtils(Context context) {
-        helper = new DBOpenHelper(context, "abcdefghijklmnopqr.db", null, 1);
+        helper = new DBOpenHelper(context, "abcdefghijklmnopqrs.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -146,35 +146,12 @@ public class DBUtils {
         cv.put("id", courseId);
         cv.put("listened_files", listenedFiles);
         db.insert(DBOpenHelper.USER_LISTENED_COURSE, null, cv);
-        /*
-                db.execSQL("CREATE TABLE IF NOT EXISTS  " + USER_LISTENED_COURSE + " ( "
-                + "id  INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "user_listened_course_id INT, "
-                + "code VARCHAR, "
-                + "course_id INT, "
-                + "last_listened_course_file_id INT, "
-                + "listened_files INT "
-                + ")");
-         */
     }
 
     public void updateUserListenedCourse(String code, int courseId, String listenedFiles) {
         ContentValues cv = new ContentValues();
-//        cv.put("code", code);
-//        cv.put("course_id", courseId);
         cv.put("listened_files", listenedFiles);
-
-        /*
-        ContentValues values = new ContentValues();
-
-values.put("price", 10.99);
-
-db.update("Book", values, "name = ?", new String[] { "The DaVinci Code" });
-
-
-         */
         String args[] = {code, String.valueOf(courseId)};
-
         db.update(DBOpenHelper.USER_LISTENED_COURSE, cv, " code=? and course_id = ?", args);
     }
 

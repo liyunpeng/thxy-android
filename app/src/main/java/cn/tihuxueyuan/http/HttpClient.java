@@ -29,9 +29,9 @@ import cn.tihuxueyuan.model.CourseList;
 import okhttp3.RequestBody;
 
 public class HttpClient {
-//    private static final String BASE_URL = "http://10.0.2.2:8082/api/";
+    private static final String BASE_URL = "http://10.0.2.2:8082/api/";
 //    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
-    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
+//    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
     //    private static final String BASE_URL = "http://10.0.2.2:8082/api/findCourseFileByCourseIdOk";
     private static final String METHOD_GET_MUSIC_LIST = "baidu.ting.billboard.billList";
     private static final String METHOD_DOWNLOAD_MUSIC = "baidu.ting.song.play";

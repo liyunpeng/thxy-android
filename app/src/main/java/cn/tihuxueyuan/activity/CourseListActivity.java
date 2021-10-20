@@ -85,6 +85,8 @@ public class CourseListActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
                 Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
+                SPUtils.listToMap();
+                appData.currentCourseFileId = mList.get(position).getId();
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
                 intent.putExtra("is_new", true);
@@ -97,16 +99,15 @@ public class CourseListActivity extends BaseActivity {
 
         if (!getCourseListFromSqlite3()) {
             // 本地没获取到，再走网络获取
-            if ( Constant.HAS_USER ){
+            if (Constant.HAS_USER) {
                 httpGetListenedFile();
-            }else{
+            } else {
                 httpGetCourseFilesV1();
             }
         }
 
-        Log.d("tag2", "onCreate: currentCouseId: " + currentCouseId);
+        Log.d(TAG, "onCreate: currentCouseId: " + currentCouseId);
 
-        courseListActivityObserver();
         reverseTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,35 +130,28 @@ public class CourseListActivity extends BaseActivity {
         if (courseListOrder == true) {
             Constant.order = true;
             Collections.sort(mList, new ComparatorValues());
-//            reverseTextView.setText(" 倒序");
         } else {
-//            courseListOrder = true;
             Constant.order = false;
             Collections.sort(mList, new ComparatorValues());
-//            reverseTextView.setText(" 正序");
         }
 
-
         SPUtils.httpGetCourseImage(imageView);
-
+        courseListActivityObserver();
     }
 
     @Override
     protected void onRestart() {
-        Log.e("====", "onRestart()");
         super.onRestart();
     }
 
     @Override
     protected void onStart() {
-        Log.e("====", "onStart()");
         super.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        appData.lastCourseId = Integer.parseInt(currentCouseId);
         appData.lastCourseId = currentCouseId;
     }
 
@@ -203,12 +197,11 @@ public class CourseListActivity extends BaseActivity {
             if (musicControl != null) {
                 if (currentCouseId != musicControl.getCurrentCourseId()) {
                     Log.d(TAG, " freshLastPlay 当前课程列表的courseId  和 当前正在播放的courseId 不同， 设置为可见");
-                    if (appData.courseFileMap != null && appData.courseFileMap.get(lastListenedCourseFileId) != null ) {
+                    if (appData.courseFileMap != null && appData.courseFileMap.get(lastListenedCourseFileId) != null) {
                         String lastTitle = SPUtils.getTitleFromName(appData.courseFileMap.get(lastListenedCourseFileId).getFileName());
                         lastPlayTextView.setText("上次播放: " + lastTitle);
                         lastPlayTextView.setVisibility(View.VISIBLE);
                     }
-
                 } else {
                     Log.d(TAG, " freshLastPlay 当前课程列表的courseId  和 当前正在播放的courseId 相同， 设置为不可见");
                     lastPlayTextView.setVisibility(View.INVISIBLE);
@@ -226,25 +219,10 @@ public class CourseListActivity extends BaseActivity {
                     ", lastListenedCourseFileId=" + lastListenedCourseFileId +
                     ", appData.lastCourseId= " + appData.lastCourseId +
                     ", currentCouseId=" + currentCouseId);
-
             lastPlayTextView.setVisibility(View.INVISIBLE);
         }
     }
 
-    /*
-
-    点回退键时：
-    D/tag2: onCreate: param: 1
-E/====: onStart()
-E/====: onResume()
-D/tag1: parseNetworkResponse:
-
-再点应用时：
-E/====: onRestart()
-E/====: onStart()
-E/====: onResume()
-D/tag1: parseNetworkResponse:
-     */
     @Override
     public void onResume() {
         super.onResume();
@@ -254,7 +232,7 @@ D/tag1: parseNetworkResponse:
             Log.d(TAG, " 课程列表 onResume 刷新");
 //            if (currentCouseId == Constant.musicControl.getCurrentCourseId()) {
             Log.d(TAG, " 课程列表 onResume 刷新, 调用 notifyDataSetChanged ");
-            if (mAdapter != null) {
+            if (mAdapter != null && courseListView != null) {
                 mAdapter.notifyDataSetChanged();
                 courseListView.setSelection(appData.currentPostion);
             }
@@ -277,18 +255,16 @@ D/tag1: parseNetworkResponse:
             @Override
             public void onChanged(ListenedFile value) {
                 Log.d(TAG, " CourseListActivity 观察者监控到消息 = " + value);
-                if (mList != null && mList.size() > Constant.appData.currentPostion) {
+                if (mList != null && mList.size() >= Constant.appData.currentPostion) {
                     mList.get(Constant.appData.currentPostion).listenedPercent = value.listenedPercent;
                     mList.get(Constant.appData.currentPostion).listenedPosition = value.position;
 
-                    if (!Constant.HAS_USER) {
-                        SPUtils.updateUserListenedV1(
-                                Constant.appData.UserCode,
-                                Constant.appData.currentCourseId,
-                                Constant.appData.currentCourseFileId,
-                                value.listenedPercent,
-                                value.position);
-                    }
+                    SPUtils.updateUserListenedV1(
+                            Constant.appData.UserCode,
+                            Constant.appData.currentCourseId,
+                            Constant.appData.currentCourseFileId,
+                            value.listenedPercent,
+                            value.position);
 
                     mAdapter.notifyDataSetChanged();
                 }
@@ -321,6 +297,7 @@ D/tag1: parseNetworkResponse:
             public void convertView(ViewHolder holder, CourseFile courseFile) {
                 int percent = courseFile.getListenedPercent();
                 String duration = courseFile.getDuration();
+                int pos = courseFile.getListenedPosition();
                 int color = Color.parseColor("#000000");
                 if (currentCouseId == appData.currentMusicCourseId &&
                         appData.currentPostion >= 0 &&
@@ -361,12 +338,11 @@ D/tag1: parseNetworkResponse:
                     holder.set(R.id.duration, "时长" + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
-
+                holder.set(R.id.pos, "位置:" + pos, color);
                 holder.getView(R.id.duration).setVisibility(View.GONE);
             }
         };
 
-//        courseListView.set
         courseListView.setAdapter(mAdapter);
 
         mAdapter.notifyDataSetChanged();
@@ -472,19 +448,14 @@ D/tag1: parseNetworkResponse:
                         }
                     }
                 }
-
                 createFlag = 1;
-                courseListOrder = true;
-
+//                courseListOrder = true;
                 if (courseListOrder == true) {
                     Constant.order = true;
                     Collections.sort(mList, new ComparatorValues());
-//            reverseTextView.setText(" 倒序");
                 } else {
-//            courseListOrder = true;
                     Constant.order = false;
                     Collections.sort(mList, new ComparatorValues());
-//            reverseTextView.setText(" 正序");
                 }
             }
 
