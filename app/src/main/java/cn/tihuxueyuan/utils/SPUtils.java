@@ -24,7 +24,7 @@ import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.ListenedFile;
-import cn.tihuxueyuan.model.Sqlite3UserCourse;
+import cn.tihuxueyuan.model.SqliteUserCourse;
 import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.service.MusicService;
 import okhttp3.Call;
@@ -37,31 +37,31 @@ public class SPUtils {
 
         // 从其他列表课程的悬浮穿 进入音乐播放界面，currentPostion 大于了Constant.appData.courseFileList.size， 导致报错
         // todo : 考虑在什么适合时间 调用用sendListenedPerscent， 现在都是在音乐播放页面 的onstop调用
-        if (Constant.appData.courseFileList.size() <= Constant.appData.currentPostion) {
+        if (Constant.appData.playingCourseFileList.size() <= Constant.appData.currentPostion) {
             Log.d(TAG, " sendListenedPerscent 出错，原因：Constant.appData.courseFileList.size() <= Constant.appData.currentPostion ");
             return;
         }
 
-        listenedFile.CourseFileId = Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId();
+        listenedFile.CourseFileId = Constant.appData.playingCourseFileList.get(Constant.appData.currentPostion).getId();
         listenedFile.ListenedPercent = musicControl.getListenedPercent();
         listenedFile.Position = musicControl.getPosition();
         Log.d(TAG, "调jsonpost网络接口， 写入已听数据" +
-                ", 文件名= " + Constant.appData.courseFileList.get(Constant.appData.currentPostion).getFileName() +
+                ", 文件名= " + Constant.appData.playingCourseFileList.get(Constant.appData.currentPostion).getFileName() +
                 ", CourseFileId= " + listenedFile.CourseFileId +
                 ", ListenedPercent = " + listenedFile.ListenedPercent +
                 ", Position=" + listenedFile.Position +
                 ", duration=" + musicControl.getDuration());
         Map map = new HashMap<>();
         map.put("code", "7899000");
-        map.put("course_id", Constant.appData.courseFileList.get(Constant.appData.currentPostion).getCourseId());
+        map.put("course_id", Constant.appData.playingCourseFileList.get(Constant.appData.currentPostion).getCourseId());
         map.put("listened_file", listenedFile);
-        map.put("last_listened_file_id", Constant.appData.courseFileList.get(Constant.appData.currentPostion).getId());
+        map.put("last_listened_file_id", Constant.appData.playingCourseFileList.get(Constant.appData.currentPostion).getId());
 
         Gson gson = new Gson();
         String param = gson.toJson(map);
         JsonPost.postListenedPercent(param);
         Log.d(TAG, "Musicactivity onStop ");
-        Constant.appData.lastCourseFileId = Constant.appData.currentCourseFileId;
+        Constant.appData.lastCourseFileId = Constant.appData.playingCourseFileId;
     }
 
     public static void putBoolean(String key, boolean value, Context context) {
@@ -233,16 +233,16 @@ public class SPUtils {
 
     // list 转 map
     public static void listToMap() {
-        Constant.appData.courseFileMap = new HashMap<>();
-        for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
+        Constant.appData.playingCourseFileMap = new HashMap<>();
+        for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileList) {
             int i = c.getId();
-            Constant.appData.courseFileMap.put(i, c);
+            Constant.appData.playingCourseFileMap.put(i, c);
         }
     }
 
     public static int findPositionByFileId(int fileId) {
         int position = 0;
-        for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
+        for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileList) {
             if (c.getId() == fileId) {
                 return position;
             }
@@ -252,12 +252,9 @@ public class SPUtils {
     }
 
     public static void httpGetCourseImage(ImageView imageView) {
-//        String url = "http://10.0.2.2:8082/api/fileDownload?fileName=tihuxueyuan.png";
-//        String url = SPUtils.getImgOrMp3Url(Integer.parseInt(currentCouseId), appData.currentCourseImageFileName);
         AppData appData = Constant.appData;
         String url = SPUtils.getImgOrMp3Url(appData.currentCourseId, appData.currentCourseImageFileName);
         Log.d(Constant.TAG, "httpGetCourseImage 调用， 加载课程图片的url=" + url);
-//        OkHttpUtils.get().url(url).tag(this)
         OkHttpUtils.get().url(url)
                 .build()
                 .connTimeOut(20000).readTimeOut(20000).writeTimeOut(20000)
@@ -277,7 +274,6 @@ public class SPUtils {
                         } else {
                             if (MusicService.notificationRemoteViews != null) {
                                 MusicService.notificationRemoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
-
                                 MusicService.notificationManager.notify(MusicService.NOTIFICATION_ID, notification);
                             }
                         }
@@ -323,23 +319,21 @@ public class SPUtils {
 //        }
 //    }
 
-//    public static Map<Integer, ListenedFile> getUserListened(String code, int courseId) {
-    public static Sqlite3UserCourse getUserListened(String code, int courseId) {
-        UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
+    public static SqliteUserCourse getUserListened(String code, int courseId) {
+        UserListenedCourse userListenedCourse = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
         Gson gson = new Gson();
-        Sqlite3UserCourse s = new Sqlite3UserCourse();
+        SqliteUserCourse userCourse = new SqliteUserCourse();
 
-        if (u == null) {
+        if (userListenedCourse == null) {
             return null;
         }
 
         Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(
-                u.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
+                userListenedCourse.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
 
-        s.lastListenedCourseFileId = u.lastListenedCourseFileId;
-        s.listenedFileMap = listenedFileMap;
-
-        return s;
+        userCourse.lastListenedCourseFileId = userListenedCourse.lastListenedCourseFileId;
+        userCourse.listenedFileMap = listenedFileMap;
+        return userCourse;
     }
 
     public static void updateUserListenedV1(String code, int courseId, int fileId, int listenedInt, int postion) {
@@ -348,13 +342,13 @@ public class SPUtils {
 
         if (userListenedCourse == null) {
             Map<Integer, ListenedFile> listenedFileMap  = new HashMap<>();
-            ListenedFile f = new ListenedFile();
-            f.listenedPercent = listenedInt;
-            f.courseFileId = fileId;
-            f.position = postion;
-            listenedFileMap.put(fileId, f);
-            String listened1 = gson.toJson(listenedFileMap);
-            Constant.dbUtils.insertUserListenedCourse(code, courseId, listened1);
+            ListenedFile listenedFile = new ListenedFile();
+            listenedFile.listenedPercent = listenedInt;
+            listenedFile.courseFileId = fileId;
+            listenedFile.position = postion;
+            listenedFileMap.put(fileId, listenedFile);
+            String listenedFileMapStr = gson.toJson(listenedFileMap);
+            Constant.dbUtils.insertUserListenedCourse(code, courseId, listenedFileMapStr);
         } else {
             Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(userListenedCourse.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
             if (listenedFileMap != null && listenedFileMap.get(fileId) != null) {
@@ -368,9 +362,8 @@ public class SPUtils {
                 listenedFile.position = postion;
                 listenedFileMap.put(fileId, listenedFile);
             }
-
-            String listened1 = gson.toJson(listenedFileMap);
-            Constant.dbUtils.updateUserListenedCourse(code, courseId, listened1);
+            String listenedFileMapStr = gson.toJson(listenedFileMap);
+            Constant.dbUtils.updateUserListenedCourse(code, courseId, listenedFileMapStr);
         }
     }
 }

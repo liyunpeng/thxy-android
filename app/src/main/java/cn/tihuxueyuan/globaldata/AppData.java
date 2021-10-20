@@ -23,7 +23,7 @@ public class AppData extends Application {
     public static int lastCourseId = -1;
     public static int currentMusicCourseId = -3;
     public static int lastCourseFileId = -1;
-    public static int currentCourseFileId = -2;
+    public static int playingCourseFileId = -2;
 
     public static Bitmap notificationBitMap = null;
     public static int currentCourseId = -1;
@@ -32,8 +32,8 @@ public class AppData extends Application {
     public static MainActivity.MusicReceiver musicReceiver = null;
     public static HomeReceiver mHomeKeyReceiver = null;
     public static MediaButtonReceiver mButtonReceiver = null;
-    public static List<CourseFileList.CourseFile> courseFileList = new ArrayList<>();
-    public static Map<Integer, CourseFileList.CourseFile> courseFileMap = new HashMap<>();
+    public static List<CourseFileList.CourseFile> playingCourseFileList = new ArrayList<>();
+    public static Map<Integer, CourseFileList.CourseFile> playingCourseFileMap = new HashMap<>();
 
     @Override
     public void onCreate() {

@@ -92,23 +92,19 @@ public class MusicService extends Service {
                 public void onAudioFocusChange(int focusChange) {
                     if (focusChange == AUDIOFOCUS_LOSS_TRANSIENT) {
                         Log.d(TAG, " AUDIOFOCUS_LOSS_TRANSIENT 事件，音乐暂停 ");
-                        // Pause playback
                         musicControl.pause();
                     } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-                        Log.d(TAG, " AUDIOFOCUS_GAIN 事件, 音乐播放");
-                        musicControl.play();
-                        // Resume playback
+                        Log.d(TAG, " AUDIOFOCUS_GAIN 事件, 不要恢复播放");
+//                        musicControl.play();
                     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
                         Log.d(TAG, " AUDIOFOCUS_LOSS 事件, 音乐暂停");
 //                        am.unregisterMediaButtonEventReceiver(RemoteControlReceiver);
 
                         audioManager.abandonAudioFocus(afChangeListener);
-// Stop playback
                         musicControl.pause();
                     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
                         Log.d(TAG, " AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK 事件, 无动作");
 // Lower the volume
-
                     }
                 }
 
@@ -147,10 +143,10 @@ public class MusicService extends Service {
         player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                int pos = appData.courseFileMap.get(appData.currentCourseFileId).getListenedPosition();
-                int percent = appData.courseFileMap.get(appData.currentCourseFileId).getListenedPercent();
-                currentCourseId = appData.courseFileMap.get(appData.currentCourseFileId).getCourseId();
-                String fileName = appData.courseFileMap.get(appData.currentCourseFileId).getFileName();
+                int pos = appData.playingCourseFileMap.get(appData.playingCourseFileId).getListenedPosition();
+                int percent = appData.playingCourseFileMap.get(appData.playingCourseFileId).getListenedPercent();
+                currentCourseId = appData.playingCourseFileMap.get(appData.playingCourseFileId).getCourseId();
+                String fileName = appData.playingCourseFileMap.get(appData.playingCourseFileId).getFileName();
                 Constant.currentMusicName = SPUtils.getTitleFromName(fileName);
 
                 Log.d(TAG, " player onPrepared...");
@@ -165,7 +161,7 @@ public class MusicService extends Service {
                     }
                 } else {
                     Log.d(TAG, "pos=0, percent=" + percent +
-                            ", currentCourseFileId=" +  appData.currentCourseFileId +
+                            ", currentCourseFileId=" + appData.playingCourseFileId +
                             ", fileName=" + fileName);
                     player.seekTo(0);
                 }
@@ -194,12 +190,12 @@ public class MusicService extends Service {
                         Log.d(TAG, "音乐回调函数 onCompletion 调用");
                         SPUtils.sendListenedPerscent();
 
-                        if (appData.currentPostion >= (appData.courseFileList.size() - 1)) {
+                        if (appData.currentPostion >= (appData.playingCourseFileList.size() - 1)) {
                             Log.d(TAG, "音乐回调函数 onCompletion 调用 currentPostion  赋值");
-                            appData.currentPostion = (appData.courseFileList.size() - 1);
+                            appData.currentPostion = (appData.playingCourseFileList.size() - 1);
                         } else {
                             appData.currentPostion++;
-                            appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
+                            appData.playingCourseFileId = appData.playingCourseFileList.get(appData.currentPostion).getId();
                             musicControl.playListened(NEWPLAY);
 //                            try {
 //                                String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
@@ -319,7 +315,6 @@ public class MusicService extends Service {
 
         //歌手名
 //        remoteViews.setTextViewText(R.id.tv_notification_singer, mList.get(position).getSinger());
-
         notificationManager.notify(NOTIFICATION_ID, notification);
 
         Log.d(TAG, "显示通知栏完成  ");
@@ -348,28 +343,25 @@ public class MusicService extends Service {
         musicActivityLiveData.postValue(CLOSE);
     }
 
-
-    public void addTimer() { //添加计时器用于设置音乐播放器中的播放进度条
+    public void addTimer() {
         if (timer == null) {
-            timer = new Timer();//创建计时器对象
+            timer = new Timer();
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-                    if (player == null) return;
-
-                    int duration = player.getDuration();//获取歌曲总时长
-                    int currentPosition = player.getCurrentPosition();//获取播放进度
-                    Message msg = Music_Activity.handler.obtainMessage();//创建消息对象
-                    //将音乐的总时长和播放进度封装至消息对象中
+                    if (player == null)
+                        return;
+                    int duration = player.getDuration();
+                    int currentPosition = player.getCurrentPosition();
+                    Message msg = Music_Activity.handler.obtainMessage();
                     Bundle bundle = new Bundle();
                     bundle.putInt("duration", duration);
                     bundle.putInt("currentPosition", currentPosition);
                     msg.setData(bundle);
-                    //将消息发送到主线程的消息队列
                     Music_Activity.handler.sendMessage(msg);
                 }
             };
-            //开始计时任务后的5毫秒，第一次执行task任务，以后每500毫秒执行一次
+            // 每5秒开始，每500毫秒执行
             timer.schedule(task, 5, 500);
         }
     }
@@ -380,12 +372,14 @@ public class MusicService extends Service {
         Toast.makeText(MusicService.this, "App要退出了", Toast.LENGTH_SHORT).show();
     }
 
-    public class MusicControl extends Binder { //Binder是一种跨进程的通信方式
+    public class MusicControl extends Binder {
         public void release() {
-            if (player == null) return;
-            if (player.isPlaying()) player.stop();//停止播放音乐
-            player.release();//释放占用的资源
-            player = null;//将player置为空
+            if (player == null)
+                return;
+            if (player.isPlaying())
+                player.stop();
+            player.release();
+            player = null;
             notificationManager.cancel(NOTIFICATION_ID);
         }
 
@@ -396,13 +390,13 @@ public class MusicService extends Service {
         public void playListened(String action) {
             boolean isPlaying = player.isPlaying();
             Log.d(TAG, "播放器是否在播放 isPlaying = " + isPlaying);
-            if ((action == PLAY || action == PAUSE) && isPlaying && appData.lastCourseFileId == appData.currentCourseFileId) {
-                Log.d(TAG, "playListened 不初始化" );
+            if ((action == PLAY || action == PAUSE) && isPlaying && appData.lastCourseFileId == appData.playingCourseFileId) {
+                Log.d(TAG, "playListened 不初始化");
 //                player.pause();
 //                musicActivityLiveData.postValue(PAUSE);
             } else {
                 if (action == NEWPLAY) {
-                    String mp3url = SPUtils.getImgOrMp3Url(appData.courseFileList.get(appData.currentPostion).getCourseId(), appData.courseFileList.get(appData.currentPostion).getMp3FileName());
+                    String mp3url = SPUtils.getImgOrMp3Url(appData.playingCourseFileList.get(appData.currentPostion).getCourseId(), appData.playingCourseFileList.get(appData.currentPostion).getMp3FileName());
                     initPlayer(mp3url);
                 }
 
@@ -523,7 +517,7 @@ public class MusicService extends Service {
         }
 
         public void initPlayer(String url) {
-            if (appData.lastCourseFileId == appData.currentCourseFileId) {
+            if (appData.lastCourseFileId == appData.playingCourseFileId) {
                 Log.d(TAG, " musicControl init 调用， 因为appData.lastCourseFileId == appData.currentCourseFileId， play不需要reset 和 setDataSource");
                 return;
             }

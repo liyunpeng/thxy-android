@@ -101,15 +101,15 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         Log.d(TAG, "Music Activity oncreate  musicUrl= " + musicUrl);
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
 
-        appData.currentMusicCourseId = appData.courseFileList.get(0).getCourseId();
+        appData.currentMusicCourseId = appData.playingCourseFileList.get(0).getCourseId();
         musicActivityObserver();
 
         initView();
         if (isNew == true) {
             appData.currentPostion = getIntent().getIntExtra("current_position", 0);
             musicTitle = getIntent().getStringExtra("title");
-            appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
-            Log.d(TAG, "设置 app.currentCourseFileId= " + appData.currentCourseFileId);
+            appData.playingCourseFileId = appData.playingCourseFileList.get(appData.currentPostion).getId();
+            Log.d(TAG, "设置 app.currentCourseFileId= " + appData.playingCourseFileId);
             bindMusicService();
         } else {
 //            bootstrapReflect();
@@ -123,7 +123,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             if (getIntent().getStringExtra(Constant.FromIntent).contains( Constant.FloatWindow) ){
                 musicTitle = getIntent().getStringExtra("float_text");
             } else {
-                musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
+                musicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.currentPostion).getFileName());
             }
 
 //            }
@@ -359,7 +359,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                         playPauseView.setImageResource(R.drawable.pause_dark);
                         break;
                     case NEWPLAY:
-                        musicTitle = SPUtils.getTitleFromName(appData.courseFileList.get(appData.currentPostion).getFileName());
+                        musicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.currentPostion).getFileName());
                         name_song.setText(musicTitle);
 
 //                        floatingControl.setText(musicTitle);
@@ -448,16 +448,16 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                     appData.currentPostion = 0;
                 } else {
                     appData.currentPostion--;
-                    appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
+                    appData.playingCourseFileId = appData.playingCourseFileList.get(appData.currentPostion).getId();
                     musicControl.playListened(NEWPLAY);
                 }
                 break;
             case R.id.play_next:
-                if (appData.currentPostion >= (appData.courseFileList.size() - 1)) {
-                    appData.currentPostion = (appData.courseFileList.size() - 1);
+                if (appData.currentPostion >= (appData.playingCourseFileList.size() - 1)) {
+                    appData.currentPostion = (appData.playingCourseFileList.size() - 1);
                 } else {
                     appData.currentPostion++;
-                    appData.currentCourseFileId = appData.courseFileList.get(appData.currentPostion).getId();
+                    appData.playingCourseFileId = appData.playingCourseFileList.get(appData.currentPostion).getId();
                     musicControl.playListened(NEWPLAY);
                 }
                 break;

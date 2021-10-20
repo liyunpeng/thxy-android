@@ -76,7 +76,7 @@ public class DBUtils {
     }
 
     public void saveCourseFiles() {
-        for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
+        for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileList) {
             ContentValues cv = new ContentValues();
             cv.put("course_file_id", c.getId());
             cv.put("id", c.getId());

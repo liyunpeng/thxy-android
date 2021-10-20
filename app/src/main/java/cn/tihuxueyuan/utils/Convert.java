@@ -28,9 +28,9 @@ public  class Convert<T> {
 
     // list 转 map
     public void listToMap2(List<T> aa) {
-        Map<Integer, CourseFileList.CourseFile> m = Constant.appData.courseFileMap;
+        Map<Integer, CourseFileList.CourseFile> m = Constant.appData.playingCourseFileMap;
         m.clear();
-        for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
+        for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileList) {
             int i = c.getId();
             m.put(i, c);
         }
@@ -38,9 +38,9 @@ public  class Convert<T> {
 
 //    private java.util.ArrayList<E> list = new java.util.ArrayList<E> ();
     public void listToMap1(java.util.ArrayList<T> aa) {
-        Map<Integer, CourseFileList.CourseFile> m = Constant.appData.courseFileMap;
+        Map<Integer, CourseFileList.CourseFile> m = Constant.appData.playingCourseFileMap;
         m.clear();
-        for (CourseFileList.CourseFile c : Constant.appData.courseFileList) {
+        for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileList) {
             int i = c.getId();
             m.put(i, c);
         }

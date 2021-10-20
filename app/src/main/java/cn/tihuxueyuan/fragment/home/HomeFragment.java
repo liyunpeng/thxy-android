@@ -37,13 +37,11 @@ import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.http.CustomResponse;
 import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseFileList;
-import cn.tihuxueyuan.model.CourseList;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class HomeFragment extends Fragment {
 
@@ -66,6 +64,9 @@ public class HomeFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(HomeFragment.this.getActivity(), Music_Activity.class);//创建Intent对象，启动check
                 String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
+
+
+
 //
 //                HttpClient.getCourseById(String.valueOf(mList.get(position).getCourseId()), new HttpCallback<CourseList.Course>() {
 //                    @Override
@@ -135,7 +136,7 @@ public class HomeFragment extends Fragment {
                             intent.putExtra("is_new", true);
 
 
-                            appData.currentCourseFileId = mList.get(position).getId();
+                            appData.playingCourseFileId = mList.get(position).getId();
                             appData.currentPostion = position;
                             appData.currentCourseId = mList.get(position).getCourseId();
 
@@ -143,6 +144,10 @@ public class HomeFragment extends Fragment {
 
                             String titleArr[] = mList.get(position).getFileName().split("\\.");
                             intent.putExtra("title", titleArr[0]);
+
+                            appData.playingCourseFileList = mList;
+                            appData.playingCourseFileId = mList.get(position).getId();
+                            SPUtils.listToMap();
                             startActivity(intent);
                             Log.d(Constant.TAG, "onResponse: " + result);
 
@@ -155,8 +160,6 @@ public class HomeFragment extends Fragment {
                         }
 //                        ResponseBody r = response.body();
 //                        r.string();
-
-
 
                     }
                 });
@@ -209,10 +212,6 @@ public class HomeFragment extends Fragment {
                 }
                 mList = response.getCourseFileList();
                 refreshListView();
-
-                appData.courseFileList = mList;
-
-                SPUtils.listToMap();
             }
 
             @Override
