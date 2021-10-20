@@ -159,10 +159,10 @@ public class MusicService extends Service {
                         Log.d(TAG, " 上次已听完， 这次seekto开始位置，重新听 ");
                         player.seekTo(0);
                     } else {
-                        Log.d(TAG, " seek to pos= "+ pos);
+                        Log.d(TAG, " seek to pos= " + pos);
                         player.seekTo(pos);
                     }
-                }else{
+                } else {
                     player.seekTo(0);
                 }
                 player.start();
@@ -295,6 +295,9 @@ public class MusicService extends Service {
     }
 
     public void updateNotificationShow(String musicTitle) {
+        if (notificationRemoteViews == null) {
+            return;
+        }
         if (player.isPlaying()) {
             notificationRemoteViews.setImageViewResource(R.id.btn_notification_play, R.drawable.pause_black);
         } else {
@@ -390,6 +393,7 @@ public class MusicService extends Service {
             boolean isPlaying = player.isPlaying();
             Log.d(TAG, "播放器是否在播放 isPlaying = " + isPlaying);
             if ((action == PLAY || action == PAUSE) && isPlaying && appData.lastCourseFileId == appData.currentCourseFileId) {
+                Log.d(TAG, "playListened 不初始化" );
 //                player.pause();
 //                musicActivityLiveData.postValue(PAUSE);
             } else {
@@ -546,8 +550,10 @@ public class MusicService extends Service {
 
         public void pause() {
 //            unregisterReceiver(myNoisyAudioStreamReceiver);
-            player.pause();
-            updateOtherActivity(PAUSE);
+            if (player != null) {
+                player.pause();
+                updateOtherActivity(PAUSE);
+            }
         }
 
         public void playOrPause() {
@@ -569,8 +575,10 @@ public class MusicService extends Service {
         }
 
         private void updateOtherActivity(String action) {
-            musicActivityLiveData.postValue(action);
-            baseActivityFloatLiveData.postValue(Constant.currentMusicName);
+            if (baseActivityFloatLiveData != null)
+                baseActivityFloatLiveData.postValue(Constant.currentMusicName);
+            if (musicActivityLiveData != null)
+                musicActivityLiveData.postValue(action);
             updateNotificationShow(Constant.currentMusicName);
         }
 

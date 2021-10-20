@@ -137,8 +137,6 @@ public class CourseListActivity extends BaseActivity {
 
         SPUtils.httpGetCourseImage(imageView);
 
-
-
     }
 
     @Override

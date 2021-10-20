@@ -128,7 +128,9 @@ public class MainActivity extends BaseActivity {
 //                            mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
 //                    registerMusicButton();
 
-
+                    if (Constant.musicControl != null) {
+                        Constant.musicControl.pause();
+                    }
                 } else {
                     Log.d(TAG, "耳机检测：没有插入");
 //                    Toast.makeText(context, "耳机检测：没有插入", Toast.LENGTH_SHORT).show();
@@ -139,6 +141,10 @@ public class MainActivity extends BaseActivity {
 //                    }
 //                    mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
 //                    unregisterButtonReceiver();
+
+                    if (Constant.musicControl != null) {
+                        Constant.musicControl.pause();
+                    }
                 }
             }
         }
@@ -466,7 +472,6 @@ public class MainActivity extends BaseActivity {
 //        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());  这个是无效的， 试过很多次， 发现这个坑
         mAudioManager.registerMediaButtonEventReceiver(mRemoteControlReceiverComponent);
     }
-
 
 
     private void unregisterHeadsetButtonReceiver() {
