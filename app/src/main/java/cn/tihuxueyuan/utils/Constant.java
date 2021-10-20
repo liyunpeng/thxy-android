@@ -22,6 +22,7 @@ public class Constant {
     public static Music_Activity.MyServiceConn conn1;
 
     private String name;
+    public static boolean HAS_USER=false;
     public static  boolean order;
     public static String MusicLiveDataObserverTag = "music_activity_observer";
     public static String BaseActivityFloatTextViewDataObserverTag = "base_activity_float_observer";

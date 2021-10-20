@@ -97,8 +97,11 @@ public class CourseListActivity extends BaseActivity {
 
         if (!getCourseListFromSqlite3()) {
             // 本地没获取到，再走网络获取
-            httpGetListenedFile();
-//            httpGetCourseFilesV1();
+            if ( Constant.HAS_USER ){
+                httpGetListenedFile();
+            }else{
+                httpGetCourseFilesV1();
+            }
         }
 
         Log.d("tag2", "onCreate: currentCouseId: " + currentCouseId);
@@ -278,12 +281,15 @@ D/tag1: parseNetworkResponse:
                     mList.get(Constant.appData.currentPostion).listenedPercent = value.listenedPercent;
                     mList.get(Constant.appData.currentPostion).listenedPosition = value.position;
 
-                    SPUtils.updateUserListenedV1(
-                            Constant.appData.UserCode,
-                            Constant.appData.currentCourseId,
-                            Constant.appData.currentCourseFileId,
-                            value.listenedPercent,
-                            value.position);
+                    if (!Constant.HAS_USER) {
+                        SPUtils.updateUserListenedV1(
+                                Constant.appData.UserCode,
+                                Constant.appData.currentCourseId,
+                                Constant.appData.currentCourseFileId,
+                                value.listenedPercent,
+                                value.position);
+                    }
+
                     mAdapter.notifyDataSetChanged();
                 }
             }

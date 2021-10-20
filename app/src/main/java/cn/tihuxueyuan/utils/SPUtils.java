@@ -287,43 +287,43 @@ public class SPUtils {
                 });
     }
 
-    public static void updateUserListened(String code, int courseId, int fileId, int listenedInt) {
-        UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
-
-        Gson gson = new Gson();
-        ListenedFile[] lf = gson.fromJson(u.listenedFiles, ListenedFile[].class);
-
-        Convert convertInstance = Convert.getInstance();
-        Map<Integer, ListenedFile> listenedFileMap = convertInstance.listToMap3(lf);
-
-        ListenedFile[] lf1;
-        if (listenedFileMap.get(fileId) != null) {
-            listenedFileMap.get(fileId).listenedPercent = listenedInt;
-            lf1 = new ListenedFile[lf.length];
-        } else {
-            ListenedFile f = new ListenedFile();
-            f.listenedPercent = listenedInt;
-            f.courseFileId = fileId;
-            f.position = 11;
-            listenedFileMap.put(fileId, f);
-            lf1 = new ListenedFile[lf.length + 1];
-        }
-
-
-        int i = 0;
-        for (ListenedFile c : listenedFileMap.values()) {
-            lf1[i] = c;
-            i++;
-        }
-
-        String listened1 = gson.toJson(listenedFileMap);
-
-        if (u == null) {
-            Constant.dbUtils.insertUserListenedCourse(code, courseId, listened1);
-        } else {
-            Constant.dbUtils.updateUserListenedCourse(code, courseId, listened1);
-        }
-    }
+//    public static void updateUserListened(String code, int courseId, int fileId, int listenedInt) {
+//        UserListenedCourse u = Constant.dbUtils.getUserListenedCourseByUserCodeAndCourseId(code, courseId);
+//
+//        Gson gson = new Gson();
+//        ListenedFile[] lf = gson.fromJson(u.listenedFiles, ListenedFile[].class);
+//
+//        Convert convertInstance = Convert.getInstance();
+//        Map<Integer, ListenedFile> listenedFileMap = convertInstance.listToMap3(lf);
+//
+//        ListenedFile[] lf1;
+//        if (listenedFileMap.get(fileId) != null) {
+//            listenedFileMap.get(fileId).listenedPercent = listenedInt;
+//            lf1 = new ListenedFile[lf.length];
+//        } else {
+//            ListenedFile f = new ListenedFile();
+//            f.listenedPercent = listenedInt;
+//            f.courseFileId = fileId;
+//            f.position = 11;
+//            listenedFileMap.put(fileId, f);
+//            lf1 = new ListenedFile[lf.length + 1];
+//        }
+//
+//
+//        int i = 0;
+//        for (ListenedFile c : listenedFileMap.values()) {
+//            lf1[i] = c;
+//            i++;
+//        }
+//
+//        String listened1 = gson.toJson(listenedFileMap);
+//
+//        if (u == null) {
+//            Constant.dbUtils.insertUserListenedCourse(code, courseId, listened1);
+//        } else {
+//            Constant.dbUtils.updateUserListenedCourse(code, courseId, listened1);
+//        }
+//    }
 
 //    public static Map<Integer, ListenedFile> getUserListened(String code, int courseId) {
     public static Sqlite3UserCourse getUserListened(String code, int courseId) {

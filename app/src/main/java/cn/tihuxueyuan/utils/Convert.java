@@ -14,8 +14,6 @@ public  class Convert<T> {
 
 
     public Convert() {
-//        helper = new DBOpenHelper(context, "abcde.db", null, 1);
-//        db = helper.getWritableDatabase();
     }
 
     private static Convert instance;

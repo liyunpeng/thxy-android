@@ -25,7 +25,7 @@ public class DBUtils {
      * 实例化SQLiteHelper类，从中得到一个读写的数据库
      **/
     public DBUtils(Context context) {
-        helper = new DBOpenHelper(context, "abcdefghijklmnopq.db", null, 1);
+        helper = new DBOpenHelper(context, "abcdefghijklmnopqr.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
