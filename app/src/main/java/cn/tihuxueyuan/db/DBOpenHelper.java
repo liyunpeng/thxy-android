@@ -59,7 +59,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 + "course_id INT, "
                 + "number INT, "
                 + "mp3_file_name VARCHAR, "
-                + "duraion VARCHAR "
+                + "duration VARCHAR "
                 + ")");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS  " + USER_LISTENED_COURSE + " ( "

@@ -106,6 +106,8 @@ public class CourseListActivity extends BaseActivity {
 
         ActivityManager.setCurrentActivity(CourseListActivity.this);
 
+        Log.d(TAG, "onCreate: currentCouseId: " + currentCouseId);
+
         if (!getCourseListFromSqlite3()) {
             // 本地没获取到，再走网络获取
             if (Constant.HAS_USER) {
@@ -117,7 +119,7 @@ public class CourseListActivity extends BaseActivity {
 
         listToMap();
 
-        Log.d(TAG, "onCreate: currentCouseId: " + currentCouseId);
+
 
         reverseTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -422,7 +424,7 @@ public class CourseListActivity extends BaseActivity {
             courseListOrder = true;
             return true;
         } else {
-            Log.d(TAG, "mList 为空， 走网络， 从本地sqlite3数据库读取， 刷新列表");
+            Log.d(TAG, "mList 为空， 走网络， 从本地sqlite数据库读取， 刷新列表");
             return false;
         }
     }
@@ -469,10 +471,7 @@ public class CourseListActivity extends BaseActivity {
                 mList = response.getCourseFileList();
                 SPUtils.listToMap();
 
-                Log.d(Constant.TAG, " 上次播放 lastListenedCourseFileId :" + lastListenedCourseFileId);
-                refreshListView();
-
-                int count = Constant.dbUtils.getFileCountByCourseId(playingCourseId);
+                int count = Constant.dbUtils.getFileCountByCourseId(currentCouseId);
                 if (count <= 0) {
                     Log.d(TAG, "保存到本地数据库");
                     Constant.dbUtils.saveCourseFiles(mList);
@@ -480,6 +479,7 @@ public class CourseListActivity extends BaseActivity {
 
                 if (Constant.HAS_USER) {
                     lastListenedCourseFileId = response.getLastListenedCourseFileId();
+                    Log.d(Constant.TAG, " 上次播放 lastListenedCourseFileId :" + lastListenedCourseFileId);
                     if (currentListenedFileMap != null) {
                         for (CourseFile courseFile : mList) {
 //                        courseFile.courseFileId = courseFile.id;
@@ -501,6 +501,8 @@ public class CourseListActivity extends BaseActivity {
                     Constant.order = false;
                     Collections.sort(mList, new ComparatorValues());
                 }
+
+                refreshListView();
             }
 
             @Override
