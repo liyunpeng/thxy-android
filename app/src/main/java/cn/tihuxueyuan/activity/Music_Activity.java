@@ -106,9 +106,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
         initView();
         if (isNew == true) {
-            appData.currentPostion = getIntent().getIntExtra("current_position", 0);
+            appData.playingCourseFileListPostion = getIntent().getIntExtra("current_position", 0);
             musicTitle = getIntent().getStringExtra("title");
-            appData.playingCourseFileId = appData.playingCourseFileList.get(appData.currentPostion).getId();
+            appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
             Log.d(TAG, "设置 app.currentCourseFileId= " + appData.playingCourseFileId);
             bindMusicService();
         } else {
@@ -123,7 +123,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             if (getIntent().getStringExtra(Constant.FromIntent).contains( Constant.FloatWindow) ){
                 musicTitle = getIntent().getStringExtra("float_text");
             } else {
-                musicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.currentPostion).getFileName());
+                musicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getFileName());
             }
 
 //            }
@@ -280,6 +280,9 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
         @Override
         public void handleMessage(Message msg) {
+            if (!musicControl.isPlaying()) {
+                return;
+            }
 //            Log.d("tag1", "handleMessage: 处理消息 ： " + msg.toString());
             Bundle bundle = msg.getData();//获取从子线程发送过来的音乐播放进度
             int duration = bundle.getInt("duration");
@@ -359,7 +362,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                         playPauseView.setImageResource(R.drawable.pause_dark);
                         break;
                     case NEWPLAY:
-                        musicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.currentPostion).getFileName());
+                        musicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getFileName());
                         name_song.setText(musicTitle);
 
 //                        floatingControl.setText(musicTitle);
@@ -444,20 +447,20 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
                 musicControl.playOrPause();
                 break;
             case R.id.play_previous:
-                if (appData.currentPostion <= 0) {
-                    appData.currentPostion = 0;
+                if (appData.playingCourseFileListPostion <= 0) {
+                    appData.playingCourseFileListPostion = 0;
                 } else {
-                    appData.currentPostion--;
-                    appData.playingCourseFileId = appData.playingCourseFileList.get(appData.currentPostion).getId();
+                    appData.playingCourseFileListPostion--;
+                    appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
                     musicControl.playListened(NEWPLAY);
                 }
                 break;
             case R.id.play_next:
-                if (appData.currentPostion >= (appData.playingCourseFileList.size() - 1)) {
-                    appData.currentPostion = (appData.playingCourseFileList.size() - 1);
+                if (appData.playingCourseFileListPostion >= (appData.playingCourseFileList.size() - 1)) {
+                    appData.playingCourseFileListPostion = (appData.playingCourseFileList.size() - 1);
                 } else {
-                    appData.currentPostion++;
-                    appData.playingCourseFileId = appData.playingCourseFileList.get(appData.currentPostion).getId();
+                    appData.playingCourseFileListPostion++;
+                    appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
                     musicControl.playListened(NEWPLAY);
                 }
                 break;
