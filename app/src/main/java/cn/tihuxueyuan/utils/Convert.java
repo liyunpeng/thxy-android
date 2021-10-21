@@ -46,20 +46,20 @@ public  class Convert<T> {
         }
     }
 
-    public Map<Integer, ListenedFile> listToMap3(ListenedFile[] aa) {
-        Map<Integer, ListenedFile> m = new AbstractMap<Integer, ListenedFile>() {
-            @NonNull
-            @Override
-            public Set<Entry<Integer, ListenedFile>> entrySet() {
-                return null;
-            }
-        };
-        m.clear();
-
-        for (ListenedFile c : aa) {
-            int i = c.courseFileId;
-            m.put(i, c);
-        }
-        return m;
-    }
+//    public Map<Integer, ListenedFile> listToMap3(ListenedFile[] aa) {
+//        Map<Integer, ListenedFile> m = new AbstractMap<Integer, ListenedFile>() {
+//            @NonNull
+//            @Override
+//            public Set<Entry<Integer, ListenedFile>> entrySet() {
+//                return null;
+//            }
+//        };
+//        m.clear();
+//
+//        for (ListenedFile c : aa) {
+//            int i = c.courseFileId;
+//            m.put(i, c);
+//        }
+//        return m;
+//    }
 }

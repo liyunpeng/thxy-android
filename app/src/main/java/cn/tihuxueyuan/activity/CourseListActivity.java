@@ -40,6 +40,7 @@ import cn.tihuxueyuan.utils.SPUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -95,8 +96,8 @@ public class CourseListActivity extends BaseActivity {
 
                 // debug log
                 for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileMap.values()) {
-                    Log.d(TAG, "mp3_file_name=" +  c.mp3_file_name + ", courseFileId=" + c.courseFileId  + ", listenedPercent=" + c.listenedPercent
-                            +  ", listenedPosition=" + c.listenedPosition  );
+                    Log.d(TAG, "mp3_file_name=" + c.mp3_file_name + ", listenedPercent=" + c.listenedPercent
+                            + ", listenedPosition=" + c.listenedPosition);
                 }
 
                 startActivity(intent);
@@ -113,6 +114,8 @@ public class CourseListActivity extends BaseActivity {
                 httpGetCourseFilesV1();
             }
         }
+
+        listToMap();
 
         Log.d(TAG, "onCreate: currentCouseId: " + currentCouseId);
 
@@ -143,6 +146,17 @@ public class CourseListActivity extends BaseActivity {
             Collections.sort(mList, new ComparatorValues());
         }
         courseListActivityObserver();
+    }
+
+    private void listToMap() {
+        if (currentCourseFileMap != null) {
+            currentCourseFileMap.clear();
+        }
+        currentCourseFileMap = new HashMap<>();
+        for (CourseFileList.CourseFile c : mList) {
+            int i = c.getId();
+            currentCourseFileMap.put(i, c);
+        }
     }
 
     @Override
@@ -194,6 +208,7 @@ public class CourseListActivity extends BaseActivity {
 //        }
     }
 
+    public static Map<Integer, CourseFileList.CourseFile> currentCourseFileMap = new HashMap<>();
 
     private void freshLastPlay() {
 //        if ( appData.lastCourseId == -1  && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
@@ -203,8 +218,9 @@ public class CourseListActivity extends BaseActivity {
             if (musicControl != null) {
                 if (currentCouseId != musicControl.getCurrentCourseId()) {
                     Log.d(TAG, " freshLastPlay 当前课程列表的courseId  和 当前正在播放的courseId 不同， 设置为可见");
-                    if (appData.playingCourseFileMap != null && appData.playingCourseFileMap.get(lastListenedCourseFileId) != null) {
-                        String lastTitle = SPUtils.getTitleFromName(appData.playingCourseFileMap.get(lastListenedCourseFileId).getFileName());
+                    if (currentCourseFileMap != null && currentCourseFileMap.get(lastListenedCourseFileId) != null) {
+                        Log.d(TAG, " currentCourseFileMap.get(lastListenedCourseFileId) != null， 设置为可见");
+                        String lastTitle = SPUtils.getTitleFromName(currentCourseFileMap.get(lastListenedCourseFileId).getFileName());
                         lastPlayTextView.setText("上次播放: " + lastTitle);
                         lastPlayTextView.setVisibility(View.VISIBLE);
                     }
@@ -236,23 +252,24 @@ public class CourseListActivity extends BaseActivity {
         if (mList != null && mList.size() > appData.playingCourseFileListPostion) {
             // 从悬浮窗进入音乐界面， 再回到列表界面时，如果是其他课程列表，不刷新
             Log.d(TAG, " 课程列表 onResume 刷新");
-            if (Constant.musicControl != null && currentCouseId == Constant.musicControl.getCurrentCourseId()) {
+            if (Constant.musicControl != null && currentCouseId == Constant.appData.playingCourseId) {
                 Log.d(TAG, " 课程列表 onResume 刷新, 调用 notifyDataSetChanged ");
                 if (mAdapter != null && courseListView != null) {
                     mAdapter.notifyDataSetChanged();
-                    if (appData.playingCourseFileListPostion >= 2) {
-                        courseListView.setSelection(appData.playingCourseFileListPostion - 2);
-                    }else{
-                        courseListView.setSelection(appData.playingCourseFileListPostion);
-                    }
+//                    if (appData.playingCourseFileListPostion >= 2) {
+//                        courseListView.setSelection(appData.playingCourseFileListPostion - 2);
+//                    } else {
+//                        courseListView.setSelection(appData.playingCourseFileListPostion);
+//                    }
 //                courseListView.getTop()
                 }
             }
-            freshLastPlay();
+
         } else {
             Log.d(TAG, " 课程列表 onResume 不刷新");
         }
 
+        freshLastPlay();
         if (courseListOrder == true) {
             reverseTextView.setText("正序");
         } else {
@@ -267,7 +284,7 @@ public class CourseListActivity extends BaseActivity {
             public void onChanged(ListenedFile value) {
                 Log.d(TAG, " CourseListActivity 观察者监控到消息 = " + value);
                 if (mList != null && mList.size() >= Constant.appData.playingCourseFileListPostion
-                        && currentCouseId == Constant.appData.playingCourseId ) {
+                        && currentCouseId == Constant.appData.playingCourseId) {
                     mList.get(Constant.appData.playingCourseFileListPostion).listenedPercent = value.listenedPercent;
                     mList.get(Constant.appData.playingCourseFileListPostion).listenedPosition = value.position;
 
@@ -310,20 +327,35 @@ public class CourseListActivity extends BaseActivity {
                 int percent = courseFile.getListenedPercent();
                 String duration = courseFile.getDuration();
                 int pos = courseFile.getListenedPosition();
-                int color = Color.parseColor("#000000");
-                if (currentCouseId == appData.playingCourseId &&
-                        appData.playingCourseFileListPostion >= 0 &&
-                        Constant.appData.playingCourseFileListPostion < Constant.appData.playingCourseFileList.size()) {
-                    if (Constant.appData.playingCourseFileMap.get(Constant.appData.playingCourseFileId) != null) {
-//                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.getId()) {
-//                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.courseFileId) {
-                        if (Constant.appData.playingCourseFileId == courseFile.courseFileId) {
-                            color = Color.parseColor("#FF0000");
-                        }
-                    } else {
-                        color = Color.parseColor("#000000");
-                    }
+                int color;
+//                if (currentCouseId == appData.playingCourseId &&
+//                if (appData.playingCourseFileListPostion >= 0 &&
+//                        Constant.appData.playingCourseFileListPostion < Constant.appData.playingCourseFileList.size()) {
+//                    if (Constant.appData.playingCourseFileMap.get(Constant.appData.playingCourseFileId) != null) {
+////                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.getId()) {
+////                        if (Constant.appData.courseFileMap.get(Constant.appData.currentCourseFileId).getId() == courseFile.courseFileId) {
+//                        if (Constant.appData.playingCourseFileId == courseFile.courseFileId) {
+//                            color = Color.parseColor("#FF0000");
+//                        }
+//                    } else {
+//                        color = Color.parseColor("#000000");
+//                    }
+//
+//                } else {
+////                    if (Constant.appData.playingCourseFileId == courseFile.courseFileId) {
+////                        color = Color.parseColor("#FF0000");
+////                    }else{
+//                        if (percent > 0) {
+//                            color = Color.parseColor("#777777");
+//                        } else {
+//                            color = Color.parseColor("#000000");
+//                        }
+////                    }
+//
+//                }
 
+                if (Constant.appData.playingCourseFileId >= 0 && Constant.appData.playingCourseFileId == courseFile.id) {
+                    color = Color.parseColor("#FF0000");
                 } else {
                     if (percent > 0) {
                         color = Color.parseColor("#777777");
@@ -372,9 +404,9 @@ public class CourseListActivity extends BaseActivity {
                 Map<Integer, ListenedFile> listendFileMap = sqlite3UserCourse.listenedFileMap;
                 if (listendFileMap != null) {
                     for (CourseFile courseFile : mList) {
-                        courseFile.courseFileId = courseFile.getId();
-
-                        ListenedFile listenedFile = listendFileMap.get(courseFile.courseFileId);
+//                        courseFile.courseFileId = courseFile.getId();
+                        courseFile.id = courseFile.getId();
+                        ListenedFile listenedFile = listendFileMap.get(courseFile.id);
                         if (listenedFile != null) {
                             courseFile.listenedPercent = listenedFile.listenedPercent;
                             courseFile.listenedPosition = listenedFile.position;
@@ -395,36 +427,36 @@ public class CourseListActivity extends BaseActivity {
         }
     }
 
-    private void httpGetCourseFiles() {
-        HttpClient.getCourseFilesByCourseId(currentCouseId, new HttpCallback<CourseFileList>() {
-            @Override
-            public void onSuccess(CourseFileList response) {
-                if (response == null || response.getCourseFileList() == null || response.getCourseFileList().isEmpty()) {
-                    onFail(null);
-                    return;
-                }
-                mList = response.getCourseFileList();
-                SPUtils.listToMap();
-                lastListenedCourseFileId = response.getLastListenedCourseFileId();
-                Log.d(Constant.TAG, " 上次播放 lastListenedCourseFileId :" + lastListenedCourseFileId);
-                refreshListView();
-
-                int count = Constant.dbUtils.getFileCountByCourseId(playingCourseId);
-                if (count <= 0) {
-                    Log.d(TAG, "保存到本地数据库");
-                    Constant.dbUtils.saveCourseFiles();
-                }
-
-                createFlag = 1;
-                courseListOrder = true;
-            }
-
-            @Override
-            public void onFail(Exception e) {
-                Log.d(Constant.TAG, "getCourseFiles exception=" + e);
-            }
-        });
-    }
+//    private void httpGetCourseFiles() {
+//        HttpClient.getCourseFilesByCourseId(currentCouseId, new HttpCallback<CourseFileList>() {
+//            @Override
+//            public void onSuccess(CourseFileList response) {
+//                if (response == null || response.getCourseFileList() == null || response.getCourseFileList().isEmpty()) {
+//                    onFail(null);
+//                    return;
+//                }
+//                mList = response.getCourseFileList();
+//                SPUtils.listToMap();
+//                lastListenedCourseFileId = response.getLastListenedCourseFileId();
+//                Log.d(Constant.TAG, " 上次播放 lastListenedCourseFileId :" + lastListenedCourseFileId);
+//                refreshListView();
+//
+//                int count = Constant.dbUtils.getFileCountByCourseId(playingCourseId);
+//                if (count <= 0) {
+//                    Log.d(TAG, "保存到本地数据库");
+//                    Constant.dbUtils.saveCourseFiles();
+//                }
+//
+//                createFlag = 1;
+//                courseListOrder = true;
+//            }
+//
+//            @Override
+//            public void onFail(Exception e) {
+//                Log.d(Constant.TAG, "getCourseFiles exception=" + e);
+//            }
+//        });
+//    }
 
     private void httpGetCourseFilesV1() {
         HttpClient.getCourseFilesByCourseIdV1(currentCouseId, new HttpCallback<CourseFileList>() {
@@ -436,26 +468,30 @@ public class CourseListActivity extends BaseActivity {
                 }
                 mList = response.getCourseFileList();
                 SPUtils.listToMap();
-                lastListenedCourseFileId = response.getLastListenedCourseFileId();
+
                 Log.d(Constant.TAG, " 上次播放 lastListenedCourseFileId :" + lastListenedCourseFileId);
                 refreshListView();
 
                 int count = Constant.dbUtils.getFileCountByCourseId(playingCourseId);
                 if (count <= 0) {
                     Log.d(TAG, "保存到本地数据库");
-                    Constant.dbUtils.saveCourseFiles();
+                    Constant.dbUtils.saveCourseFiles(mList);
                 }
 
-                if (currentListenedFileMap != null) {
-                    for (CourseFile courseFile : mList) {
-                        courseFile.courseFileId = courseFile.id;
-                        ListenedFile listenedFile = currentListenedFileMap.get(courseFile.courseFileId);
-                        if (listenedFile != null) {
-                            courseFile.listenedPercent = listenedFile.listenedPercent;
-                            courseFile.listenedPosition = listenedFile.position;
+                if (Constant.HAS_USER) {
+                    lastListenedCourseFileId = response.getLastListenedCourseFileId();
+                    if (currentListenedFileMap != null) {
+                        for (CourseFile courseFile : mList) {
+//                        courseFile.courseFileId = courseFile.id;
+                            ListenedFile listenedFile = currentListenedFileMap.get(courseFile.id);
+                            if (listenedFile != null) {
+                                courseFile.listenedPercent = listenedFile.listenedPercent;
+                                courseFile.listenedPosition = listenedFile.position;
+                            }
                         }
                     }
                 }
+
                 createFlag = 1;
 //                courseListOrder = true;
                 if (courseListOrder == true) {
@@ -515,6 +551,4 @@ public class CourseListActivity extends BaseActivity {
             }
         });
     }
-
-
 }

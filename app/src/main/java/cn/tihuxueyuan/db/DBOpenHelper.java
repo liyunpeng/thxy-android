@@ -56,7 +56,6 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS  " + COURSE_FILE + " ( "
                 + "id_auto  INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "id INT, "
-                + "course_file_id INT, "
                 + "course_id INT, "
                 + "number INT, "
                 + "mp3_file_name VARCHAR, "

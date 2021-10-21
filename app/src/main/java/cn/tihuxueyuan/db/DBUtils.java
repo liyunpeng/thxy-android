@@ -44,7 +44,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "123.db", null, 1);
+        helper = new DBOpenHelper(context, "1234.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -94,14 +94,15 @@ public class DBUtils {
         }
     }
 
-    public void saveCourseFiles() {
-        for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileList) {
+    public void saveCourseFiles(List<CourseFileList.CourseFile> courseFiles) {
+        for (CourseFileList.CourseFile courseFile : courseFiles) {
             ContentValues cv = new ContentValues();
-            cv.put("course_file_id", c.getId());
-            cv.put("id", c.getId());
-            cv.put("course_id", c.getCourseId());
-            cv.put("number", c.getNumber());
-            cv.put("mp3_file_name", c.getMp3FileName());
+//            cv.put("course_file_id", courseFile.getId());
+            cv.put("id", courseFile.getId());
+            cv.put("course_id", courseFile.getCourseId());
+            cv.put("number", courseFile.getNumber());
+            cv.put("mp3_file_name", courseFile.getMp3FileName());
+            cv.put("duration", courseFile.getDuration());
             db.insert(DBOpenHelper.COURSE_FILE, null, cv);
         }
     }
@@ -158,18 +159,23 @@ public class DBUtils {
         }
     }
 
-    public void insertUserListenedCourse(String code, int courseId, String listenedFiles) {
+    public void insertUserListenedCourse(String code, int courseId, String listenedFiles, int fileId) {
         ContentValues cv = new ContentValues();
         cv.put("code", code);
         cv.put("course_id", courseId);
         cv.put("id", courseId);
         cv.put("listened_files", listenedFiles);
+        cv.put("last_listened_course_file_id", fileId);
+
         db.insert(DBOpenHelper.USER_LISTENED_COURSE, null, cv);
     }
 
-    public void updateUserListenedCourse(String code, int courseId, String listenedFiles) {
+    public void updateUserListenedCourse(String code, int courseId, String listenedFiles, int fileId) {
         ContentValues cv = new ContentValues();
         cv.put("listened_files", listenedFiles);
+        cv.put("course_id", courseId);
+        cv.put("id", courseId);
+        cv.put("last_listened_course_file_id", fileId);
         String args[] = {code, String.valueOf(courseId)};
         db.update(DBOpenHelper.USER_LISTENED_COURSE, cv, " code=? and course_id = ?", args);
     }
@@ -219,20 +225,20 @@ public class DBUtils {
         List<CourseFileList.CourseFile> beans = null;
         //Move the cursor to the next row.
         while (cursor.moveToNext()) {
-            CourseFileList.CourseFile bean = new CourseFileList.CourseFile();
+            CourseFileList.CourseFile courseFile = new CourseFileList.CourseFile();
             //根据列索引获取对应的数值，因为这里查询结果只有一个，我们也不需要对模型UserBean进行修改，
             //直接将对应用户名的所有数据从表中动态赋值给bean
-            bean.mp3_file_name = cursor.getString(cursor.getColumnIndex("mp3_file_name"));
-            bean.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
-            bean.number = cursor.getInt(cursor.getColumnIndex("number"));
-            bean.id = cursor.getInt(cursor.getColumnIndex("id"));
-            bean.courseFileId = cursor.getInt(cursor.getColumnIndex("course_file_id"));
+            courseFile.mp3_file_name = cursor.getString(cursor.getColumnIndex("mp3_file_name"));
+            courseFile.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
+            courseFile.number = cursor.getInt(cursor.getColumnIndex("number"));
+            courseFile.id = cursor.getInt(cursor.getColumnIndex("id"));
+//            bean.courseFileId = cursor.getInt(cursor.getColumnIndex("course_file_id"));
 //            bean.nickName = cursor.getString(cursor.getColumnIndex("nickName"));
 //            bean.sex = cursor.getString(cursor.getColumnIndex("sex"));
 //            bean.signature = cursor.getString(cursor.getColumnIndex("signature"));
 //            bean.beanqq = cursor.getString(cursor.getColumnIndex("qq"));
-            Log.d(Constant.TAG, " sqlite mp3: " + bean.mp3_file_name+ ", id= " + bean.id + ", courseFileId =" + bean.courseFileId);
-            lc.add(bean);
+            Log.d(Constant.TAG, " sqlite mp3: " + courseFile.mp3_file_name+ ", id= " + courseFile.id );
+            lc.add(courseFile);
         }
 
         cursor.close();

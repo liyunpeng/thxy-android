@@ -145,7 +145,8 @@ public class HttpClient {
         Map<String, String> params = new HashMap<>();
         params.put("code", code);
         params.put("course_id", courseId);
-        params.put("course_file_id", courseFileId);
+//        params.put("course_file_id", courseId);
+//        params.put("course_file_id", courseFileId);
         params.put("listened_percent", listenedPercent);
 
         OkHttpUtils.post().url(BASE_URL + "updateUserListenedFiles")

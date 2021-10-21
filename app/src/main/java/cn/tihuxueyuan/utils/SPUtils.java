@@ -351,22 +351,23 @@ public class SPUtils {
             listenedFile.position = postion;
             listenedFileMap.put(fileId, listenedFile);
             String listenedFileMapStr = gson.toJson(listenedFileMap);
-            Constant.dbUtils.insertUserListenedCourse(code, courseId, listenedFileMapStr);
+
+            Constant.dbUtils.insertUserListenedCourse(code, courseId, listenedFileMapStr, fileId);
         } else {
             Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(userListenedCourse.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
             if (listenedFileMap != null && listenedFileMap.get(fileId) != null) {
+                listenedFileMap.get(fileId).courseFileId = fileId;
                 listenedFileMap.get(fileId).listenedPercent = listenedInt;
                 listenedFileMap.get(fileId).position = postion;
-                listenedFileMap.get(fileId).courseFileId = fileId;
             } else {
                 ListenedFile listenedFile = new ListenedFile();
-                listenedFile.listenedPercent = listenedInt;
                 listenedFile.courseFileId = fileId;
+                listenedFile.listenedPercent = listenedInt;
                 listenedFile.position = postion;
                 listenedFileMap.put(fileId, listenedFile);
             }
             String listenedFileMapStr = gson.toJson(listenedFileMap);
-            Constant.dbUtils.updateUserListenedCourse(code, courseId, listenedFileMapStr);
+            Constant.dbUtils.updateUserListenedCourse(code, courseId, listenedFileMapStr, fileId);
         }
     }
 }

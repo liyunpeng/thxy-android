@@ -28,8 +28,8 @@ public class CourseFileList {
          */
         @SerializedName("id")
         public int id;
-        @SerializedName("course_file_id")
-        public int courseFileId;
+//        @SerializedName("course_file_id")
+//        public int courseFileId;
         @SerializedName("mp3_file_name")
         public String mp3_file_name;
         @SerializedName("img_file_name")
