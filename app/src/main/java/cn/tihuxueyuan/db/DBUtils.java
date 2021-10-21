@@ -5,8 +5,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +28,23 @@ public class DBUtils {
      * 实例化SQLiteHelper类，从中得到一个读写的数据库
      **/
     public DBUtils(Context context) {
-        helper = new DBOpenHelper(context, "abcdefghijklmnopqrs.db", null, 1);
+
+//        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/AAA";
+//        File pathFile = new File(path);
+//        File file = new File(path+"/aa.db");
+//        try{
+//            if(!pathFile.exists()){
+//                pathFile.mkdirs();
+//            }
+//            if(!file.exists()){
+//                file.createNewFile();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        helper = new DBOpenHelper(context, "ccccccccddddddd.db", null, 1);
+//        db = SQLiteDatabase.openOrCreateDatabase(file,null);
         db = helper.getWritableDatabase();
     }
 
@@ -212,7 +231,7 @@ public class DBUtils {
 //            bean.sex = cursor.getString(cursor.getColumnIndex("sex"));
 //            bean.signature = cursor.getString(cursor.getColumnIndex("signature"));
 //            bean.beanqq = cursor.getString(cursor.getColumnIndex("qq"));
-            Log.d(Constant.TAG, " sqlite mp3: " + bean.mp3_file_name);
+            Log.d(Constant.TAG, " sqlite mp3: " + bean.mp3_file_name+ ", id= " + bean.id + ", courseFileId =" + bean.courseFileId);
             lc.add(bean);
         }
 

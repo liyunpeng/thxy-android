@@ -137,8 +137,8 @@ public class HomeFragment extends Fragment {
 
 
                             appData.playingCourseFileId = mList.get(position).getId();
-                            appData.currentPostion = position;
-                            appData.currentCourseId = mList.get(position).getCourseId();
+                            appData.playingCourseFileListPostion = position;
+                            appData.playingCourseId = mList.get(position).getCourseId();
 
                             appData.currentCourseImageFileName = course.getData().getImgFileName();
 

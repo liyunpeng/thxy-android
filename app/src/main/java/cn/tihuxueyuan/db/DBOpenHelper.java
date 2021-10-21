@@ -5,8 +5,12 @@ import static android.content.ContentValues.TAG;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
     final String CREATE_DOCUMENT = "create table tb_document (_id integer primary key autoincrement," +

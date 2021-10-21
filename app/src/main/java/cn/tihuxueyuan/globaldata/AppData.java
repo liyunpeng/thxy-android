@@ -14,7 +14,7 @@ import cn.tihuxueyuan.receiver.HomeReceiver;
 import cn.tihuxueyuan.receiver.MediaButtonReceiver;
 
 public class AppData extends Application {
-    public static int currentPostion = -1;
+    public static int playingCourseFileListPostion = -1;
     public static String baseUrl;
     public static String mp3SourceRouter;
     public static String courseStorePath = "";
@@ -26,7 +26,7 @@ public class AppData extends Application {
     public static int playingCourseFileId = -2;
 
     public static Bitmap notificationBitMap = null;
-    public static int currentCourseId = -1;
+    public static int playingCourseId = -1;
     public static String currentCourseImageFileName ;
 
     public static MainActivity.MusicReceiver musicReceiver = null;

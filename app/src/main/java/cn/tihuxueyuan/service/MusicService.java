@@ -164,6 +164,7 @@ public class MusicService extends Service {
                             ", currentCourseFileId=" + appData.playingCourseFileId +
                             ", fileName=" + fileName);
                     player.seekTo(0);
+
                 }
                 player.start();
                 musicControl.setText();
@@ -188,14 +189,17 @@ public class MusicService extends Service {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         Log.d(TAG, "音乐回调函数 onCompletion 调用");
+                        if (true){
+                            return;
+                        }
                         SPUtils.sendListenedPerscent();
 
-                        if (appData.currentPostion >= (appData.playingCourseFileList.size() - 1)) {
+                        if (appData.playingCourseFileListPostion >= (appData.playingCourseFileList.size() - 1)) {
                             Log.d(TAG, "音乐回调函数 onCompletion 调用 currentPostion  赋值");
-                            appData.currentPostion = (appData.playingCourseFileList.size() - 1);
+                            appData.playingCourseFileListPostion = (appData.playingCourseFileList.size() - 1);
                         } else {
-                            appData.currentPostion++;
-                            appData.playingCourseFileId = appData.playingCourseFileList.get(appData.currentPostion).getId();
+                            appData.playingCourseFileListPostion++;
+                            appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
                             musicControl.playListened(NEWPLAY);
 //                            try {
 //                                String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
@@ -396,7 +400,7 @@ public class MusicService extends Service {
 //                musicActivityLiveData.postValue(PAUSE);
             } else {
                 if (action == NEWPLAY) {
-                    String mp3url = SPUtils.getImgOrMp3Url(appData.playingCourseFileList.get(appData.currentPostion).getCourseId(), appData.playingCourseFileList.get(appData.currentPostion).getMp3FileName());
+                    String mp3url = SPUtils.getImgOrMp3Url(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getCourseId(), appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getMp3FileName());
                     initPlayer(mp3url);
                 }
 
@@ -584,11 +588,9 @@ public class MusicService extends Service {
             return player.isPlaying();
         }
 
-
         public boolean isActivie() {
             return player.isLooping();
         }
-
 
         public void seekTo(int progress) {
             player.seekTo(progress);//设置音乐的播放位置

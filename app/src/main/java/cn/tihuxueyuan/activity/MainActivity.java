@@ -154,26 +154,13 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Constant.dbUtils = DBUtils.getInstance(getApplicationContext());
         this.context = this.getApplicationContext();
-//        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-//
-////构造一个ComponentName，指向MediaoButtonReceiver类
-//        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
-//        mAudioManager.registerMediaButtonEventReceiver(mComponent);
-//
-////注册一个MediaButtonReceiver广播监听
-////        mAudioManager.registerMediaButtonEventReceiver(mComponent);
-//
-////        mAudioManager.registerMediaButtonEventReceiver(mComponent);
-//
+
         logcatHelper = LogcatHelper.getInstance(getApplicationContext());
         logcatHelper.start();
         appData = (AppData) getApplication();
         registerReceiver(headSetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
-
-//        mAudioManager.registerAudioDeviceCallback();
-//注销方法
-//        mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
 
         String curProcess = getProcessName(this, Process.myPid());
         if (!TextUtils.equals(curProcess, "cn.tihuxueyuan")) {
@@ -237,10 +224,9 @@ public class MainActivity extends BaseActivity {
         }
         switch (requestCode) {
             case 222:
-
                 //todo：  获取到创建目录权限  ， 还放目录用系统自带的document目录， 放在这个地方， 一些初妈化的log打印不到
-//                Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
-//                logcatHelper.start();
+                Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
+                logcatHelper.start();
 //                Toast.makeText(getApplicationContext(), "已申请权限", Toast.LENGTH_SHORT).show();
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -497,7 +483,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Constant.dbUtils = DBUtils.getInstance(getApplicationContext());
+
     }
 
     @Override
