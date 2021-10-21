@@ -189,9 +189,9 @@ public class MusicService extends Service {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         Log.d(TAG, "音乐回调函数 onCompletion 调用");
-                        if (true){
-                            return;
-                        }
+//                        if (true){
+//                            return;
+//                        }
                         SPUtils.sendListenedPerscent();
 
                         if (appData.playingCourseFileListPostion >= (appData.playingCourseFileList.size() - 1)) {

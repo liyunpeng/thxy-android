@@ -42,9 +42,9 @@ public class DBUtils {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-
-        helper = new DBOpenHelper(context, "ccccccccddddddd.db", null, 1);
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
+
+        helper = new DBOpenHelper(context, "123.db", null, 1);
         db = helper.getWritableDatabase();
     }
 

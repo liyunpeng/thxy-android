@@ -69,8 +69,6 @@ public class CourseListActivity extends BaseActivity {
         title = getIntent().getStringExtra("title");
 
         appData = (AppData) getApplication();
-
-
         this.titleView = findViewById(R.id.course_title);
         this.imageView = findViewById(R.id.course_image);
 
@@ -78,6 +76,7 @@ public class CourseListActivity extends BaseActivity {
         this.courseListView = findViewById(R.id.courseList);
         this.lastPlayTextView = findViewById(R.id.last_play);
         reverseTextView = findViewById(R.id.reverse);
+        SPUtils.httpGetCourseImage(imageView);
 
         courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -94,10 +93,8 @@ public class CourseListActivity extends BaseActivity {
                 appData.playingCourseId = currentCouseId;
                 SPUtils.listToMap();
 
+                // debug log
                 for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileMap.values()) {
-
-//                    int i = c.getId();
-//                    Constant.appData.playingCourseFileMap.put(i, c);
                     Log.d(TAG, "mp3_file_name=" +  c.mp3_file_name + ", courseFileId=" + c.courseFileId  + ", listenedPercent=" + c.listenedPercent
                             +  ", listenedPosition=" + c.listenedPosition  );
                 }
@@ -145,8 +142,6 @@ public class CourseListActivity extends BaseActivity {
             Constant.order = false;
             Collections.sort(mList, new ComparatorValues());
         }
-
-        SPUtils.httpGetCourseImage(imageView);
         courseListActivityObserver();
     }
 
@@ -271,7 +266,8 @@ public class CourseListActivity extends BaseActivity {
             @Override
             public void onChanged(ListenedFile value) {
                 Log.d(TAG, " CourseListActivity 观察者监控到消息 = " + value);
-                if (mList != null && mList.size() >= Constant.appData.playingCourseFileListPostion) {
+                if (mList != null && mList.size() >= Constant.appData.playingCourseFileListPostion
+                        && currentCouseId == Constant.appData.playingCourseId ) {
                     mList.get(Constant.appData.playingCourseFileListPostion).listenedPercent = value.listenedPercent;
                     mList.get(Constant.appData.playingCourseFileListPostion).listenedPosition = value.position;
 
@@ -315,7 +311,7 @@ public class CourseListActivity extends BaseActivity {
                 String duration = courseFile.getDuration();
                 int pos = courseFile.getListenedPosition();
                 int color = Color.parseColor("#000000");
-                if (currentCouseId == appData.currentMusicCourseId &&
+                if (currentCouseId == appData.playingCourseId &&
                         appData.playingCourseFileListPostion >= 0 &&
                         Constant.appData.playingCourseFileListPostion < Constant.appData.playingCourseFileList.size()) {
                     if (Constant.appData.playingCourseFileMap.get(Constant.appData.playingCourseFileId) != null) {
