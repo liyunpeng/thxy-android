@@ -21,7 +21,7 @@ public class AppData extends Application {
     public static int direction = 1;
     public static String UserCode = "7899000";
     public static int lastCourseId = -1;
-    public static int currentMusicCourseId = -3;
+//    public static int currentMusicCourseId = -3;
     public static int lastCourseFileId = -1;
     public static int playingCourseFileId = -2;
 

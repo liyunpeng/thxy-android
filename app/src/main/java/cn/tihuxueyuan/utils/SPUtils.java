@@ -17,6 +17,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cn.tihuxueyuan.R;
@@ -243,9 +244,9 @@ public class SPUtils {
         }
     }
 
-    public static int findPositionByFileId(int fileId) {
+    public static int findPositionByFileId(int fileId, List<CourseFileList.CourseFile> cf) {
         int position = 0;
-        for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileList) {
+        for (CourseFileList.CourseFile c : cf) {
             if (c.getId() == fileId) {
                 return position;
             }

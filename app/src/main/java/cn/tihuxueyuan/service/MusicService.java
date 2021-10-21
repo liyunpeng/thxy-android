@@ -399,7 +399,7 @@ public class MusicService extends Service {
 //                player.pause();
 //                musicActivityLiveData.postValue(PAUSE);
             } else {
-                if (action == NEWPLAY) {
+                if (action == NEWPLAY || action == PLAY ) {
                     String mp3url = SPUtils.getImgOrMp3Url(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getCourseId(), appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getMp3FileName());
                     initPlayer(mp3url);
                 }

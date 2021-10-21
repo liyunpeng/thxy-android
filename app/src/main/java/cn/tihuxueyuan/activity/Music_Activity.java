@@ -92,8 +92,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 ////注销方法
 //        mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
 //
-
-
         appData = Constant.appData;
 
         setContentView(R.layout.activity_music);
@@ -101,7 +99,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         Log.d(TAG, "Music Activity oncreate  musicUrl= " + musicUrl);
         boolean isNew = getIntent().getBooleanExtra("is_new", false);
 
-        appData.currentMusicCourseId = appData.playingCourseFileList.get(0).getCourseId();
+//        appData.currentMusicCourseId = appData.playingCourseFileList.get(0).getCourseId();
         musicActivityObserver();
 
         initView();
@@ -174,7 +172,6 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
         // Todo 待定
         Intent intent = new Intent();
-//        intent.putExtra("respond", "Hello,Alice!I'm Bob.");
         setResult(Activity.RESULT_OK, intent);
 
         SPUtils.sendListenedPerscent();
@@ -199,13 +196,11 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
 
     @Override
     protected void onStart() {
-        Log.e("====", "onStart()");
         super.onStart();
     }
 
     @Override
     protected void onRestart() {
-        Log.e("====", "onRestart()");
         super.onRestart();
     }
 
