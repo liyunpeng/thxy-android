@@ -23,10 +23,6 @@ public class DBUtils {
     DBOpenHelper helper;
     SQLiteDatabase db;
 
-    /**
-     * 构造方法，只有当类被实例化时候调用
-     * 实例化SQLiteHelper类，从中得到一个读写的数据库
-     **/
     public DBUtils(Context context) {
 
 //        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/AAA";
@@ -50,9 +46,6 @@ public class DBUtils {
 
     private static DBUtils instance;
 
-    /**
-     * 得到这个类的实例
-     **/
     public static DBUtils getInstance(Context context) {
         if (instance == null) {
             instance = new DBUtils(context);
@@ -60,16 +53,9 @@ public class DBUtils {
         return instance;
     }
 
-    //保存个人资料信息
     public void saveUserInfo(UserBean bean) {
         ContentValues cv = new ContentValues();
         cv.put("userName", bean.userName);
-//        cv.put("nickName", bean.nickName);
-//        cv.put("sex", bean.sex);
-//        cv.put("signature", bean.signature);
-//        cv.put("qq",bean.qq);
-//        //Convenience method for inserting a row into the database.
-        //注意，我们是从数据库使用插入方法，传入表名和数据集完成插入
         db.insert(DBOpenHelper.U_USER_INFO, null, cv);
     }
 
@@ -97,7 +83,6 @@ public class DBUtils {
     public void saveCourseFiles(List<CourseFileList.CourseFile> courseFiles) {
         for (CourseFileList.CourseFile courseFile : courseFiles) {
             ContentValues cv = new ContentValues();
-//            cv.put("course_file_id", courseFile.getId());
             cv.put("id", courseFile.getId());
             cv.put("course_id", courseFile.getCourseId());
             cv.put("number", courseFile.getNumber());
@@ -216,28 +201,19 @@ public class DBUtils {
     @SuppressLint("Range")
     public List<CourseFileList.CourseFile> getSqlite3CourseFileList(int courseId) {
         String sql = "SELECT * FROM " + DBOpenHelper.COURSE_FILE + " WHERE course_id =?";
-        //?和下面数组内元素会逐个替换，可以多条件查询=?and =?
-        //You may include ?s in where clause in the query, which will be replaced by the values from selectionArgs.
         String args[] = {String.valueOf(courseId)};
         List<CourseFileList.CourseFile> lc = new ArrayList<>();
 
         Cursor cursor = db.rawQuery(sql, args);
         List<CourseFileList.CourseFile> beans = null;
-        //Move the cursor to the next row.
         while (cursor.moveToNext()) {
             CourseFileList.CourseFile courseFile = new CourseFileList.CourseFile();
-            //根据列索引获取对应的数值，因为这里查询结果只有一个，我们也不需要对模型UserBean进行修改，
-            //直接将对应用户名的所有数据从表中动态赋值给bean
             courseFile.id = cursor.getInt(cursor.getColumnIndex("id"));
             courseFile.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
             courseFile.mp3_file_name = cursor.getString(cursor.getColumnIndex("mp3_file_name"));
             courseFile.number = cursor.getInt(cursor.getColumnIndex("number"));
-//            bean.courseFileId = cursor.getInt(cursor.getColumnIndex("course_file_id"));
-//            bean.nickName = cursor.getString(cursor.getColumnIndex("nickName"));
-//            bean.sex = cursor.getString(cursor.getColumnIndex("sex"));
-//            bean.signature = cursor.getString(cursor.getColumnIndex("signature"));
-//            bean.beanqq = cursor.getString(cursor.getColumnIndex("qq"));
-            Log.d(Constant.TAG, " sqlite mp3: " + courseFile.mp3_file_name+ ", id= " + courseFile.id );
+            courseFile.duration = cursor.getString(cursor.getColumnIndex("duration"));
+            Log.d(Constant.TAG, " sqlite mp3: " + courseFile.mp3_file_name + ", id= " + courseFile.id);
             lc.add(courseFile);
         }
 
@@ -245,36 +221,23 @@ public class DBUtils {
         return lc;
     }
 
-    //获取个人资料信息
     @SuppressLint("Range")
     public UserBean getUserInfo(String userName) {
         String sql = "SELECT * FROM " + DBOpenHelper.U_USER_INFO + " WHERE userName=?";
-        //?和下面数组内元素会逐个替换，可以多条件查询=?and =?
-        //You may include ?s in where clause in the query, which will be replaced by the values from selectionArgs.
         Cursor cursor = db.rawQuery(sql, new String[]{userName});
         UserBean bean = null;
-        //Move the cursor to the next row.
         while (cursor.moveToNext()) {
             bean = new UserBean();
-            //根据列索引获取对应的数值，因为这里查询结果只有一个，我们也不需要对模型UserBean进行修改，
-            //直接将对应用户名的所有数据从表中动态赋值给bean
             bean.userName = cursor.getString(cursor.getColumnIndex("userName"));
-//            bean.nickName = cursor.getString(cursor.getColumnIndex("nickName"));
-//            bean.sex = cursor.getString(cursor.getColumnIndex("sex"));
-//            bean.signature = cursor.getString(cursor.getColumnIndex("signature"));
-//            bean.beanqq = cursor.getString(cursor.getColumnIndex("qq"));
         }
         cursor.close();
         return bean;
     }
 
-    //修改个人资料信息,这里的key指代表字段，value表示数值
     public void updateUserInfo(String key, String value, String userName) {
         ContentValues cv = new ContentValues();
         cv.put(key, value);
-        //Convenience method for updating rows in the database.
         db.update(DBOpenHelper.U_USER_INFO, cv, "userName=?", new String[]
                 {userName});
     }
-
 }

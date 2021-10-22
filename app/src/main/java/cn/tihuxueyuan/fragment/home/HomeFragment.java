@@ -193,7 +193,7 @@ public class HomeFragment extends Fragment {
                 holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), Color.parseColor("#000000"));
                 holder.getView(R.id.number).setVisibility(View.GONE);
                 String duration = courseFile.getDuration();
-                holder.set(R.id.duration, "时长" + duration, Color.parseColor("#000000"));
+                holder.set(R.id.duration, "时长: " + duration, Color.parseColor("#000000"));
                 holder.getView(R.id.percent).setVisibility(View.GONE);
                 holder.getView(R.id.duration).setVisibility(View.generateViewId());
             }

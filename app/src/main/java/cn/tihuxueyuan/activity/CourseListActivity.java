@@ -429,13 +429,13 @@ public class CourseListActivity extends BaseActivity {
                     } else {
                         holder.set(R.id.percent, "已听" + percent + "%", color);
                     }
-                    holder.set(R.id.duration, "时长" + duration, color);
+                    holder.set(R.id.duration, "时长: " + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.VISIBLE);
                 } else {
                     holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                     holder.set(R.id.number, String.valueOf(courseFile.getNumber()), color);
                     holder.set(R.id.percent, "", color);
-                    holder.set(R.id.duration, "时长" + duration, color);
+                    holder.set(R.id.duration, "时长: " + duration, color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
                 holder.set(R.id.pos, "位置:" + pos, color);

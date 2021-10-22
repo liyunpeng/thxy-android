@@ -267,10 +267,7 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
         ActivityManager.setCurrentActivity(Music_Activity.this);
     }
 
-    //    private static MutableLiveData<Object> courseListActivityLiveData;
-    public static Handler handler = new Handler() {//创建消息处理器对象
-        //在主线程中处理从子线程发送过来的消息
-
+    public static Handler handler = new Handler() {
         public int lastPercent;
 
         @Override
@@ -278,38 +275,35 @@ public class Music_Activity extends BaseActivity implements View.OnClickListener
             if (!musicControl.isPlaying()) {
                 return;
             }
-//            Log.d("tag1", "handleMessage: 处理消息 ： " + msg.toString());
-            Bundle bundle = msg.getData();//获取从子线程发送过来的音乐播放进度
+            Bundle bundle = msg.getData();
             int duration = bundle.getInt("duration");
             int currentPosition = bundle.getInt("currentPosition");
             seekBar.setMax(duration);
             seekBar.setProgress(currentPosition);
-            //歌曲总时长
             int minute = duration / 1000 / 60;
             int second = duration / 1000 % 60;
             String strMinute = null;
             String strSecond = null;
-            if (minute < 10) {//如果歌曲的时间中的分钟小于10
-                strMinute = "0" + minute;//在分钟的前面加一个0
+            if (minute < 10) {
+                strMinute = "0" + minute;
             } else {
                 strMinute = minute + "";
             }
-            if (second < 10) {//如果歌曲中的秒钟小于10
-                strSecond = "0" + second;//在秒钟前面加一个0
+            if (second < 10) {
+                strSecond = "0" + second;
             } else {
                 strSecond = second + "";
             }
             tv_total.setText(strMinute + ":" + strSecond);
-            //歌曲当前播放时长
             minute = currentPosition / 1000 / 60;
             second = currentPosition / 1000 % 60;
-            if (minute < 10) {//如果歌曲的时间中的分钟小于10
-                strMinute = "0" + minute;//在分钟的前面加一个0
+            if (minute < 10) {
+                strMinute = "0" + minute;
             } else {
                 strMinute = minute + " ";
             }
-            if (second < 10) {//如果歌曲中的秒钟小于10
-                strSecond = "0" + second;//在秒钟前面加一个0
+            if (second < 10) {
+                strSecond = "0" + second;
             } else {
                 strSecond = second + " ";
             }
