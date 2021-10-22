@@ -17,16 +17,23 @@ public class CourseList {
     }
 
     public static class Course {
-        @SerializedName("title")
-        private String title;
         @SerializedName("id")
         private int id;
-        @SerializedName("img_file_name")
-        private String ImgFileName;
-        @SerializedName("store_path")
-        private String storePath;
+
         @SerializedName("type_id")
         private int typeId;
+
+        @SerializedName("title")
+        private String title;
+
+        @SerializedName("img_file_name")
+        private String ImgFileName;
+
+        @SerializedName("introduction")
+        private String introduction;
+
+        @SerializedName("store_path")
+        private String storePath;
 
         public int getTypeId() {
             return typeId;
@@ -34,6 +41,10 @@ public class CourseList {
 
         public String getTitle() {
             return title;
+        }
+
+        public String getIntroduction() {
+            return introduction;
         }
 
         public String getStorePath() {
@@ -50,25 +61,11 @@ public class CourseList {
             this.typeId = typeId;
         }
 
-//        public void setCourseId(int typeId) {
-//            this.typeId = typeId;
-//        }
-
         public void setImgFileName(String imgFileName) {
             this.ImgFileName = imgFileName;
         }
 
-//        public String getArtistname() {
-//            return artistname;
-//        }
-//
-//        public void setArtistname(String artistname) {
-//            this.artistname = artistname;
-//        }
-
-        public int getId() {
-            return id;
-        }
+        public int getId() { return id; }
 
         public void setId(int Id) {
             this.id = id;

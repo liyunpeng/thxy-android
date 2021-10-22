@@ -48,23 +48,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import android.widget.ListView;
 
 public class CourseListActivity extends BaseActivity {
     private AppData appData;
-    private int mCouseId;
     private boolean mCourseListOrder = true;
+    private int mCouseId;
     private int createFlag = 0;
     private int mLastListenedCourseFileId = -1;
-
     private String mTitle;
-    private CommonAdapter<CourseFile> mAdapter;
-    private ListView mCourseListView;
+    private String mIntroduction;
+
+    private ImageView mImageView;
+    private TextView mTitleView;
+    private TextView mIntroductionView;
     private TextView mLastPlayTextView;
     private TextView mReverseTextView;
-    private TextView mTitleView;
-    private ImageView mImageView;
+    private ListView mCourseListView;
 
+    private CommonAdapter<CourseFile> mAdapter;
     private List<CourseFileList.CourseFile> mList = new ArrayList<>();
     private LiveDataBus.BusMutableLiveData<ListenedFile> mCourseListActivityLiveData;
 
@@ -77,16 +80,39 @@ public class CourseListActivity extends BaseActivity {
         Log.d(TAG, "CourseListActivity 创建， 调用oncreate");
         mCouseId = getIntent().getIntExtra("course_id", 0);
         mTitle = getIntent().getStringExtra("title");
-
+        mIntroduction = getIntent().getStringExtra("introduction");
         appData = (AppData) getApplication();
         mTitleView = findViewById(R.id.course_title);
+        mIntroductionView = findViewById(R.id.introduction);
         mImageView = findViewById(R.id.course_image);
         mCourseListView = findViewById(R.id.courseList);
         mLastPlayTextView = findViewById(R.id.last_play);
         mReverseTextView = findViewById(R.id.reverse);
 
         mTitleView.setText(mTitle);
+        mIntroductionView.setText(mIntroduction);
 
+        setImageView();
+
+        registerListener();
+
+        getListViewData();
+
+        ActivityManager.setCurrentActivity(CourseListActivity.this);
+
+
+        if (mCourseListOrder == true) {
+            Constant.order = true;
+            Collections.sort(mList, new ComparatorValues());
+        } else {
+            Constant.order = false;
+            Collections.sort(mList, new ComparatorValues());
+        }
+        courseListActivityObserver();
+
+    }
+
+    private void setImageView() {
         // todo: 图片缓存因图片解码出来的bitmap为空，暂时注释昝
         if (false) {
             String bitmapFilePath = "/data/user/0/cn.tihuxueyuan/files/11_23.jpeg";
@@ -121,7 +147,20 @@ public class CourseListActivity extends BaseActivity {
         } else {
             SPUtils.httpGetCourseImage(getApplicationContext(), mCouseId, mImageView);
         }
+    }
+    private void getListViewData() {
+        if (!getCourseListFromSqlite3()) {
+            // 本地没获取到，再走网络获取
+            if (Constant.HAS_USER) {
+                httpGetListenedFile();
+            } else {
+                httpGetCourseFilesV1();
+            }
+        }
+        listToMap();
+    }
 
+    private void registerListener() {
         mCourseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -146,22 +185,6 @@ public class CourseListActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
-        ActivityManager.setCurrentActivity(CourseListActivity.this);
-
-        Log.d(TAG, "onCreate: currentCouseId: " + mCouseId);
-
-        if (!getCourseListFromSqlite3()) {
-            // 本地没获取到，再走网络获取
-            if (Constant.HAS_USER) {
-                httpGetListenedFile();
-            } else {
-                httpGetCourseFilesV1();
-            }
-        }
-
-        listToMap();
-
         mReverseTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,15 +203,6 @@ public class CourseListActivity extends BaseActivity {
                 mAdapter.notifyDataSetChanged();
             }
         });
-
-        if (mCourseListOrder == true) {
-            Constant.order = true;
-            Collections.sort(mList, new ComparatorValues());
-        } else {
-            Constant.order = false;
-            Collections.sort(mList, new ComparatorValues());
-        }
-        courseListActivityObserver();
     }
 
     private void listToMap() {

@@ -75,6 +75,7 @@ public class DBUtils {
             cv.put("img_file_name", c.getImgFileName());
             cv.put("type_id", c.getTypeId());
             cv.put("course_id", c.getId());
+            cv.put("introduction", c.getIntroduction());
             cv.put("id", c.getId());
             db.insert(DBOpenHelper.COURSE, null, cv);
         }
