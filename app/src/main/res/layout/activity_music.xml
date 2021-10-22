@@ -6,7 +6,7 @@
     android:layout_alignParentBottom="true"
     android:background="@drawable/sun_1"
     android:orientation="vertical"
-    tools:context="cn.tihuxueyuan.activity.Music_Activity">
+    tools:context="cn.tihuxueyuan.activity.MusicActivity">
     <!--        <ImageView-->
     <!--            android:id="@+id/iv_music"-->
     <!--            android:layout_width="240dp"-->

@@ -2,8 +2,6 @@ package cn.tihuxueyuan.service;
 
 import static android.content.ContentValues.TAG;
 import static android.os.Build.VERSION.SDK_INT;
-import static cn.tihuxueyuan.utils.Constant.PAUSE;
-import static cn.tihuxueyuan.utils.Constant.PLAY;
 import static cn.tihuxueyuan.utils.Constant.bootstrapReflect;
 
 import android.app.Service;
@@ -15,7 +13,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,11 +23,9 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
-import androidx.lifecycle.Observer;
 
 import cn.tihuxueyuan.R;
-import cn.tihuxueyuan.activity.Music_Activity;
-import cn.tihuxueyuan.livedata.LiveDataBus;
+import cn.tihuxueyuan.activity.MusicActivity;
 import cn.tihuxueyuan.utils.Constant;
 
 public class FloatingImageDisplayService extends Service {
@@ -211,7 +206,7 @@ public class FloatingImageDisplayService extends Service {
                 case MotionEvent.ACTION_DOWN:
                     x = (int) event.getRawX();
                     y = (int) event.getRawY();
-                    Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
+                    Intent intent = new Intent(getApplicationContext(), MusicActivity.class);
                     intent.putExtra(Constant.FromIntent, Constant.FloatWindow);
                     intent.putExtra("float_text", floatText);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -37,7 +37,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import cn.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.activity.MusicActivity;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.receiver.NotificationClickReceiver;
@@ -357,12 +357,12 @@ public class MusicService extends Service {
                         return;
                     int duration = player.getDuration();
                     int currentPosition = player.getCurrentPosition();
-                    Message msg = Music_Activity.handler.obtainMessage();
+                    Message msg = MusicActivity.handler.obtainMessage();
                     Bundle bundle = new Bundle();
                     bundle.putInt("duration", duration);
                     bundle.putInt("currentPosition", currentPosition);
                     msg.setData(bundle);
-                    Music_Activity.handler.sendMessage(msg);
+                    MusicActivity.handler.sendMessage(msg);
                 }
             };
             // 每5秒开始，每500毫秒执行
@@ -532,14 +532,14 @@ public class MusicService extends Service {
 
             int duration = player.getDuration();//获取歌曲总时长
             int currentPosition = player.getCurrentPosition();//获取播放进度
-            Message msg = Music_Activity.handler.obtainMessage();//创建消息对象
+            Message msg = MusicActivity.handler.obtainMessage();//创建消息对象
             //将音乐的总时长和播放进度封装至消息对象中
             Bundle bundle = new Bundle();
             bundle.putInt("duration", duration);
             bundle.putInt("currentPosition", currentPosition);
             msg.setData(bundle);
             //将消息发送到主线程的消息队列
-            Music_Activity.handler.sendMessage(msg);
+            MusicActivity.handler.sendMessage(msg);
         }
 
         public void initPlayer(String url) {

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.tihuxueyuan.R;
-import cn.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.activity.MusicActivity;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.databinding.FragmentHomeBinding;
@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(HomeFragment.this.getActivity(), Music_Activity.class);//创建Intent对象，启动check
+                Intent intent = new Intent(HomeFragment.this.getActivity(), MusicActivity.class);//创建Intent对象，启动check
                 String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
 
 

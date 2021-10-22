@@ -2,7 +2,6 @@ package cn.tihuxueyuan.utils;
 
 import static android.os.Build.VERSION.SDK_INT;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
@@ -10,16 +9,15 @@ import android.view.WindowManager;
 
 import java.lang.reflect.Method;
 
-import cn.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.activity.MusicActivity;
 import cn.tihuxueyuan.db.DBUtils;
-import cn.tihuxueyuan.floatview.weight.FloatingView;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 
 public class Constant {
 
-    public static Music_Activity.MyServiceConn conn1;
+    public static MusicActivity.MusiceServiceConnection conn1;
 
     private String name;
     public static boolean HAS_USER=false;

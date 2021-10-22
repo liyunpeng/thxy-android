@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import cn.tihuxueyuan.R;
 
-import cn.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.activity.MusicActivity;
 
 public class ListFragment extends Fragment {
     private View view;
@@ -31,7 +31,7 @@ public class ListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(ListFragment.this.getContext(),Music_Activity.class);//创建Intent对象，启动check
+                Intent intent=new Intent(ListFragment.this.getContext(), MusicActivity.class);//创建Intent对象，启动check
                 //将数据存入Intent对象
                 intent.putExtra("name",name[position]);
                 intent.putExtra("position",String.valueOf(position));

@@ -76,7 +76,7 @@
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.RecyclerActivity" />
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.ViewPagerActivity" />
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.SimpleActivity" />
-        <activity android:name="cn.tihuxueyuan.activity.Music_Activity" />
+        <activity android:name="cn.tihuxueyuan.activity.MusicActivity" />
         <activity android:name="cn.tihuxueyuan.activity.CourseListActivity" />
 
         <activity android:name="cn.tihuxueyuan.activity.MusicMainActivity" />

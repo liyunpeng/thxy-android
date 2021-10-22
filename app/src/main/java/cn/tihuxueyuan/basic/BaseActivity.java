@@ -12,7 +12,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
-import cn.tihuxueyuan.activity.Music_Activity;
+import cn.tihuxueyuan.activity.MusicActivity;
 import cn.tihuxueyuan.floatview.weight.FloatingView;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.utils.Constant;
@@ -47,7 +47,7 @@ public class BaseActivity extends AppCompatActivity {
             floatingView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
+                    Intent intent = new Intent(getApplicationContext(), MusicActivity.class);
                     intent.putExtra(Constant.FromIntent, Constant.FloatWindow);
                     intent.putExtra("float_text", customFloatViewText);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
