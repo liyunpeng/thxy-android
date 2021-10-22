@@ -4,6 +4,8 @@ import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +39,11 @@ import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,14 +76,59 @@ public class CourseListActivity extends BaseActivity {
         title = getIntent().getStringExtra("title");
 
         appData = (AppData) getApplication();
-        this.titleView = findViewById(R.id.course_title);
-        this.imageView = findViewById(R.id.course_image);
+        titleView = findViewById(R.id.course_title);
+        imageView = findViewById(R.id.course_image);
+        courseListView = findViewById(R.id.courseList);
+        lastPlayTextView = findViewById(R.id.last_play);
+        reverseTextView = findViewById(R.id.reverse);
 
         titleView.setText(title);
-        this.courseListView = findViewById(R.id.courseList);
-        this.lastPlayTextView = findViewById(R.id.last_play);
-        reverseTextView = findViewById(R.id.reverse);
-        SPUtils.httpGetCourseImage(imageView);
+
+        String bitmapFilePath = "/data/user/0/cn.tihuxueyuan/files/11_23.jpeg";
+//
+//        try {
+//            FileInputStream fis = new FileInputStream(s);
+//
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+//
+////            byte[] a =
+//
+//
+//
+//
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+
+        File f=new File(bitmapFilePath);
+        if(f.exists()) {
+
+            Log.d(TAG, "本地图片文件存, 文件长度=" + f.length());
+        }else{
+            Log.d(TAG, "本地图片文件不存在");
+        }
+
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+
+        opts.inJustDecodeBounds = true;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(bitmapFilePath, opts);
+
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
+            Log.d(TAG, "用本地文件设置图片");
+        }else{
+            Log.d(TAG, "用网络获取设置图片");
+            SPUtils.httpGetCourseImage(getApplicationContext(),  mCouseId, imageView);
+        }
+
+
+
+
+
 
         courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -117,8 +169,6 @@ public class CourseListActivity extends BaseActivity {
         }
 
         listToMap();
-
-
 
         reverseTextView.setOnClickListener(new View.OnClickListener() {
             @Override

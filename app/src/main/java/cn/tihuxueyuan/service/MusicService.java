@@ -310,7 +310,7 @@ public class MusicService extends Service {
 
         if (currentCourseId != appData.lastCourseId) {
             Log.d(TAG, " 更新通知栏 当前currentCourseId 与上次 记录的 courseId 不同，走网络获取图片");
-            SPUtils.httpGetCourseImage(null);
+            SPUtils.httpGetCourseImage(getApplicationContext(), appData.playingCourseId, null);
         } else {
             notificationRemoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
         }
@@ -399,7 +399,7 @@ public class MusicService extends Service {
 //                player.pause();
 //                musicActivityLiveData.postValue(PAUSE);
             } else {
-                if (action == NEWPLAY || action == PLAY ) {
+                if (action == NEWPLAY || action == PLAY  ) {
                     String mp3url = SPUtils.getImgOrMp3Url(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getCourseId(), appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getMp3FileName());
                     initPlayer(mp3url);
                 }
@@ -460,6 +460,28 @@ public class MusicService extends Service {
                 case PAUSE:
                     playOrPause();
                     break;
+
+                case PREV:
+                    if (appData.playingCourseFileListPostion <= 0) {
+                        appData.playingCourseFileListPostion = 0;
+                    } else {
+                        appData.playingCourseFileListPostion--;
+                        appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
+                        musicControl.playListened(NEWPLAY);
+                    }
+                    break;
+                case NEXT:
+                    if (appData.playingCourseFileListPostion >= (appData.playingCourseFileList.size() - 1)) {
+                        appData.playingCourseFileListPostion = (appData.playingCourseFileList.size() - 1);
+                    } else {
+                        appData.playingCourseFileListPostion++;
+                        appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
+                        musicControl.playListened(NEWPLAY);
+                    }
+                    break;
+
+
+//
 //                case PREV:
 //                    app.currentPostion--;
 //

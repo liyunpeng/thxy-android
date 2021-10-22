@@ -9,6 +9,7 @@ import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.appData;
 import static cn.tihuxueyuan.utils.Constant.logcatHelper;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
@@ -34,6 +35,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -224,7 +226,8 @@ public class MainActivity extends BaseActivity {
         }
         switch (requestCode) {
             case 222:
-                //todo：  获取到创建目录权限  ， 还放目录用系统自带的document目录， 放在这个地方， 一些初妈化的log打印不到
+                //todo：  获取到创建目录权限  ， 还放目录用系统自带的document目录， 放在这个地方， 一些初始化的log打印不到
+                Log.d(TAG, " onRequestPermissionsResult 响应， 创建log目录");
                 Constant.logcatHelper = LogcatHelper.getInstance(getApplicationContext());
                 logcatHelper.start();
 //                Toast.makeText(getApplicationContext(), "已申请权限", Toast.LENGTH_SHORT).show();

@@ -8,6 +8,7 @@ import static cn.tihuxueyuan.utils.Constant.musicControl;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -16,6 +17,8 @@ import com.google.gson.reflect.TypeToken;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -255,9 +258,9 @@ public class SPUtils {
         return 0;
     }
 
-    public static void httpGetCourseImage(ImageView imageView) {
+    public static void httpGetCourseImage(Context c, int courseId, ImageView imageView) {
         AppData appData = Constant.appData;
-        String url = SPUtils.getImgOrMp3Url(appData.playingCourseId, appData.currentCourseImageFileName);
+        String url = SPUtils.getImgOrMp3Url(courseId, appData.currentCourseImageFileName);
         Log.d(Constant.TAG, "httpGetCourseImage 调用， 加载课程图片的url=" + url);
         OkHttpUtils.get().url(url)
                 .build()
@@ -275,6 +278,22 @@ public class SPUtils {
 
                         if (imageView != null) {
                             imageView.setImageBitmap(bitmap);
+
+                            try {
+//                                String path =   c.getFilesDir().getAbsolutePath() + File.separator + "documents/" + courseId + "_" + appData.currentCourseImageFileName;
+//                                String path =   c.getFilesDir().getAbsolutePath() + File.separator + courseId + "_" + appData.currentCourseImageFileName;
+                                String path =   Environment.getRootDirectory() + File.separator + "Thxy/" + courseId + "_" + appData.currentCourseImageFileName;
+                                Log.d(TAG, "获取图片文件，保存图片文件 path="+path);
+
+//                                String path = LogcatHelper.PATH_LOGCAT;
+                                FileOutputStream fos = new FileOutputStream(path);
+                                fos.write(bitmap.getRowBytes());
+                                fos.flush();
+                                fos.close();
+                            } catch (Exception e) {
+                                Log.d(TAG, "保存图片文件失败,e="+e);
+                                e.printStackTrace();
+                            }
                         } else {
                             if (MusicService.notificationRemoteViews != null) {
                                 MusicService.notificationRemoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
@@ -333,7 +352,8 @@ public class SPUtils {
         }
 
         Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(
-                userListenedCourse.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
+                userListenedCourse.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {
+                }.getType());
 
         userCourse.lastListenedCourseFileId = userListenedCourse.lastListenedCourseFileId;
         userCourse.listenedFileMap = listenedFileMap;
@@ -345,7 +365,7 @@ public class SPUtils {
         Gson gson = new Gson();
 
         if (userListenedCourse == null) {
-            Map<Integer, ListenedFile> listenedFileMap  = new HashMap<>();
+            Map<Integer, ListenedFile> listenedFileMap = new HashMap<>();
             ListenedFile listenedFile = new ListenedFile();
             listenedFile.listenedPercent = listenedInt;
             listenedFile.courseFileId = fileId;
@@ -355,7 +375,8 @@ public class SPUtils {
 
             Constant.dbUtils.insertUserListenedCourse(code, courseId, listenedFileMapStr, fileId);
         } else {
-            Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(userListenedCourse.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {}.getType());
+            Map<Integer, ListenedFile> listenedFileMap = gson.fromJson(userListenedCourse.listenedFiles, new TypeToken<Map<Integer, ListenedFile>>() {
+            }.getType());
             if (listenedFileMap != null && listenedFileMap.get(fileId) != null) {
                 listenedFileMap.get(fileId).courseFileId = fileId;
                 listenedFileMap.get(fileId).listenedPercent = listenedInt;
