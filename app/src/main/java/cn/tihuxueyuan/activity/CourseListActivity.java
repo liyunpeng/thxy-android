@@ -43,6 +43,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,30 +106,33 @@ public class CourseListActivity extends BaseActivity {
         File f=new File(bitmapFilePath);
         if(f.exists()) {
 
-            Log.d(TAG, "本地图片文件存, 文件长度=" + f.length());
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(f);
+                int size = fis.available();
+                Log.d(TAG, "本地图片文件存在， 文件大小=" + size);
+                fis.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }else{
             Log.d(TAG, "本地图片文件不存在");
         }
 
-
         BitmapFactory.Options opts = new BitmapFactory.Options();
-
         opts.inJustDecodeBounds = true;
-
         Bitmap bitmap = BitmapFactory.decodeFile(bitmapFilePath, opts);
 
         if (bitmap != null) {
+
             imageView.setImageBitmap(bitmap);
             Log.d(TAG, "用本地文件设置图片");
         }else{
             Log.d(TAG, "用网络获取设置图片");
             SPUtils.httpGetCourseImage(getApplicationContext(),  mCouseId, imageView);
         }
-
-
-
-
-
 
         courseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
@@ -280,14 +281,13 @@ public class SPUtils {
                             imageView.setImageBitmap(bitmap);
 
                             try {
-//                                String path =   c.getFilesDir().getAbsolutePath() + File.separator + "documents/" + courseId + "_" + appData.currentCourseImageFileName;
-//                                String path =   c.getFilesDir().getAbsolutePath() + File.separator + courseId + "_" + appData.currentCourseImageFileName;
-                                String path =   Environment.getRootDirectory() + File.separator + "Thxy/" + courseId + "_" + appData.currentCourseImageFileName;
+                                String path =   c.getFilesDir().getAbsolutePath() + File.separator + courseId + "_" + appData.currentCourseImageFileName;
+//                                String path =   Environment.getRootDirectory() + File.separator + "Thxy/" + courseId + "_" + appData.currentCourseImageFileName;
                                 Log.d(TAG, "获取图片文件，保存图片文件 path="+path);
-
-//                                String path = LogcatHelper.PATH_LOGCAT;
-                                FileOutputStream fos = new FileOutputStream(path);
-                                fos.write(bitmap.getRowBytes());
+                                BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(path));
+//                                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+                                boolean c = bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+                                Log.d(TAG, " bitmap.compress result=" + c);
                                 fos.flush();
                                 fos.close();
                             } catch (Exception e) {

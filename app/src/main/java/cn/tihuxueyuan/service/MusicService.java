@@ -148,7 +148,7 @@ public class MusicService extends Service {
                 currentCourseId = appData.playingCourseFileMap.get(appData.playingCourseFileId).getCourseId();
                 String fileName = appData.playingCourseFileMap.get(appData.playingCourseFileId).getFileName();
                 Constant.currentMusicName = SPUtils.getTitleFromName(fileName);
-
+                Constant.appData.lastCourseFileId = Constant.appData.playingCourseFileId;
                 Log.d(TAG, " player onPrepared...");
                 if (pos > 0) {
                     Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);

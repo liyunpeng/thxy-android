@@ -152,6 +152,20 @@ public class MainActivity extends BaseActivity {
         }
     };
 
+    private static final String[] PERMISSION_EXTERNAL_STORAGE = new String[] {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+    private static final int REQUEST_EXTERNAL_STORAGE = 100;
+
+
+    private void verifyStoragePermissions(Activity activity) {
+        int permissionWrite = ActivityCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(permissionWrite != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, PERMISSION_EXTERNAL_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE);
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +176,9 @@ public class MainActivity extends BaseActivity {
         logcatHelper = LogcatHelper.getInstance(getApplicationContext());
         logcatHelper.start();
         appData = (AppData) getApplication();
+        verifyStoragePermissions(this);
+
+
         registerReceiver(headSetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
 
         String curProcess = getProcessName(this, Process.myPid());
