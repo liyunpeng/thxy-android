@@ -3,7 +3,7 @@ package cn.tihuxueyuan.activity;
 import static android.os.Build.VERSION.SDK_INT;
 import static cn.tihuxueyuan.utils.Constant.CLOSE;
 import static cn.tihuxueyuan.utils.Constant.NEXT;
-import static cn.tihuxueyuan.utils.Constant.PLAY;
+import static cn.tihuxueyuan.utils.Constant.CONTINURE_PLAY;
 import static cn.tihuxueyuan.utils.Constant.PREV;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.appData;
@@ -288,7 +288,7 @@ public class MainActivity extends BaseActivity {
             Log.d(TAG, " 保证只动态注册一次receiver");
             appData.musicReceiver = new MusicReceiver();
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(PLAY);
+            intentFilter.addAction(CONTINURE_PLAY);
             intentFilter.addAction(PREV);
             intentFilter.addAction(NEXT);
             intentFilter.addAction(CLOSE);

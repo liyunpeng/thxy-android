@@ -176,10 +176,10 @@ public class CourseListActivity extends BaseActivity {
                 SPUtils.listToMap();
 
                 // debug log
-                for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileMap.values()) {
-                    Log.d(TAG, "mp3_file_name=" + c.mp3_file_name + ", listenedPercent=" + c.listenedPercent
-                            + ", listenedPosition=" + c.listenedPosition);
-                }
+//                for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileMap.values()) {
+//                    Log.d(TAG, "mp3_file_name=" + c.mp3_file_name + ", listenedPercent=" + c.listenedPercent
+//                            + ", listenedPosition=" + c.listenedPosition);
+//                }
 
                 startActivity(intent);
             }

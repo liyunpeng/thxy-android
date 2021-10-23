@@ -2,7 +2,7 @@ package cn.tihuxueyuan.activity;
 
 import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
-import static cn.tihuxueyuan.utils.Constant.PLAY;
+import static cn.tihuxueyuan.utils.Constant.CONTINURE_PLAY;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.floatingControl;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
@@ -49,6 +49,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
     private boolean isUnbind = false; //记录服务是否被解绑
     private String mMusicTitle;
     private String mMusicUrl;
+    private static String mTotalDurationText;
+    private static String mProgressText;
     private Intent intent3;
     private AppData appData;
     private MusiceServiceConnection mServiceConnection;
@@ -109,21 +111,14 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             Log.d(TAG, "设置 app.currentCourseFileId= " + appData.playingCourseFileId);
             bindMusicService();
         } else {
-//            bootstrapReflect();
-
-//            if ( appData.courseFileList == null || appData.courseFileList.size() <= appData.currentPostion ||  appData.courseFileList.get(appData.currentPostion) == null ) {
-//                Log.d(TAG, "从悬浮窗启动的activity");
-//                musicTitle = getIntent().getStringExtra("float_text");
-//            }else{
-            Log.d(TAG, " from intent = " + getIntent().getStringExtra(Constant.FromIntent));
-
             if (getIntent().getStringExtra(Constant.FromIntent).contains(Constant.FloatWindow)) {
+                Log.d(TAG, " intent 的发送者为" + getIntent().getStringExtra(Constant.FromIntent) + ", 需要设置时间进度文本" );
+                setTimeText();
                 mMusicTitle = getIntent().getStringExtra("float_text");
             } else {
                 mMusicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getFileName());
             }
 
-//            }
             musicControl.setText();
             if (musicControl.isPlaying()) {
                 mPlayPauseView.setImageResource(R.drawable.pause_dark);
@@ -134,16 +129,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
 
 //        setLockedScreen();
         mTitleTextView.setText(mMusicTitle);
-//        if (floatingControl != null) {
-//            floatingControl.setText(musicTitle);
-//        }
-
-//        this.customFloatViewText = musicTitle;
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 && Settings.canDrawOverlays(getApplicationContext()))
-//            getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
-
-//        floatLiveData = LiveDataBus.getInstance().with("float_control", String.class);
-//        floatLiveData.postValue(PLAY);
     }
 
     // 设置锁屏显示
@@ -184,7 +169,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             bindService(Constant.intent2, Constant.conn1, BIND_AUTO_CREATE); //绑定服务
         } else {
             musicControl.initPlayer(mMusicUrl);
-            musicControl.playListened(PLAY);
+            musicControl.playListened(CONTINURE_PLAY);
         }
 
         if (floatingControl == null) {
@@ -294,7 +279,9 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             } else {
                 strSecond = second + "";
             }
-            mTotalTextView.setText(strMinute + ":" + strSecond);
+            mTotalDurationText = strMinute + ":" + strSecond;
+            mTotalTextView.setText(mTotalDurationText);
+
             minute = currentPosition / 1000 / 60;
             second = currentPosition / 1000 % 60;
             if (minute < 10) {
@@ -307,7 +294,9 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             } else {
                 strSecond = second + " ";
             }
-            mProgressTextView.setText(strMinute + ":" + strSecond);
+            mProgressText = strMinute + ":" + strSecond;
+            mProgressTextView.setText(mProgressText);
+
             int currentPercent = 0;
             if (duration > 0) {
                 currentPercent = (currentPosition * 100 / duration);
@@ -337,6 +326,11 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
     };
 
 
+    private void setTimeText(){
+        mTotalTextView.setText(mTotalDurationText);
+        mProgressTextView.setText(mProgressText);
+    }
+
     private void musicActivityObserver() {
         mMusicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
         mMusicActivityLiveData.observe(MusicActivity.this, true, new Observer<String>() {
@@ -346,15 +340,15 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
                 switch (state) {
                     case PAUSE:
                         mPlayPauseView.setImageResource(R.drawable.play_dark);
+                        setTimeText();
                         break;
-                    case PLAY:
+                    case CONTINURE_PLAY:
                         mPlayPauseView.setImageResource(R.drawable.pause_dark);
+                        setTimeText();
                         break;
                     case NEWPLAY:
                         mMusicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getFileName());
                         mTitleTextView.setText(mMusicTitle);
-
-//                        floatingControl.setText(musicTitle);
                         break;
 //                    case CLOSE:
 //                        btnPlay.setIcon(getDrawable(R.mipmap.icon_play));
@@ -400,12 +394,12 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d(TAG, "onServiceConnected: 服务连接成功, serrvice 类名：" + name.getShortClassName());
+            Log.d(TAG, "onServiceConnected: 服务连接成功, service类名=" + name.getShortClassName());
             String shortClassName = name.getShortClassName();
             if (shortClassName.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
                 musicControl.initPlayer(mMusicUrl);
-                musicControl.playListened(PLAY);
+                musicControl.playListened(CONTINURE_PLAY);
                 Log.d(Constant.TAG, "musicControl 初始化完成 ");
             } else if (shortClassName.contains("FloatingImageDisplayService")) {
 //                Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;

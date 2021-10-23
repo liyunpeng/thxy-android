@@ -1,14 +1,13 @@
 package cn.tihuxueyuan.utils;
 
 import static cn.tihuxueyuan.globaldata.AppData.notificationBitMap;
-import static cn.tihuxueyuan.service.MusicService.notification;
+import static cn.tihuxueyuan.service.MusicService.mNotification;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -295,9 +294,9 @@ public class SPUtils {
                                 e.printStackTrace();
                             }
                         } else {
-                            if (MusicService.notificationRemoteViews != null) {
-                                MusicService.notificationRemoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
-                                MusicService.notificationManager.notify(MusicService.NOTIFICATION_ID, notification);
+                            if (MusicService.mNotificationRemoteViews != null) {
+                                MusicService.mNotificationRemoteViews.setImageViewBitmap(R.id.notification_img, appData.notificationBitMap);
+                                MusicService.mNotificationManager.notify(MusicService.NOTIFICATION_ID, mNotification);
                             }
                         }
                     }

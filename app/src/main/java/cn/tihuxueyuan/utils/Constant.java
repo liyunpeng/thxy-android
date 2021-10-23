@@ -43,7 +43,7 @@ public class Constant {
     /**
      * 歌曲播放
      */
-    public static final String PLAY = "play";
+    public static final String CONTINURE_PLAY = "play";
     public static final String NEWPLAY = "new_play";
     /**
      * 歌曲暂停
