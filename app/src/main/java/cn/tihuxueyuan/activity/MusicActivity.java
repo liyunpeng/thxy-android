@@ -49,6 +49,8 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
     private boolean isUnbind = false; //记录服务是否被解绑
     private String mMusicTitle;
     private String mMusicUrl;
+    private String mMode;
+
     private static String mTotalDurationText;
     private static String mProgressText;
     private Intent intent3;
@@ -98,13 +100,14 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
         setContentView(R.layout.activity_music);
         mMusicUrl = getIntent().getStringExtra("music_url");
         Log.d(TAG, "Music Activity oncreate  musicUrl= " + mMusicUrl);
-        boolean isNew = getIntent().getBooleanExtra("is_new", false);
+        mMode = getIntent().getStringExtra("mode");
 
 //        appData.currentMusicCourseId = appData.playingCourseFileList.get(0).getCourseId();
         musicActivityObserver();
 
         initView();
-        if (isNew == true) {
+
+        if ( mMode != null && (mMode.contains("list") || mMode.contains("last")) ) {
             appData.playingCourseFileListPostion = getIntent().getIntExtra("current_position", 0);
             mMusicTitle = getIntent().getStringExtra("title");
             appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
@@ -112,7 +115,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             bindMusicService();
         } else {
             if (getIntent().getStringExtra(Constant.FromIntent).contains(Constant.FloatWindow)) {
-                Log.d(TAG, " intent 的发送者为" + getIntent().getStringExtra(Constant.FromIntent) + ", 需要设置时间进度文本" );
+                Log.d(TAG, " intent 的发送者为" + getIntent().getStringExtra(Constant.FromIntent) + ", 需要设置时间进度文本");
                 setTimeText();
                 mMusicTitle = getIntent().getStringExtra("float_text");
             } else {
@@ -169,14 +172,18 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             bindService(Constant.intent2, Constant.conn1, BIND_AUTO_CREATE); //绑定服务
         } else {
             musicControl.initPlayer(mMusicUrl);
-            musicControl.playListened(CONTINURE_PLAY);
+            if (mMode.contains("last")) {
+                musicControl.playListened( NEWPLAY);
+            } else {
+                musicControl.playListened(CONTINURE_PLAY);
+            }
         }
 
-        if (floatingControl == null) {
-            intent3 = new Intent(this, FloatingImageDisplayService.class);//创建意图对象
-            mServiceConnection = new MusiceServiceConnection();
-            bindService(intent3, mServiceConnection, BIND_AUTO_CREATE);  //绑定服务
-        }
+//        if (floatingControl == null) {
+//            intent3 = new Intent(this, FloatingImageDisplayService.class);//创建意图对象
+//            mServiceConnection = new MusiceServiceConnection();
+//            bindService(intent3, mServiceConnection, BIND_AUTO_CREATE);  //绑定服务
+//        }
     }
 
     @Override
@@ -326,7 +333,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
     };
 
 
-    private void setTimeText(){
+    private void setTimeText() {
         mTotalTextView.setText(mTotalDurationText);
         mProgressTextView.setText(mProgressText);
     }
@@ -375,19 +382,19 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
         });
     }
 
-    public void startFloatingImageDisplayService() {
-        if (FloatingImageDisplayService.isStarted) {
-            return;
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (!Settings.canDrawOverlays(this)) {
-//                Toast.makeText(this, "当前无权限，请授权", Toast.LENGTH_SHORT);
-//                startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 1);
-//            } else {
-            startService(new Intent(MusicActivity.this, FloatingImageDisplayService.class));
-//            }
-        }
-    }
+//    public void startFloatingImageDisplayService() {
+//        if (FloatingImageDisplayService.isStarted) {
+//            return;
+//        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+////            if (!Settings.canDrawOverlays(this)) {
+////                Toast.makeText(this, "当前无权限，请授权", Toast.LENGTH_SHORT);
+////                startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 1);
+////            } else {
+//            startService(new Intent(MusicActivity.this, FloatingImageDisplayService.class));
+////            }
+//        }
+//    }
 
     public class MusiceServiceConnection implements ServiceConnection {
 
@@ -399,15 +406,20 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             if (shortClassName.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
                 musicControl.initPlayer(mMusicUrl);
-                musicControl.playListened(CONTINURE_PLAY);
+                if (mMode.contains("last")) {
+                    musicControl.playListened(NEWPLAY);
+                } else {
+                    musicControl.playListened(CONTINURE_PLAY);
+                }
                 Log.d(Constant.TAG, "musicControl 初始化完成 ");
-            } else if (shortClassName.contains("FloatingImageDisplayService")) {
-//                Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
-//                Constant.floatingControl.initFloatingWindow();
-//                Constant.floatingControl.setVisibility(false);
-//                Constant.floatingControl.setText(musicTitle);
-//                Log.d(Constant.TAG, "floatingControl 初始化完成");
             }
+//            else if (shortClassName.contains("FloatingImageDisplayService")) {
+////                Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
+////                Constant.floatingControl.initFloatingWindow();
+////                Constant.floatingControl.setVisibility(false);
+////                Constant.floatingControl.setText(musicTitle);
+////                Log.d(Constant.TAG, "floatingControl 初始化完成");
+//            }
         }
 
         @Override

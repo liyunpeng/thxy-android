@@ -1,5 +1,6 @@
 package cn.tihuxueyuan.activity;
 //
+import android.os.Build;
 import android.os.Bundle;
 ////import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +16,7 @@ import cn.tihuxueyuan.basic.BaseActivity;
 import okhttp3.OkHttpClient;
 import okhttp3.FormBody;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import cn.tihuxueyuan.R;
@@ -32,6 +34,7 @@ public class OkhttpClientActivity extends BaseActivity implements View.OnClickLi
 
     final OkHttpClient client = new OkHttpClient();
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +46,7 @@ public class OkhttpClientActivity extends BaseActivity implements View.OnClickLi
         bt_get.setOnClickListener(this);
         bt_post.setOnClickListener(this);
 
-        String s = (String) getIntent().getStringExtra("course_id");
+        String s = getIntent().getStringExtra("course_id");
         Log.d("tag2", "onCreate: param: "+ s);
     }
 

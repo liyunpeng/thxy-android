@@ -17,7 +17,6 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             "time, height, weight, blood_pressure, temperature, pulse, breathe)";
 
     private static final int DB_VERSION = 1;
-    public static String DB_NAME = "bxg.db";
     public static final String U_USER_INFO = "userInfo";
 
     public static final String COURSE_TYPE = "course_type";

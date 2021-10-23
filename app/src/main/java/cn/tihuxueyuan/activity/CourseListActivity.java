@@ -167,7 +167,7 @@ public class CourseListActivity extends BaseActivity {
                 Intent intent = new Intent(getApplicationContext(), MusicActivity.class);
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
-                intent.putExtra("is_new", true);
+                intent.putExtra("mode", "list");
                 intent.putExtra("title", SPUtils.getTitleFromName(mList.get(position).getFileName()));
 
                 appData.playingCourseFileList = mList;
@@ -366,24 +366,13 @@ public class CourseListActivity extends BaseActivity {
                 CourseFile courseFile = currentCourseFileMap.get(mLastListenedCourseFileId);
                 // android手机里播放音乐 按在listView中的位置找到音乐，而不是按fileId去找音乐，以便与播放上一首， 下一首一致, 以及自动播放下一首处理一致
                 appData.playingCourseFileListPostion = SPUtils.findPositionByFileId(mLastListenedCourseFileId, mList);
-//                 = SPUtils.findPositionByFileId(lastListenedCourseFileId);
                 if (courseFile != null) {
                     Intent intent = new Intent(getApplicationContext(), MusicActivity.class);
                     String musicUrl = SPUtils.getImgOrMp3Url(courseFile.getId(), courseFile.getFileName());
                     intent.putExtra("music_url", musicUrl);
                     intent.putExtra("current_position", appData.playingCourseFileListPostion);
-                    intent.putExtra("is_new", true);
+                    intent.putExtra("mode", "last");
                     intent.putExtra("title", SPUtils.getTitleFromName(courseFile.getFileName()));
-//
-
-                    ////////
-//                    String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
-//                    Intent intent = new Intent(getApplicationContext(), Music_Activity.class);
-//                    intent.putExtra("music_url", musicUrl);
-//                    intent.putExtra("current_position", position);
-//                    intent.putExtra("is_new", true);
-//                    intent.putExtra("title", SPUtils.getTitleFromName(mList.get(position).getFileName()));
-
                     appData.playingCourseFileList = mList;
                     appData.playingCourseFileId = courseFile.getId();
                     appData.playingCourseId = mCouseId;

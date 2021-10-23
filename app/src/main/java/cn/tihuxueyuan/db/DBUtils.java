@@ -40,7 +40,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "1122.db", null, 1);
+        helper = new DBOpenHelper(context, "11223344.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -74,7 +74,7 @@ public class DBUtils {
             cv.put("title", c.getTitle());
             cv.put("img_file_name", c.getImgFileName());
             cv.put("type_id", c.getTypeId());
-            cv.put("course_id", c.getId());
+//            cv.put("course_id", c.getId());
             cv.put("introduction", c.getIntroduction());
             cv.put("id", c.getId());
             db.insert(DBOpenHelper.COURSE, null, cv);

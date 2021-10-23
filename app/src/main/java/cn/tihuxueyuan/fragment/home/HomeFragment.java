@@ -133,7 +133,7 @@ public class HomeFragment extends Fragment {
 
                             intent.putExtra("music_url", musicUrl);
                             intent.putExtra("current_position", position);
-                            intent.putExtra("is_new", true);
+                            intent.putExtra("mode", "list");
 
 
                             appData.playingCourseFileId = mList.get(position).getId();
