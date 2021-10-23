@@ -98,8 +98,9 @@ public class CourseListActivity extends BaseActivity {
 
         getListViewData();
 
-        ActivityManager.setCurrentActivity(CourseListActivity.this);
+        courseListActivityObserver();
 
+        ActivityManager.setCurrentActivity(CourseListActivity.this);
 
         if (mCourseListOrder == true) {
             Constant.order = true;
@@ -108,8 +109,6 @@ public class CourseListActivity extends BaseActivity {
             Constant.order = false;
             Collections.sort(mList, new ComparatorValues());
         }
-        courseListActivityObserver();
-
     }
 
     private void setImageView() {
