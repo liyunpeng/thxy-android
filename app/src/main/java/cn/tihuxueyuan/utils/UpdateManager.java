@@ -27,10 +27,11 @@ public class UpdateManager {
     private Context mContext;
     private String updateMsg = "有最新的软件包，请下载！";
     // 下载安装包的网络路径
-    private String apkUrl = "http://10.0.2.2:8082/api/apkUpload";
+    private String apkUrl = "http://47.102.146.8:8082/api/apkUpload";
+//    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
     private Dialog noticeDialog;
     private Dialog downloadDialog;
-    private static final String savePath = "/storage/emulated/0/Thxy/";// 保存apk的文件夹
+    private static String savePath =  null; // "/storage/emulated/0/Thxy/";// 保存apk的文件夹
     private static final String saveFileName = savePath + "a.apk";
     // 进度条与通知UI刷新的handler和msg常量
     private ProgressBar mProgress;
@@ -58,6 +59,7 @@ public class UpdateManager {
     };
     public UpdateManager(Context context) {
         this.mContext = context;
+        savePath = context.getFilesDir().getAbsolutePath() + File.separator + "abc.apk";
     }
     // 显示更新程序对话框，供主程序调用
     public  void updateSoftware(Context  c) {

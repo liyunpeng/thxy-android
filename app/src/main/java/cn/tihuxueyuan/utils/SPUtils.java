@@ -280,7 +280,7 @@ public class SPUtils {
                             imageView.setImageBitmap(bitmap);
 
                             try {
-                                String path =   c.getFilesDir().getAbsolutePath() + File.separator + courseId + "_" + appData.currentCourseImageFileName;
+                                String path = c.getFilesDir().getAbsolutePath() + File.separator + courseId + "_" + appData.currentCourseImageFileName;
 //                                String path =   Environment.getRootDirectory() + File.separator + "Thxy/" + courseId + "_" + appData.currentCourseImageFileName;
                                 Log.d(TAG, "获取图片文件，保存图片文件 path="+path);
                                 BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(path));
