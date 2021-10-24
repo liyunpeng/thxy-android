@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.http.CustomResponse;
 import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseFileList;
+import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
 import okhttp3.Call;
@@ -62,7 +64,7 @@ public class HomeFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(HomeFragment.this.getActivity(), MusicActivity.class);//创建Intent对象，启动check
+                Intent intent = new Intent(HomeFragment.this.getActivity(), MusicActivity.class);
                 String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
 
 //                HttpClient.getCourseById(String.valueOf(mList.get(position).getCourseId()), new HttpCallback<CourseList.Course>() {
@@ -124,7 +126,6 @@ public class HomeFragment extends Fragment {
                             String result = stringBuffer.toString();
                             Log.d(TAG, "result = " + result);
 
-
                             Gson gson = new Gson();
                             CustomResponse course = gson.fromJson(result, CustomResponse.class);
 
@@ -132,15 +133,18 @@ public class HomeFragment extends Fragment {
                             intent.putExtra("current_position", position);
                             intent.putExtra("mode", "list");
 
-
                             appData.playingCourseFileId = mList.get(position).getId();
-                            appData.playingCourseFileListPostion = position;
+//                            appData.playingCourseFileListPostion = position;
                             appData.playingCourseId = mList.get(position).getCourseId();
 
                             appData.currentCourseImageFileName = course.getData().getImgFileName();
 
                             String titleArr[] = mList.get(position).getFileName().split("\\.");
                             intent.putExtra("title", titleArr[0]);
+
+
+                            Constant.order = true;
+                            Collections.sort(mList, new ComparatorValues());
 
                             appData.playingCourseFileList = mList;
                             appData.playingCourseFileId = mList.get(position).getId();
@@ -192,7 +196,7 @@ public class HomeFragment extends Fragment {
                 String duration = courseFile.getDuration();
                 holder.set(R.id.duration, "时长: " + duration, Color.parseColor("#000000"));
                 holder.getView(R.id.percent).setVisibility(View.GONE);
-                holder.getView(R.id.duration).setVisibility(View.generateViewId());
+                holder.getView(R.id.duration).setVisibility(View.VISIBLE);
             }
         });
 

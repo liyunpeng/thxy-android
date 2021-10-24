@@ -288,7 +288,7 @@ public class MusicService extends Service {
                 .setContentIntent(pendingIntent)
                 .setWhen(System.currentTimeMillis())
                 .setPriority(Notification.PRIORITY_MAX)
-//                .setSmallIcon(R.mipmap.goods)
+                .setSmallIcon(R.mipmap.thxy)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                 .setCustomContentView(mNotificationRemoteViews)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
