@@ -104,11 +104,10 @@ public class CourseListActivity extends BaseActivity {
 
         if (mCourseListOrder == true) {
             Constant.order = true;
-            Collections.sort(mList, new ComparatorValues());
         } else {
             Constant.order = false;
-            Collections.sort(mList, new ComparatorValues());
         }
+        Collections.sort(mList, new ComparatorValues());
     }
 
     private void setImageView() {
@@ -343,13 +342,6 @@ public class CourseListActivity extends BaseActivity {
                         && mCouseId == Constant.appData.playingCourseId) {
                     mList.get(Constant.appData.playingCourseFileListPostion).listenedPercent = value.listenedPercent;
                     mList.get(Constant.appData.playingCourseFileListPostion).listenedPosition = value.position;
-
-                    SPUtils.updateUserListenedV1(
-                            Constant.appData.UserCode,
-                            Constant.appData.playingCourseId,
-                            Constant.appData.playingCourseFileId,
-                            value.listenedPercent,
-                            value.position);
 
                     mAdapter.notifyDataSetChanged();
                 }

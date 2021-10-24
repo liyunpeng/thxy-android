@@ -313,20 +313,25 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
                 }
 
                 if (currentPercent != lastPercent || (currentPercent == 1 && lastPercent != 1)) {
-
                     String listenedPercent = Integer.toString(currentPercent);
-
                     Log.d(TAG, "handleMessage  listenedPercent = " + listenedPercent
                             + ", currentPosition=" + currentPosition + ", duration=" + duration
                             + ", cp=" + currentPercent
                     );
-
                     ListenedFile listenedFile = new ListenedFile();
                     listenedFile.listenedPercent = currentPercent;
                     listenedFile.position = currentPosition;
+
+                    SPUtils.updateUserListenedV1(
+                            Constant.appData.UserCode,
+                            Constant.appData.playingCourseId,
+                            Constant.appData.playingCourseFileId,
+                            listenedFile.listenedPercent,
+                            listenedFile.position);
+
+
                     mCourseListActivityLiveData.postValue(listenedFile);
                 }
-
             }
             lastPercent = currentPercent;
         }

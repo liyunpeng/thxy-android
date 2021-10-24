@@ -180,9 +180,16 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        appData.lastCourseId = -1000;  // 表示在最新列表播放
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
-        appData.UserCode = "7899000";  // 记录在本地文件里
+        appData.UserCode = "uc";  // 记录在本地文件里
         getFilelist();
 //        getConfig();
     }
