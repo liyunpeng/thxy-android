@@ -12,8 +12,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.Collections;
+
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.databinding.FragmentNotificationsBinding;
+import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.UpdateManager;
 
@@ -40,6 +43,13 @@ public class NotificationsFragment extends Fragment {
 
 //        root.setcon(R.layout.user_main);
 //        bind = ButterKnife.bind(this);
+
+        root.findViewById(R.id.update_software).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Constant.updateManager.updateSoftware( getContext());
+            }
+        });
 
         return root;
     }

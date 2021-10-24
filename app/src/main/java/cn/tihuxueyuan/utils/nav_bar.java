@@ -12,8 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Collections;
-
 import cn.tihuxueyuan.R;
 
 
@@ -26,7 +24,7 @@ public class nav_bar extends LinearLayout  {
     private int right_icon;
     private View inflate;
     ImageView imageView;
-    TextView editText;
+    TextView textView;
     private View tv_search;
 
     public nav_bar(@NonNull Context context) {
@@ -59,23 +57,14 @@ public class nav_bar extends LinearLayout  {
 
         inflate = LayoutInflater.from(context).inflate(R.layout.nav_bar, this, false);
         //imageView=  (ImageView)inflate.findViewById(R.id.tou);
-        editText=  (TextView)inflate.findViewById(R.id.title);
+        textView =  inflate.findViewById(R.id.title);
 
         Constant.updateManager = new UpdateManager(getContext());
-        editText.setOnClickListener(new  View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Constant.updateManager.checkUpdateInfo( getContext());
-            }
-        });
 
-        imageView=  (ImageView)inflate.findViewById(R.id.back);
+        imageView=  inflate.findViewById(R.id.back);
         imageView.setImageResource(inputview_input_icon);
-        editText.setText(inputview_input_hint);
+        textView.setText(inputview_input_hint);
         //editText.setInputType(inputview_is_pass?);
         addView(inflate);
-
     }
-
-
 }

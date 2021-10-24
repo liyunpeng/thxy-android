@@ -59,29 +59,14 @@
             </intent-filter>
         </activity>
 
-        <!--        <activity android:name="cn.tihuxueyuan.floatview.EggActivity"></activity>-->
-        <!--        <activity android:name="cn.tihuxueyuan.floatview.Main3Activity" />-->
-        <!--        <activity android:name="cn.tihuxueyuan.floatview.Main2Activity" />-->
-        <!--        <activity android:name="cn.tihuxueyuan.floatview.MainActivity"-->
-        <!--            android:exported="true">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.MAIN" />-->
-
-        <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-        <!--            </intent-filter>-->
-        <!--        </activity>-->
-
-
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.MainActivity" />
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.RecyclerActivity" />
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.ViewPagerActivity" />
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.SimpleActivity" />
         <activity android:name="cn.tihuxueyuan.activity.MusicActivity" />
         <activity android:name="cn.tihuxueyuan.activity.CourseListActivity" />
-
         <activity android:name="cn.tihuxueyuan.activity.MusicMainActivity" />
         <activity android:name="cn.tihuxueyuan.activity.OkhttpClientActivity" />
-
         <receiver android:name=".receiver.NotificationClickReceiver" />
 
         <service

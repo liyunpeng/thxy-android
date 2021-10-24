@@ -31,7 +31,7 @@ public class UpdateManager {
     private String apkUrl = "http://10.0.2.2:8082/api/apkUpload";
     private Dialog noticeDialog;// 提示有软件更新的对话框
     private Dialog downloadDialog;// 下载对话框
-    private static final String savePath = "/storage/emulated/0/Thxy1/";// 保存apk的文件夹
+    private static final String savePath = "/storage/emulated/0/Thxy/";// 保存apk的文件夹
     private static final String saveFileName = savePath + "a.apk";
     // 进度条与通知UI刷新的handler和msg常量
     private ProgressBar mProgress;
@@ -61,7 +61,7 @@ public class UpdateManager {
         this.mContext = context;
     }
     // 显示更新程序对话框，供主程序调用
-    public  void checkUpdateInfo( Context  c) {
+    public  void updateSoftware(Context  c) {
         mContext = c;
         showNoticeDialog();
     }
@@ -88,7 +88,7 @@ public class UpdateManager {
     }
     protected void showDownloadDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(mContext);
-        builder.setTitle("软件版本更新");
+        builder.setTitle("下载后自动更新");
         final LayoutInflater inflater = LayoutInflater.from(mContext);
         View v = inflater.inflate(R.layout.progress, null);
         mProgress = (ProgressBar) v.findViewById(R.id.progress);

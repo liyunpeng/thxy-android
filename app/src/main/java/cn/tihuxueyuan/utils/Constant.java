@@ -19,6 +19,7 @@ public class Constant {
 
     public static MusicActivity.MusiceServiceConnection conn1;
 
+    public static  String version="1.0";
     private String name;
     public static boolean HAS_USER=false;
     public static  boolean order;

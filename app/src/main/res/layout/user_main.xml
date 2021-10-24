@@ -101,7 +101,7 @@
         <cn.tihuxueyuan.utils.nav_bar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/version"
+            android:id="@+id/update_software"
             my:icon="@drawable/little_monk"
             my:hint="版本更新"
             android:background="@drawable/selector"
@@ -113,7 +113,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/about"
             my:icon="@drawable/little_monk"
-            my:hint="关于"
+            my:hint="版本号"
             android:background="@drawable/selector"
             >
         </cn.tihuxueyuan.utils.nav_bar>
