@@ -65,9 +65,6 @@ public class HomeFragment extends Fragment {
                 Intent intent = new Intent(HomeFragment.this.getActivity(), MusicActivity.class);//创建Intent对象，启动check
                 String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
 
-
-
-//
 //                HttpClient.getCourseById(String.valueOf(mList.get(position).getCourseId()), new HttpCallback<CourseList.Course>() {
 //                    @Override
 //                    public void onSuccess(CourseList.Course response) {
@@ -105,7 +102,7 @@ public class HomeFragment extends Fragment {
                 map.put("id", mList.get(position).getCourseId());
                 Gson gson = new Gson();
                 String param = gson.toJson(map);
-                JsonPost.postHttpRequest("getCourseById",  param ,  new Callback() {
+                JsonPost.postHttpRequest("getCourseById", param, new Callback() {
 
                     @Override
                     public void onFailure(Call call, IOException e) {
@@ -115,7 +112,7 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         try {
-                            BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(response.body().byteStream()));
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
                             StringBuffer stringBuffer = new StringBuffer("");
                             // 获取本系统的行分割线
                             String NL = System.getProperty("line.separator");
@@ -128,8 +125,8 @@ public class HomeFragment extends Fragment {
                             Log.d(TAG, "result = " + result);
 
 
-                            Gson gson=new Gson();
-                            CustomResponse course =gson.fromJson(result, CustomResponse.class);
+                            Gson gson = new Gson();
+                            CustomResponse course = gson.fromJson(result, CustomResponse.class);
 
                             intent.putExtra("music_url", musicUrl);
                             intent.putExtra("current_position", position);

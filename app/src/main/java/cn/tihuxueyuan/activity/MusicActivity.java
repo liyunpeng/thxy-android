@@ -233,7 +233,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
                 musicControl.seekTo(progress);//改变播放进度
                 if (musicControl.isPlaying() != true) {
                     musicControl.playOrPause();
-                    mPlayPauseView.setImageResource(R.drawable.stop);
+//                    mPlayPauseView.setImageResource(R.drawable.stop);
                 }
             }
         });

@@ -40,7 +40,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "11223344.db", null, 1);
+        helper = new DBOpenHelper(context, "1122334455.db", null, 1);
         db = helper.getWritableDatabase();
     }
 

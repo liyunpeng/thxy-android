@@ -12,7 +12,9 @@
         android:layout_height="217dp"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="0dp"
-        tools:ignore="MissingConstraints">
+        tools:ignore="MissingConstraints"
+        android:visibility="gone"
+        >
 
         <ImageView
             android:id="@+id/h_back"
@@ -52,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@id/user_line"
-                android:text="张三"
+                android:text="123"
                 android:textColor="@color/white"
                 android:textSize="17sp" />
 
@@ -77,39 +79,40 @@
         tools:layout_editor_absoluteY="0dp"
         android:orientation="vertical"
         tools:ignore="MissingConstraints">
-        <cn.tihuxueyuan.utils.nav_bar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/lishi"
-            my:icon="@mipmap/product_part2_icon"
-            my:hint="历史记录"
-            android:background="@drawable/selector"
-            >
-        </cn.tihuxueyuan.utils.nav_bar>
-        <!---->
-        <cn.tihuxueyuan.utils.nav_bar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/shoucang"
-            my:icon="@mipmap/my_asset_manage"
-            my:hint="收藏"
-            android:background="@drawable/selector"
-            >
-        </cn.tihuxueyuan.utils.nav_bar>
+<!--        <cn.tihuxueyuan.utils.nav_bar-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/lishi"-->
+<!--            my:icon="@mipmap/product_part2_icon"-->
+<!--            my:hint="历史记录"-->
+<!--            android:background="@drawable/selector"-->
+<!--            >-->
+<!--        </cn.tihuxueyuan.utils.nav_bar>-->
+
+<!--        <cn.tihuxueyuan.utils.nav_bar-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/shoucang"-->
+<!--            my:icon="@mipmap/my_asset_manage"-->
+<!--            my:hint="收藏"-->
+<!--            android:background="@drawable/selector"-->
+<!--            >-->
+<!--        </cn.tihuxueyuan.utils.nav_bar>-->
         <cn.tihuxueyuan.utils.nav_bar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/version"
-            my:icon="@mipmap/product_info_icon"
+            my:icon="@drawable/little_monk"
             my:hint="版本更新"
             android:background="@drawable/selector"
             >
         </cn.tihuxueyuan.utils.nav_bar>
+
         <cn.tihuxueyuan.utils.nav_bar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/about"
-            my:icon="@mipmap/my_reward_manage"
+            my:icon="@drawable/little_monk"
             my:hint="关于"
             android:background="@drawable/selector"
             >
