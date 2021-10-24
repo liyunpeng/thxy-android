@@ -180,7 +180,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
         appData.UserCode = "7899000";  // 记录在本地文件里
         getFilelist();
-        getConfig();
+//        getConfig();
     }
 
     public void refreshListView() {
@@ -218,24 +218,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void getConfig() {
-        HttpClient.getConfig("", new HttpCallback<Config>() {
-            @Override
-            public void onSuccess(Config response) {
-                if (response == null || response.getBaseUrl() == null) {
-                    onFail(null);
-                    return;
-                }
-                Constant.appData.baseUrl = response.getBaseUrl();
-                Constant.appData.mp3SourceRouter = response.getMp3SourceRouter();
-            }
-
-            @Override
-            public void onFail(Exception e) {
-
-            }
-        });
-    }
 
     @Override
     public void onDestroy() {

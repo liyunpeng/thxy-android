@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -23,14 +24,12 @@ import java.net.URL;
 import cn.tihuxueyuan.R;
 
 public class UpdateManager {
-    // 应用程序Context
     private Context mContext;
-    // 提示消息
     private String updateMsg = "有最新的软件包，请下载！";
     // 下载安装包的网络路径
     private String apkUrl = "http://10.0.2.2:8082/api/apkUpload";
-    private Dialog noticeDialog;// 提示有软件更新的对话框
-    private Dialog downloadDialog;// 下载对话框
+    private Dialog noticeDialog;
+    private Dialog downloadDialog;
     private static final String savePath = "/storage/emulated/0/Thxy/";// 保存apk的文件夹
     private static final String saveFileName = savePath + "a.apk";
     // 进度条与通知UI刷新的handler和msg常量
@@ -38,7 +37,7 @@ public class UpdateManager {
     private static final int DOWN_UPDATE = 1;
     private static final int DOWN_OVER = 2;
 
-    private int progress;// 当前进度
+    private int progress;
     private Thread downLoadThread; // 下载线程
     private boolean interceptFlag = false;// 用户取消下载
     // 通知处理刷新界面的handler
@@ -111,7 +110,10 @@ public class UpdateManager {
     protected void installApk() {
         File apkfile = new File(saveFileName);
         if (!apkfile.exists()) {
+            Log.d(Constant.TAG, "下载文件不存在");
             return;
+        }else{
+            Log.d(Constant.TAG, "下载文件存在, 启动安装");
         }
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setDataAndType(Uri.parse("file://" + apkfile.toString()),

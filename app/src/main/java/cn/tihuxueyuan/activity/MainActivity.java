@@ -48,7 +48,10 @@ import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.databinding.ActivityMainBinding;
 import cn.tihuxueyuan.db.DBUtils;
 import cn.tihuxueyuan.globaldata.AppData;
+import cn.tihuxueyuan.http.HttpCallback;
+import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.livedata.LiveDataBus;
+import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.receiver.HomeReceiver;
 import cn.tihuxueyuan.receiver.MediaButtonReceiver;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
@@ -178,7 +181,7 @@ public class MainActivity extends BaseActivity {
         appData = (AppData) getApplication();
         verifyStoragePermissions(this);
 
-
+        getConfig();
         registerReceiver(headSetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
 
         String curProcess = getProcessName(this, Process.myPid());
@@ -223,6 +226,25 @@ public class MainActivity extends BaseActivity {
         registerMusicReceiver();
         registerHomeKeyReceiver();
         registerHeadsetButtonReceiver();
+    }
+
+    private void getConfig() {
+        HttpClient.getConfig("", new HttpCallback<Config>() {
+            @Override
+            public void onSuccess(Config response) {
+                if (response == null || response.getBaseUrl() == null) {
+                    onFail(null);
+                    return;
+                }
+                Constant.appData.baseUrl = response.getBaseUrl();
+                Constant.appData.mp3SourceRouter = response.getMp3SourceRouter();
+            }
+
+            @Override
+            public void onFail(Exception e) {
+
+            }
+        });
     }
 
     // 含有全部的权限
