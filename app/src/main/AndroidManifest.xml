@@ -48,6 +48,7 @@
         android:roundIcon="@drawable/thxy"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication33"
+        
         android:usesCleartextTraffic="true">
         <activity
             android:name="cn.tihuxueyuan.activity.MainActivity"
