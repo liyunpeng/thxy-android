@@ -16,9 +16,9 @@ import cn.tihuxueyuan.receiver.MediaButtonReceiver;
 public class AppData extends Application {
     public static int playingCourseFileListPostion = -1;
     public static String baseUrl;
+    public static String serviceCurrentVersion;
     public static String mp3SourceRouter;
     public static String courseStorePath = "";
-    public static int direction = 1;
     public static String UserCode = "uc";
     public static int lastCourseId = -1;
 //    public static int currentMusicCourseId = -3;

@@ -79,7 +79,7 @@
         tools:layout_editor_absoluteY="0dp"
         android:orientation="vertical"
         tools:ignore="MissingConstraints">
-<!--        <cn.tihuxueyuan.utils.nav_bar-->
+<!--        <cn.tihuxueyuan.utils.SettingItemBar-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->
 <!--            android:id="@+id/lishi"-->
@@ -87,9 +87,9 @@
 <!--            my:hint="历史记录"-->
 <!--            android:background="@drawable/selector"-->
 <!--            >-->
-<!--        </cn.tihuxueyuan.utils.nav_bar>-->
+<!--        </cn.tihuxueyuan.utils.SettingItemBar>-->
 
-<!--        <cn.tihuxueyuan.utils.nav_bar-->
+<!--        <cn.tihuxueyuan.utils.SettingItemBar-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->
 <!--            android:id="@+id/shoucang"-->
@@ -97,8 +97,8 @@
 <!--            my:hint="收藏"-->
 <!--            android:background="@drawable/selector"-->
 <!--            >-->
-<!--        </cn.tihuxueyuan.utils.nav_bar>-->
-        <cn.tihuxueyuan.utils.nav_bar
+<!--        </cn.tihuxueyuan.utils.SettingItemBar>-->
+        <cn.tihuxueyuan.utils.SettingItemBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/update_software"
@@ -106,9 +106,9 @@
             my:hint="版本更新"
             android:background="@drawable/selector"
             >
-        </cn.tihuxueyuan.utils.nav_bar>
+        </cn.tihuxueyuan.utils.SettingItemBar>
 
-        <cn.tihuxueyuan.utils.nav_bar
+        <cn.tihuxueyuan.utils.SettingItemBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/about"
@@ -116,7 +116,7 @@
             my:hint="版本号"
             android:background="@drawable/selector"
             >
-        </cn.tihuxueyuan.utils.nav_bar>
+        </cn.tihuxueyuan.utils.SettingItemBar>
 
     </LinearLayout>
 </LinearLayout>

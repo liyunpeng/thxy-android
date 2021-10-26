@@ -17,12 +17,9 @@ import cn.tihuxueyuan.service.MusicService;
 
 public class Constant {
 
-    public static MusicActivity.MusiceServiceConnection conn1;
-
-    public static  String version="1.0";
-    private String name;
-    public static boolean HAS_USER=false;
-    public static  boolean order;
+    public static boolean HAS_USER = false;
+    public static boolean order;
+    public static String version = "1.0";
     public static String MusicLiveDataObserverTag = "music_activity_observer";
     public static String BaseActivityFloatTextViewDataObserverTag = "base_activity_float_observer";
     public static String CourseListLiveDataObserverTag = "course_list_activity_observer";
@@ -32,6 +29,7 @@ public class Constant {
     public static String currentMusicName = "456";
     public static AppData appData;
     public static FloatingImageDisplayService.FloatingControl floatingControl;
+    public static MusicActivity.MusiceServiceConnection conn1;
     public static MusicService.MusicControl musicControl;
     public static WindowManager mWM;
 

@@ -25,23 +25,20 @@ import cn.tihuxueyuan.R;
 
 public class UpdateManager {
     private Context mContext;
-    private String updateMsg = "有最新的软件包，请下载！";
-    // 下载安装包的网络路径
+    private String updateMsg = "有新的版本，点确认可以下载安装";
     private String apkUrl = "http://47.102.146.8:8082/api/apkUpload";
-//    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
     private Dialog noticeDialog;
     private Dialog downloadDialog;
     private static String savePath =  null; // "/storage/emulated/0/Thxy/";// 保存apk的文件夹
     private static final String saveFileName = savePath + "a.apk";
-    // 进度条与通知UI刷新的handler和msg常量
     private ProgressBar mProgress;
     private static final int DOWN_UPDATE = 1;
     private static final int DOWN_OVER = 2;
 
     private int progress;
     private Thread downLoadThread; // 下载线程
-    private boolean interceptFlag = false;// 用户取消下载
-    // 通知处理刷新界面的handler
+    private boolean stopFlag = false;// 用户取消下载
+
     private Handler mHandler = new Handler() {
         @SuppressLint("HandlerLeak")
         @Override
@@ -61,20 +58,16 @@ public class UpdateManager {
         this.mContext = context;
         savePath = context.getFilesDir().getAbsolutePath() + File.separator + "abc.apk";
     }
-    // 显示更新程序对话框，供主程序调用
-    public  void updateSoftware(Context  c) {
+
+    public void showUpdateSoftwareDialog(Context  c) {
         mContext = c;
-        showNoticeDialog();
-    }
-    private void showNoticeDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(
-                mContext); // Builder，可以通过此builder设置改变AleartDialog的默认的主题样式及属性相关信息
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(mContext);
         builder.setTitle("软件版本更新");
         builder.setMessage(updateMsg);
         builder.setPositiveButton("下载", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();// 当取消对话框后进行操作一定的代码？取消对话框
+                dialog.dismiss();
                 showDownloadDialog();
             }
         });
@@ -89,16 +82,16 @@ public class UpdateManager {
     }
     protected void showDownloadDialog() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(mContext);
-        builder.setTitle("下载后自动更新");
+        builder.setTitle("下载后自动安装");
         final LayoutInflater inflater = LayoutInflater.from(mContext);
         View v = inflater.inflate(R.layout.progress, null);
-        mProgress = (ProgressBar) v.findViewById(R.id.progress);
-        builder.setView(v);// 设置对话框的内容为一个View
+        mProgress =  v.findViewById(R.id.progress);
+        builder.setView(v);
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                interceptFlag = true;
+                stopFlag = true;
             }
         });
         downloadDialog = builder.create();
@@ -165,7 +158,7 @@ public class UpdateManager {
                         break;
                     }
                     outStream.write(buf, 0, numread);
-                } while (!interceptFlag);// 点击取消停止下载
+                } while (!stopFlag);
 
                 outStream.flush();
                 outStream.close();

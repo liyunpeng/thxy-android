@@ -238,6 +238,7 @@ public class MainActivity extends BaseActivity {
                     return;
                 }
                 Constant.appData.baseUrl = response.getBaseUrl();
+                Constant.appData.serviceCurrentVersion = response.getServiceCurrentVersion();
                 Constant.appData.mp3SourceRouter = response.getMp3SourceRouter();
             }
 

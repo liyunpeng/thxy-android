@@ -11,9 +11,16 @@ public class Config {
     @SerializedName("mp3_source_router")
     private String mp3SourceRouter;
 
+    @SerializedName("service_current_version")
+    private String serviceCurrentVersion;
+
 
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    public String getServiceCurrentVersion() {
+        return serviceCurrentVersion;
     }
 
     public String getMp3SourceRouter() {
