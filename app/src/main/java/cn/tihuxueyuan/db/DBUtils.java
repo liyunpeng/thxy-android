@@ -214,7 +214,7 @@ public class DBUtils {
             courseFile.mp3_file_name = cursor.getString(cursor.getColumnIndex("mp3_file_name"));
             courseFile.number = cursor.getInt(cursor.getColumnIndex("number"));
             courseFile.duration = cursor.getString(cursor.getColumnIndex("duration"));
-            Log.d(Constant.TAG, " sqlite mp3: " + courseFile.mp3_file_name + ", id= " + courseFile.id);
+//            Log.d(Constant.TAG, " sqlite mp3: " + courseFile.mp3_file_name + ", id= " + courseFile.id);
             lc.add(courseFile);
         }
 

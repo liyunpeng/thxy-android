@@ -281,12 +281,10 @@ public class SPUtils {
 
                             try {
                                 String path = c.getFilesDir().getAbsolutePath() + File.separator + courseId + "_" + appData.currentCourseImageFileName;
-//                                String path =   Environment.getRootDirectory() + File.separator + "Thxy/" + courseId + "_" + appData.currentCourseImageFileName;
                                 Log.d(TAG, "获取图片文件，保存图片文件 path="+path);
                                 BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(path));
-//                                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
                                 boolean c = bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
-                                Log.d(TAG, " bitmap.compress result=" + c);
+                                Log.d(TAG, " 保存图片 bitmap.compress result=" + c);
                                 fos.flush();
                                 fos.close();
                             } catch (Exception e) {

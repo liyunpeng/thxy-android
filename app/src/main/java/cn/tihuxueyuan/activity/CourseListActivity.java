@@ -44,6 +44,7 @@ import cn.tihuxueyuan.utils.SPUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,7 +95,7 @@ public class CourseListActivity extends BaseActivity {
         mTitleView.setText(mTitle);
         mIntroductionView.setText(mIntroduction);
 
-        setImageView();
+        setImageView(getApplicationContext());
 
         registerListener();
 
@@ -112,29 +113,45 @@ public class CourseListActivity extends BaseActivity {
         Collections.sort(mList, new ComparatorValues());
     }
 
-    private void setImageView() {
-        // todo: 图片缓存因图片解码出来的bitmap为空，暂时注释昝
-        if (false) {
-            String bitmapFilePath = "/data/user/0/cn.tihuxueyuan/files/11_23.jpeg";
-            File f = new File(bitmapFilePath);
-            if (f.exists()) {
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(f);
-                    int size = fis.available();
-                    Log.d(TAG, "本地图片文件存在， 文件大小=" + size);
-                    fis.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.d(TAG, "本地图片文件不存在");
+    private void TestReadFileWriteFile() {
+        // 测试代码
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        try {
+            File f1 = new File("/data/user/0/cn.tihuxueyuan/files/11_23.jpeg");
+            // 测试读文件
+            fis = new FileInputStream(f1);
+            int size = fis.available();
+            Log.d(TAG, "本地图片文件存在， 文件大小=" + size);
+            fis.close();
+
+
+            // 测试写文件
+            fos = new FileOutputStream(f1);
+            String s = "aaaa";
+            fos.write(s.getBytes());
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void setImageView(Context c) {
+        // c.getFilesDir().getAbsolutePath() + File.separator 结果为 /data/user/0/cn.tihuxueyuan/files/
+        String bitmapFilePath = c.getFilesDir().getAbsolutePath() + File.separator + mCouseId + "_" + appData.currentCourseImageFileName;
+
+        // String bitmapFilePath = "/data/user/0/cn.tihuxueyuan/files/11_23.jpeg";
+        File f = new File(bitmapFilePath);
+        if (f.exists()) {
+            if (false) {
+                TestReadFileWriteFile();
             }
 
             BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inJustDecodeBounds = true;
+//            opts.inJustDecodeBounds = true;
+            opts.inSampleSize = 2;  // 非常重要，没有这个设置， BitmapFactory.decodeFile 会返回空
             Bitmap bitmap = BitmapFactory.decodeFile(bitmapFilePath, opts);
 
             if (bitmap != null) {
@@ -144,10 +161,13 @@ public class CourseListActivity extends BaseActivity {
                 Log.d(TAG, "用网络获取设置图片");
                 SPUtils.httpGetCourseImage(getApplicationContext(), mCouseId, mImageView);
             }
+
         } else {
+            Log.d(TAG, "本地图片文件不存在, 用网络方式获取");
             SPUtils.httpGetCourseImage(getApplicationContext(), mCouseId, mImageView);
         }
     }
+
     private void getListViewData() {
         if (!getCourseListFromSqlite3()) {
             // 本地没获取到，再走网络获取
@@ -233,13 +253,9 @@ public class CourseListActivity extends BaseActivity {
 
         int lastTop = mCourseListView.getFirstVisiblePosition();
         SharedPreferences sharedPreferences = getSharedPreferences(String.valueOf(mCouseId), Context.MODE_PRIVATE);
-        //2、调用edit方法，回去可以操作的Editor对象
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        //写入数据
         editor.putInt("lastTop", lastTop);
         editor.commit();
-
-
     }
 
     @Override
@@ -322,10 +338,7 @@ public class CourseListActivity extends BaseActivity {
             if (Constant.musicControl != null && mCouseId == Constant.appData.playingCourseId) {
                 Log.d(TAG, " 课程列表 onResume 刷新, 调用 notifyDataSetChanged ");
                 if (mAdapter != null && mCourseListView != null) {
-
                     mAdapter.notifyDataSetChanged();
-
-
 //                    if (appData.playingCourseFileListPostion >= 2) {
 //                        courseListView.setSelection(appData.playingCourseFileListPostion - 2);
 //                    } else {
@@ -347,8 +360,8 @@ public class CourseListActivity extends BaseActivity {
         }
 
         if (mAdapter != null) {
-            SharedPreferences sharedPreferences=getSharedPreferences(String.valueOf(mCouseId),Context.MODE_PRIVATE);
-            int lastTop =sharedPreferences.getInt("lastTop",0);
+            SharedPreferences sharedPreferences = getSharedPreferences(String.valueOf(mCouseId), Context.MODE_PRIVATE);
+            int lastTop = sharedPreferences.getInt("lastTop", 0);
             mCourseListView.setSelection(lastTop);
             mAdapter.notifyDataSetChanged();
         }
@@ -364,9 +377,7 @@ public class CourseListActivity extends BaseActivity {
                         && mCouseId == Constant.appData.playingCourseId) {
                     mList.get(Constant.appData.playingCourseFileListPostion).listenedPercent = value.listenedPercent;
                     mList.get(Constant.appData.playingCourseFileListPostion).listenedPosition = value.position;
-
                     mAdapter.notifyDataSetChanged();
-
                 }
             }
         });
@@ -471,13 +482,12 @@ public class CourseListActivity extends BaseActivity {
         mList = Constant.dbUtils.getSqlite3CourseFileList(mCouseId);
 
         if (mList != null && mList.size() > 0) {
-            Log.d(TAG, "mList 不为空，不走网络， 从本地sqlite3数据库读取， 刷新列表");
+            Log.d(TAG, "mList 不为空，不走网络， 从本地sqlite3数据库读取 已听数据， 已听位置， 刷新列表");
             SqliteUserCourse sqlite3UserCourse = SPUtils.getUserListened(appData.UserCode, mCouseId);
             if (sqlite3UserCourse != null) {
                 Map<Integer, ListenedFile> listendFileMap = sqlite3UserCourse.listenedFileMap;
                 if (listendFileMap != null) {
                     for (CourseFile courseFile : mList) {
-//                        courseFile.courseFileId = courseFile.getId();
                         courseFile.id = courseFile.getId();
                         ListenedFile listenedFile = listendFileMap.get(courseFile.id);
                         if (listenedFile != null) {
