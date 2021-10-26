@@ -29,7 +29,7 @@ public class BaseActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         String className = this.getLocalClassName();
 //        if ( !className.contains("Music")) {
-            floatViewObserver();
+        floatViewObserver();
 //        }
     }
 
@@ -37,7 +37,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 //        if (customFloatViewText.contains("123")){
-            customFloatViewText = Constant.currentMusicName;
+        customFloatViewText = Constant.currentMusicName;
 //        }
         String className = this.getLocalClassName();
         Log.d(Constant.TAG, "BaseActivity onResume classname =" + this.getLocalClassName());
@@ -112,7 +112,7 @@ public class BaseActivity extends AppCompatActivity {
         floatViewLiveData.observe(BaseActivity.this, true, new Observer<String>() {
             @Override
             public void onChanged(String musicTitle) {
-                Log.d(Constant.TAG, "悬浮窗Observer = "+ musicTitle);
+                Log.d(Constant.TAG, "悬浮窗Observer = " + musicTitle);
                 if (floatingView != null) {
                     customFloatViewText = musicTitle;
                     floatingView.setText(musicTitle);
@@ -120,6 +120,5 @@ public class BaseActivity extends AppCompatActivity {
                 }
             }
         });
-    };
-
+    }
 }
