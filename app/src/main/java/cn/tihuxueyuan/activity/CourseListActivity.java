@@ -3,7 +3,9 @@ package cn.tihuxueyuan.activity;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -228,6 +230,16 @@ public class CourseListActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         appData.lastCourseId = mCouseId;
+
+        int lastTop = mCourseListView.getFirstVisiblePosition();
+        SharedPreferences sharedPreferences = getSharedPreferences(String.valueOf(mCouseId), Context.MODE_PRIVATE);
+        //2、调用edit方法，回去可以操作的Editor对象
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        //写入数据
+        editor.putInt("lastTop", lastTop);
+        editor.commit();
+
+
     }
 
     @Override
@@ -310,7 +322,10 @@ public class CourseListActivity extends BaseActivity {
             if (Constant.musicControl != null && mCouseId == Constant.appData.playingCourseId) {
                 Log.d(TAG, " 课程列表 onResume 刷新, 调用 notifyDataSetChanged ");
                 if (mAdapter != null && mCourseListView != null) {
+
                     mAdapter.notifyDataSetChanged();
+
+
 //                    if (appData.playingCourseFileListPostion >= 2) {
 //                        courseListView.setSelection(appData.playingCourseFileListPostion - 2);
 //                    } else {
@@ -330,6 +345,13 @@ public class CourseListActivity extends BaseActivity {
         } else {
             mReverseTextView.setText("倒序");
         }
+
+        if (mAdapter != null) {
+            SharedPreferences sharedPreferences=getSharedPreferences(String.valueOf(mCouseId),Context.MODE_PRIVATE);
+            int lastTop =sharedPreferences.getInt("lastTop",0);
+            mCourseListView.setSelection(lastTop);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private void courseListActivityObserver() {
@@ -344,6 +366,7 @@ public class CourseListActivity extends BaseActivity {
                     mList.get(Constant.appData.playingCourseFileListPostion).listenedPosition = value.position;
 
                     mAdapter.notifyDataSetChanged();
+
                 }
             }
         });
