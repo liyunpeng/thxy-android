@@ -17,6 +17,9 @@ import cn.tihuxueyuan.service.MusicService;
 
 public class Constant {
 
+    public static  String TYPE_SELECTED="type_selected";
+    public static  String LAST_TYPE_ID="last_type_id";
+    public static  String LAST_TAB_SELECTED_POSITION ="type_selected_position";
     public static boolean HAS_USER = false;
     public static boolean order;
     public static String version = "1.0";

@@ -97,33 +97,32 @@ public class DBUtils {
         return courseList;
     }
 
-    public void saveCourseFiles(List<CourseFileList.CourseFile> courseFiles) {
-        for (CourseFileList.CourseFile courseFile : courseFiles) {
-            ContentValues cv = new ContentValues();
-            cv.put("id", courseFile.getId());
-            cv.put("course_id", courseFile.getCourseId());
-            cv.put("number", courseFile.getNumber());
-            cv.put("mp3_file_name", courseFile.getMp3FileName());
-            cv.put("duration", courseFile.getDuration());
-            db.insert(DBOpenHelper.COURSE_FILE, null, cv);
+    public void saveCourseFiles(List<CourseFileList.CourseFile> courseFileList) {
+        for (CourseFileList.CourseFile courseFile : courseFileList) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("id", courseFile.getId());
+            contentValues.put("course_id", courseFile.getCourseId());
+            contentValues.put("number", courseFile.getNumber());
+            contentValues.put("mp3_file_name", courseFile.getMp3FileName());
+            contentValues.put("duration", courseFile.getDuration());
+            db.insert(DBOpenHelper.COURSE_FILE, null, contentValues);
         }
     }
 
     @SuppressLint("Range")
     public List<CourseTypeList.CourseType> getCourseTypes() {
         String sql = "SELECT * FROM " + DBOpenHelper.COURSE_TYPE;
-        List<CourseTypeList.CourseType> lc = new ArrayList<>();
+        List<CourseTypeList.CourseType> courseTypeList = new ArrayList<>();
         Cursor cursor = db.rawQuery(sql, null);
         while (cursor.moveToNext()) {
             CourseTypeList.CourseType bean = new CourseTypeList.CourseType();
             bean.setName(cursor.getString(cursor.getColumnIndex("name")));
             bean.setId(cursor.getInt(cursor.getColumnIndex("id")));
-            lc.add(bean);
+            courseTypeList.add(bean);
         }
         cursor.close();
-        return lc;
+        return courseTypeList;
     }
-
 
 
     @SuppressLint("Range")
@@ -133,27 +132,27 @@ public class DBUtils {
         Cursor cursor = db.rawQuery(sql, args);
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
-            UserListenedCourse u = new UserListenedCourse();
-            u.code = cursor.getString(cursor.getColumnIndex("code"));
-            u.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
-            u.id = cursor.getInt(cursor.getColumnIndex("id"));
-            u.listenedFiles = cursor.getString(cursor.getColumnIndex("listened_files"));
-            u.lastListenedCourseFileId = cursor.getInt(cursor.getColumnIndex("last_listened_course_file_id"));
-            return u;
+            UserListenedCourse userListenedCourse = new UserListenedCourse();
+            userListenedCourse.code = cursor.getString(cursor.getColumnIndex("code"));
+            userListenedCourse.courseId = cursor.getInt(cursor.getColumnIndex("course_id"));
+            userListenedCourse.id = cursor.getInt(cursor.getColumnIndex("id"));
+            userListenedCourse.listenedFiles = cursor.getString(cursor.getColumnIndex("listened_files"));
+            userListenedCourse.lastListenedCourseFileId = cursor.getInt(cursor.getColumnIndex("last_listened_course_file_id"));
+            return userListenedCourse;
         } else {
             return null;
         }
     }
 
     public void insertUserListenedCourse(String code, int courseId, String listenedFiles, int fileId) {
-        ContentValues cv = new ContentValues();
-        cv.put("code", code);
-        cv.put("course_id", courseId);
-        cv.put("id", courseId);
-        cv.put("listened_files", listenedFiles);
-        cv.put("last_listened_course_file_id", fileId);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("code", code);
+        contentValues.put("course_id", courseId);
+        contentValues.put("id", courseId);
+        contentValues.put("listened_files", listenedFiles);
+        contentValues.put("last_listened_course_file_id", fileId);
 
-        db.insert(DBOpenHelper.USER_LISTENED_COURSE, null, cv);
+        db.insert(DBOpenHelper.USER_LISTENED_COURSE, null, contentValues);
     }
 
     public void updateUserListenedCourse(String code, int courseId, String listenedFiles, int fileId) {

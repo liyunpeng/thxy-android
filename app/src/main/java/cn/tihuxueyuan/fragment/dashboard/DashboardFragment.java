@@ -1,8 +1,13 @@
 package cn.tihuxueyuan.fragment.dashboard;
 
+import static cn.tihuxueyuan.utils.Constant.LAST_TYPE_ID;
 import static cn.tihuxueyuan.utils.Constant.TAG;
+import static cn.tihuxueyuan.utils.Constant.TYPE_SELECTED;
+import static cn.tihuxueyuan.utils.Constant.LAST_TAB_SELECTED_POSITION;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,10 +51,11 @@ public class DashboardFragment extends Fragment {
     private List<CourseType> mCourseTypeList = new ArrayList<>();
     private List<Course> mCourseList = new ArrayList<>();
     private TextView tvName;
-    private VerticalTabLayout mTabLayout;
+    private VerticalTabLayout mVerticalTabView;
     private RecyclerView mRecyclerView;
     private List<TestData> recyclelist;
     private GridRecycleAdapter mRecycleAdapter;
+    private int mTypeId;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -60,7 +66,7 @@ public class DashboardFragment extends Fragment {
         View root = binding.getRoot();
 
         tvName = root.findViewById(R.id.tv_name);
-        mTabLayout = root.findViewById(R.id.tab_layout);
+        mVerticalTabView = root.findViewById(R.id.tab_layout);
         mRecyclerView = root.findViewById(R.id.recycler_view);
 
         initRecycleView();
@@ -69,11 +75,25 @@ public class DashboardFragment extends Fragment {
         if (mCourseList == null || mCourseTypeList.size() <= 0) {
             httpGetCourseType();
         } else {
+            Log.d(TAG, " 课程类型列表从数据库获取成功 ");
+
             refreshView();
-            refreshRecycleView(mCourseTypeList.get(0).getId());
+
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(TYPE_SELECTED, Context.MODE_PRIVATE);
+            int lastTypeId = sharedPreferences.getInt(LAST_TYPE_ID, -1);
+            int lastTabSelectedPosition = sharedPreferences.getInt(LAST_TAB_SELECTED_POSITION, -1);
+            if (lastTypeId != -1) {
+                mTypeId = lastTypeId;
+            } else {
+                mTypeId = mCourseTypeList.get(0).getId();
+            }
+            refreshRecycleView(mTypeId);
+            mVerticalTabView.setTabSelected(lastTabSelectedPosition);
+
         }
         return root;
     }
+
 
     private void refreshRecycleView(int typeId) {
         mCourseList = Constant.dbUtils.getCourseListByTypeId(typeId);
@@ -89,6 +109,8 @@ public class DashboardFragment extends Fragment {
             mRecycleAdapter.setList(mCourseList);
             mRecycleAdapter.notifyDataSetChanged();
         }
+
+
     }
 
     @Override
@@ -134,26 +156,21 @@ public class DashboardFragment extends Fragment {
     public void refreshView() {
         TabAdapterA adapterA = new TabAdapterA();
         adapterA.titles = mCourseTypeList;
-        mTabLayout.setTabAdapter(adapterA);
-        mTabLayout.setBackgroundResource(R.drawable.tab_background);
-        mTabLayout.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
+        mVerticalTabView.setTabAdapter(adapterA);
+        mVerticalTabView.setBackgroundResource(R.drawable.tab_background);
+        mVerticalTabView.addOnTabSelectedListener(new VerticalTabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabView tab, int position) {
                 Log.d(Constant.TAG, "onTabSelected:  id :" + mCourseTypeList.get(position).getId());
-                int typeId = mCourseTypeList.get(position).getId();
-
-
-//                int count = Constant.dbUtils.getCourseListCountByTypeId(typeId);
-//
-//                if (count <= 0) {
-//                    httpGetCourseByType(typeId);
-//                } else {
-//
-//                }
-
-
-                refreshRecycleView(typeId);
+                mTypeId = mCourseTypeList.get(position).getId();
+                refreshRecycleView(mTypeId);
 //                recycleAdapter.setList(recyclelist.get(position).getItemName());
+
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(TYPE_SELECTED, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(LAST_TYPE_ID, mTypeId);
+                editor.putInt(LAST_TAB_SELECTED_POSITION, mVerticalTabView.getSelectedTabPosition());
+                editor.commit();
             }
 
             @Override
@@ -161,6 +178,10 @@ public class DashboardFragment extends Fragment {
 
             }
         });
+
+//        mVerticalTabView.setTabSelected(3);
+
+
     }
 
     public void httpGetCourseByType(int typeId) {
@@ -191,6 +212,18 @@ public class DashboardFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        Log.d(TAG, " onstop 垂直导航记录本次位置,  position=" +  mVerticalTabView.getSelectedTabPosition());
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(TYPE_SELECTED, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(LAST_TYPE_ID, mTypeId);
+        editor.putInt(LAST_TAB_SELECTED_POSITION, mVerticalTabView.getSelectedTabPosition());
+        editor.commit();
     }
 
     public void httpGetCourseType() {

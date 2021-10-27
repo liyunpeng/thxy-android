@@ -29,20 +29,8 @@ import cn.tihuxueyuan.model.CourseList;
 import okhttp3.RequestBody;
 
 public class HttpClient {
-    private static final String BASE_URL = "http://10.0.2.2:8082/api/";
-//    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
-    private static final String METHOD_GET_MUSIC_LIST = "baidu.ting.billboard.billList";
-    private static final String METHOD_DOWNLOAD_MUSIC = "baidu.ting.song.play";
-    private static final String METHOD_ARTIST_INFO = "baidu.ting.artist.getInfo";
-    private static final String METHOD_SEARCH_MUSIC = "baidu.ting.search.catalogSug";
-    private static final String METHOD_LRC = "baidu.ting.song.lry";
-    private static final String PARAM_METHOD = "method";
-    private static final String PARAM_TYPE = "type";
-    private static final String PARAM_SIZE = "size";
-    private static final String PARAM_OFFSET = "offset";
-    private static final String PARAM_SONG_ID = "songid";
-    private static final String PARAM_TING_UID = "tinguid";
-    private static final String PARAM_QUERY = "query";
+//    private static final String BASE_URL = "http://10.0.2.2:8082/api/";
+    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
 
     static {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
