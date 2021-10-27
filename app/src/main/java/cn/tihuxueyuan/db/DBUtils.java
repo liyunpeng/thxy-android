@@ -20,8 +20,9 @@ import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.Constant;
 
 public class DBUtils {
-    DBOpenHelper helper;
-    SQLiteDatabase db;
+    private DBOpenHelper helper;
+    private SQLiteDatabase db;
+    private static DBUtils instance;
 
     public DBUtils(Context context) {
 
@@ -40,11 +41,9 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "1122334455667788.db", null, 1);
+        helper = new DBOpenHelper(context, "1122334455667788991010.db", null, 1);
         db = helper.getWritableDatabase();
     }
-
-    private static DBUtils instance;
 
     public static DBUtils getInstance(Context context) {
         if (instance == null) {
@@ -59,26 +58,43 @@ public class DBUtils {
         db.insert(DBOpenHelper.U_USER_INFO, null, cv);
     }
 
-    public void saveCourseTypes(List<CourseTypeList.CourseType> cc) {
-        for (CourseTypeList.CourseType c : cc) {
-            ContentValues cv = new ContentValues();
-            cv.put("name", c.getName());
-            cv.put("id", c.getId());
-            db.insert(DBOpenHelper.COURSE_TYPE, null, cv);
+    public void saveCourseTypes(List<CourseTypeList.CourseType> courseTypeList) {
+        for (CourseTypeList.CourseType courseType : courseTypeList) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("name", courseType.getName());
+            contentValues.put("id", courseType.getId());
+            db.insert(DBOpenHelper.COURSE_TYPE, null, contentValues);
         }
     }
 
-    public void saveCourseList(List<CourseList.Course> cc) {
-        for (CourseList.Course c : cc) {
-            ContentValues cv = new ContentValues();
-            cv.put("title", c.getTitle());
-            cv.put("img_file_name", c.getImgFileName());
-            cv.put("type_id", c.getTypeId());
-//            cv.put("course_id", c.getId());
-            cv.put("introduction", c.getIntroduction());
-            cv.put("id", c.getId());
-            db.insert(DBOpenHelper.COURSE, null, cv);
+    public void saveCourseList(List<CourseList.Course> courseList) {
+        for (CourseList.Course course : courseList) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("title", course.getTitle());
+            contentValues.put("img_file_name", course.getImgFileName());
+            contentValues.put("type_id", course.getTypeId());
+            contentValues.put("introduction", course.getIntroduction());
+            contentValues.put("id", course.getId());
+            db.insert(DBOpenHelper.COURSE, null, contentValues);
         }
+    }
+
+    @SuppressLint("Range")
+    public List<CourseList.Course> getCourseListByTypeId(int typeId) {
+        String sql = "SELECT * FROM " + DBOpenHelper.COURSE + " WHERE type_id =?";
+        String args[] = {String.valueOf(typeId)};
+        List<CourseList.Course> courseList = new ArrayList<>();
+        Cursor cursor = db.rawQuery(sql, args);
+        while (cursor.moveToNext()) {
+            CourseList.Course course = new CourseList.Course();
+            course.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            course.setTypeId(cursor.getInt(cursor.getColumnIndex("type_id")));
+            course.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            course.setImgFileName(cursor.getString(cursor.getColumnIndex("img_file_name")));
+            courseList.add(course);
+        }
+        cursor.close();
+        return courseList;
     }
 
     public void saveCourseFiles(List<CourseFileList.CourseFile> courseFiles) {
@@ -108,23 +124,7 @@ public class DBUtils {
         return lc;
     }
 
-    @SuppressLint("Range")
-    public List<CourseList.Course> getCourseList(int typeId) {
-        String sql = "SELECT * FROM " + DBOpenHelper.COURSE + " WHERE type_id =?";
-        String args[] = {String.valueOf(typeId)};
-        List<CourseList.Course> lc = new ArrayList<>();
-        Cursor cursor = db.rawQuery(sql, null);
-        while (cursor.moveToNext()) {
-            CourseList.Course course = new CourseList.Course();
-            course.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-            course.setTypeId(cursor.getInt(cursor.getColumnIndex("type_id")));
-            course.setId(cursor.getInt(cursor.getColumnIndex("id")));
-            course.setImgFileName(cursor.getString(cursor.getColumnIndex("img_file_name")));
-            lc.add(course);
-        }
-        cursor.close();
-        return lc;
-    }
+
 
     @SuppressLint("Range")
     public UserListenedCourse getUserListenedCourseByUserCodeAndCourseId(String code, int courseId) {

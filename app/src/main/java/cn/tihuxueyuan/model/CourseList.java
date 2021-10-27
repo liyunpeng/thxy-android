@@ -65,9 +65,11 @@ public class CourseList {
             this.ImgFileName = imgFileName;
         }
 
-        public int getId() { return id; }
+        public int getId() {
+            return id;
+        }
 
-        public void setId(int Id) {
+        public void setId(int id) {
             this.id = id;
         }
     }
