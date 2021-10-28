@@ -51,7 +51,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
     private static TextView mProgressTextView;
     private static TextView mTotalTextView;
     private static TextView mTitleTextView;
-    private static LiveDataBus.BusMutableLiveData<ListenedFile> mCourseListActivityLiveData;
+    public static LiveDataBus.BusMutableLiveData<ListenedFile> mCourseListActivityLiveData;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override

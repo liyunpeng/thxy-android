@@ -38,11 +38,9 @@ public class SPUtils {
 
     public static void sendListenedPerscent() {
         JsonPost.ListenedFile listenedFile = new JsonPost.ListenedFile();
-
         // 从其他列表课程的悬浮穿 进入音乐播放界面，currentPostion 大于了Constant.appData.courseFileList.size， 导致报错
-        // todo : 考虑在什么适合时间 调用用sendListenedPerscent， 现在都是在音乐播放页面 的onstop调用
         if (Constant.appData.playingCourseFileList.size() <= Constant.appData.playingCourseFileListPostion) {
-            Log.d(TAG, " sendListenedPerscent 出错，原因：Constant.appData.courseFileList.size() <= Constant.appData.currentPostion ");
+            Log.d(TAG, " sendListenedPercent 出错，原因：Constant.appData.courseFileList.size() <= Constant.appData.currentPostion ");
             return;
         }
 
@@ -55,8 +53,9 @@ public class SPUtils {
                 ", ListenedPercent = " + listenedFile.ListenedPercent +
                 ", Position=" + listenedFile.Position +
                 ", duration=" + musicControl.getDuration());
+
         Map map = new HashMap<>();
-        map.put("code", "7899000");
+        map.put("code", Constant.appData.UserCode);
         map.put("course_id", Constant.appData.playingCourseFileList.get(Constant.appData.playingCourseFileListPostion).getCourseId());
         map.put("listened_file", listenedFile);
         map.put("last_listened_file_id", Constant.appData.playingCourseFileList.get(Constant.appData.playingCourseFileListPostion).getId());
@@ -64,7 +63,6 @@ public class SPUtils {
         Gson gson = new Gson();
         String param = gson.toJson(map);
         JsonPost.postListenedPercent(param);
-        Log.d(TAG, "Musicactivity onStop ");
         Constant.appData.lastCourseFileId = Constant.appData.playingCourseFileId;
     }
 

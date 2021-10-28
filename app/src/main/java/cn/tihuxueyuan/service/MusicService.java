@@ -1,6 +1,7 @@
 package cn.tihuxueyuan.service;
 
 import static android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT;
+import static cn.tihuxueyuan.activity.MusicActivity.mCourseListActivityLiveData;
 import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.CLOSE;
@@ -40,6 +41,7 @@ import androidx.core.app.NotificationCompat;
 import cn.tihuxueyuan.activity.MusicActivity;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
+import cn.tihuxueyuan.model.ListenedFile;
 import cn.tihuxueyuan.receiver.NotificationClickReceiver;
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.utils.Constant;
@@ -134,12 +136,24 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "MusicService onCreate");
-        initNotificationRemoteViews();
-        initNotification();
+        Log.d(TAG, "MusicService 创建 onCreate...");
         appData = Constant.appData;
         mPlayer = new MediaPlayer();
+
+        initNotificationRemoteViews();
+        initNotification();
         initAudioLoseListener();
+
+        setObserverData();
+        registerPlayerListener();
+    }
+
+    private void setObserverData(){
+        mMusicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
+        mBaseActivityFloatLiveData = LiveDataBus.getInstance().with(Constant.BaseActivityFloatTextViewDataObserverTag, String.class);
+    }
+
+    private void registerPlayerListener() {
         mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
@@ -176,6 +190,7 @@ public class MusicService extends Service {
                 mMusicActivityLiveData.postValue(NEWPLAY);
             }
         });
+
         mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -189,10 +204,23 @@ public class MusicService extends Service {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         Log.d(TAG, "音乐回调函数 onCompletion 调用");
-//                        if (true){
-//                            return;
-//                        }
-                        SPUtils.sendListenedPerscent();
+
+                        if ( Constant.HAS_USER ){
+                            SPUtils.sendListenedPerscent();
+                        }
+
+                        ListenedFile listenedFile = new ListenedFile();
+                        listenedFile.listenedPercent = 100;
+                        listenedFile.position = mPlayer.getDuration();
+
+                        SPUtils.updateUserListenedV1(
+                                Constant.appData.UserCode,
+                                Constant.appData.playingCourseId,
+                                Constant.appData.playingCourseFileId,
+                                listenedFile.listenedPercent,
+                                listenedFile.position);
+
+                        mCourseListActivityLiveData.postValue(listenedFile);
 
                         if (appData.playingCourseFileListPostion >= (appData.playingCourseFileList.size() - 1)) {
                             Log.d(TAG, "音乐回调函数 onCompletion 调用 currentPostion  赋值");
@@ -201,50 +229,12 @@ public class MusicService extends Service {
                             appData.playingCourseFileListPostion++;
                             appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
                             musicControl.playListened(NEWPLAY);
-//                            try {
-//                                String mp3url = SPUtils.getMp3Url(appData.mList.get(appData.currentPostion).getMp3FileName());
-//                                player.setDataSource(mp3url);
-//                                player.prepare();
-//                                player.start();
-//                                addTimer();
-//                                // 在播放器状态确定好之后，再显示通知栏，以保证应用界面和通知栏按钮状态一致
-//                                updateNotificationShow(appData.currentPostion);
-//                                musicActivityLiveData.postValue(NEWPLAY);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-
-
-//                            new Thread(new Runnable() {
-//                                public void run() {
-//                                    try {
-//                                        Thread.sleep(1000);
-////                                        if (pos > 0) {
-////                                            Log.d(TAG, "播放器 文件名=" + fileName + "  percent=" + percent + ",  seek to 的位置 = " + pos);
-////                                            player.seekTo(pos);
-////                                        }
-//                                        player.start();
-//                                        addTimer();
-//                                        // 在播放器状态确定好之后，再显示通知栏，以保证应用界面和通知栏按钮状态一致
-//                                        updateNotificationShow(appData.currentPostion);
-//                                        musicActivityLiveData.postValue(NEWPLAY);
-//                                    } catch (InterruptedException e) {
-//                                        e.printStackTrace();
-//                                    }
-////                      handler.sendMessage();
-//                                }
-//                            }).start();
-//                            setText();
                             Log.d(TAG, "onCompletion 监听到当前音乐播放完成，自动播放到下一首 ");
                         }
-
                     }
                 }
         );
-        mMusicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
-        mBaseActivityFloatLiveData = LiveDataBus.getInstance().with(Constant.BaseActivityFloatTextViewDataObserverTag, String.class);
     }
-
 
     private void initNotificationRemoteViews() {
         mNotificationRemoteViews = new RemoteViews(this.getPackageName(), R.layout.notification);
@@ -399,12 +389,12 @@ public class MusicService extends Service {
 //                player.pause();
 
             } else {
-                if (action == NEWPLAY  ) {
+                if (action == NEWPLAY) {
                     String mp3url = SPUtils.getImgOrMp3Url(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getCourseId(), appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getMp3FileName());
                     Log.d(TAG, "初始化播放器 ");
                     initPlayer(mp3url);
 //                    musicActivityLiveData.postValue(action);
-                }else if ( action == CONTINURE_PLAY && !isPlaying ) {
+                } else if (action == CONTINURE_PLAY && !isPlaying) {
                     Log.d(TAG, "不初始化播放器， 直接播放");
                     mPlayer.start();
 //                    musicActivityLiveData.postValue(action);
@@ -566,21 +556,18 @@ public class MusicService extends Service {
             try {
                 mPlayer.setDataSource(url);
                 mPlayer.prepareAsync();
-//                player.prepare();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         public void play() {
-//            registerReceiver(myNoisyAudioStreamReceiver, intentFilter);
             mPlayer.start();
             addTimer();
             updateOtherActivity(CONTINURE_PLAY);
         }
 
         public void pause() {
-//            unregisterReceiver(myNoisyAudioStreamReceiver);
             if (mPlayer != null) {
                 mPlayer.pause();
                 updateOtherActivity(PAUSE);

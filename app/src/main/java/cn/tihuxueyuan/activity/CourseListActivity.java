@@ -81,7 +81,6 @@ public class CourseListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.course_list_activity);
 
-        Log.d(TAG, "CourseListActivity 创建， 调用oncreate");
         mCouseId = getIntent().getIntExtra("course_id", 0);
         mTitle = getIntent().getStringExtra("title");
         mIntroduction = getIntent().getStringExtra("introduction");
@@ -142,10 +141,8 @@ public class CourseListActivity extends BaseActivity {
     private void setImageView(Context c) {
         // c.getFilesDir().getAbsolutePath() + File.separator 结果为 /data/user/0/cn.tihuxueyuan/files/
         String bitmapFilePath = c.getFilesDir().getAbsolutePath() + File.separator + mCouseId + "_" + appData.currentCourseImageFileName;
-
-        // String bitmapFilePath = "/data/user/0/cn.tihuxueyuan/files/11_23.jpeg";
-        File f = new File(bitmapFilePath);
-        if (f.exists()) {
+        File file = new File(bitmapFilePath);
+        if (file.exists()) {
             if (false) {
                 TestReadFileWriteFile();
             }
@@ -192,9 +189,9 @@ public class CourseListActivity extends BaseActivity {
                 intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LIST_MODE_VALUE);
                 intent.putExtra("title", SPUtils.getTitleFromName(mList.get(position).getFileName()));
 
-                appData.playingCourseFileList = mList;
-                appData.playingCourseFileId = mList.get(position).getId();
                 appData.playingCourseId = mCouseId;
+                appData.playingCourseFileId = mList.get(position).getId();
+                appData.playingCourseFileList = mList;
                 SPUtils.listToMap();
 
                 // debug log
@@ -389,8 +386,8 @@ public class CourseListActivity extends BaseActivity {
                     String musicUrl = SPUtils.getImgOrMp3Url(courseFile.getId(), courseFile.getFileName());
                     intent.putExtra("music_url", musicUrl);
                     intent.putExtra("current_position", appData.playingCourseFileListPostion);
-                    intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LAST_PlAY_MODE_VALUE);
                     intent.putExtra("title", SPUtils.getTitleFromName(courseFile.getFileName()));
+                    intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LAST_PlAY_MODE_VALUE);
                     appData.playingCourseFileList = mList;
                     appData.playingCourseFileId = courseFile.getId();
                     appData.playingCourseId = mCouseId;
@@ -437,7 +434,6 @@ public class CourseListActivity extends BaseActivity {
         };
 
         mCourseListView.setAdapter(mAdapter);
-
         mAdapter.notifyDataSetChanged();
     }
 
