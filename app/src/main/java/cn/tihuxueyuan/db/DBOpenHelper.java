@@ -56,6 +56,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 + "id INT, "
                 + "number INT, "
                 + "course_id INT, "
+                + "has_download INT, "
                 + "mp3_file_name VARCHAR, "
                 + "duration VARCHAR "
                 + ")");

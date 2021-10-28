@@ -11,6 +11,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.view.View;
@@ -40,6 +42,10 @@ import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Sink;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,7 +75,7 @@ public class CourseListActivity extends BaseActivity {
     private TextView mReverseTextView;
     private ListView mCourseListView;
 
-    private CommonAdapter<CourseFile> mAdapter;
+    private  CommonAdapter<CourseFile> mAdapter;
     private List<CourseFileList.CourseFile> mList = new ArrayList<>();
     private Map<Integer, ListenedFile> currentListenedFileMap = null;
     private LiveDataBus.BusMutableLiveData<ListenedFile> mCourseListActivityLiveData;
@@ -403,6 +409,7 @@ public class CourseListActivity extends BaseActivity {
                 int percent = courseFile.getListenedPercent();
                 int pos = courseFile.getListenedPosition();
                 int color;
+
                 String duration = courseFile.getDuration();
 
                 if (Constant.appData.playingCourseFileId >= 0 && Constant.appData.playingCourseFileId == courseFile.id) {
@@ -417,7 +424,7 @@ public class CourseListActivity extends BaseActivity {
                 holder.set(R.id.name, SPUtils.getTitleFromName(courseFile.getFileName()), color);
                 holder.set(R.id.number, String.valueOf(courseFile.getNumber()), color);
                 holder.set(R.id.duration, "时长: " + duration, color);
-                holder.set(R.id.pos, "位置:" + pos, color);
+//                holder.set(R.id.pos, "位置:" + pos, color);
 
                 if (percent > 0) {
                     if (percent == 100) {
@@ -431,16 +438,78 @@ public class CourseListActivity extends BaseActivity {
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
 
-                holder.getView(R.id.download).setOnClickListener( new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String mp3Url = SPUtils.getImgOrMp3Url( courseFile.getCourseId(),  courseFile.getFileName());
-                        Context c = getApplicationContext();
-                        String storePath = c.getFilesDir().getAbsolutePath() +
-                                File.separator + courseFile.getCourseId() + "_" + courseFile.getFileName();
-                        HttpClient.okHttpDownloadFile( mp3Url,  storePath);
-                    }
-                } );
+                int hasDownlaod = courseFile.getHasDownload();
+                TextView downloadView = holder.getView(R.id.download);
+                View downloadProgressBar = holder.getView(R.id.download_progress_bar);
+
+                if (hasDownlaod != 1) {
+                    downloadView.setText("下载");
+                    downloadView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            downloadProgressBar.setVisibility(View.VISIBLE);
+                            downloadView.setVisibility(View.INVISIBLE);
+
+                            String mp3Url = SPUtils.getImgOrMp3Url(courseFile.getCourseId(), courseFile.getFileName());
+                            Context c = getApplicationContext();
+                            String storePath = c.getFilesDir().getAbsolutePath() +
+                                    File.separator + courseFile.getCourseId() + "_" + courseFile.getFileName();
+                            HttpClient.okHttpDownloadFile(mp3Url, new HttpCallback<Response>() {
+                                @Override
+                                public void onSuccess(Response response) {
+
+                                    Sink sink = null;
+                                    BufferedSink bufferedSink = null;
+                                    try {
+                                        File dest = new File(storePath);
+                                        sink = Okio.sink(dest);
+                                        bufferedSink = Okio.buffer(sink);
+                                        bufferedSink.writeAll(response.body().source());
+
+                                        bufferedSink.close();
+                                        Constant.dbUtils.updateCourseFileDownload(courseFile.getId());
+                                        Log.i(Constant.TAG, "下载成功");
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        Log.i(Constant.TAG, "下载失败");
+                                    } finally {
+                                        if (bufferedSink != null) {
+                                            try {
+                                                bufferedSink.close();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+
+                                        Message msg = mListActivityHandler.obtainMessage();
+                                        Bundle bundle = new Bundle();
+
+                                        msg.setData(bundle);
+
+                                        for (CourseFile c : mList){
+                                            if( c.getId() == courseFile.getId() ) {
+                                                c.hasDownload = 1;
+                                                break;
+                                            }
+                                        }
+                                        mListActivityHandler.sendMessage(msg);
+                                    }
+                                }
+
+                                @Override
+                                public void onFail(Exception e) {
+
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    downloadView.setText("已下载");
+                }
+
+                downloadView.setVisibility(View.VISIBLE);
+                downloadProgressBar.setVisibility(View.INVISIBLE);
             }
         };
 
@@ -448,8 +517,16 @@ public class CourseListActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
+    public  Handler mListActivityHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            mAdapter.notifyDataSetChanged();
+        }
+    };
+
     private boolean getCourseListFromSqlite3() {
-        mList = Constant.dbUtils.getSqlite3CourseFileList(mCouseId);
+        mList = Constant.dbUtils.getSqliteCourseFileList(mCouseId);
 
         if (mList != null && mList.size() > 0) {
             Log.d(TAG, "mList 不为空，不走网络， 从本地sqlite3数据库读取 已听数据， 已听位置， 刷新列表");

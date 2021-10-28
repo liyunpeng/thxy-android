@@ -49,28 +49,28 @@ public class HttpClient {
         OkHttpUtils.initClient(okHttpClient);
     }
 
-    public static void searchMusic(String keyword, final HttpCallback<SearchMusic> callback) {
-        OkHttpUtils.post().url("http://10.0.2.2:8082/api/findCourseFileByCourseIdOk")
-                .addParams("id", "1")
-                .build()
-
-                .execute(new JsonCallback<SearchMusic>(SearchMusic.class) {
-                    @Override
-                    public void onResponse(SearchMusic response, int id) {
-                        callback.onSuccess(response);
-                    }
-
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        callback.onFail(e);
-                    }
-
-                    @Override
-                    public void onAfter(int id) {
-                        callback.onFinish();
-                    }
-                });
-    }
+//    public static void searchMusic(String keyword, final HttpCallback<SearchMusic> callback) {
+//        OkHttpUtils.post().url("http://10.0.2.2:8082/api/findCourseFileByCourseIdOk")
+//                .addParams("id", "1")
+//                .build()
+//
+//                .execute(new JsonCallback<SearchMusic>(SearchMusic.class) {
+//                    @Override
+//                    public void onResponse(SearchMusic response, int id) {
+//                        callback.onSuccess(response);
+//                    }
+//
+//                    @Override
+//                    public void onError(Call call, Exception e, int id) {
+//                        callback.onFail(e);
+//                    }
+//
+//                    @Override
+//                    public void onAfter(int id) {
+//                        callback.onFinish();
+//                    }
+//                });
+//    }
 
     public static void getCourseTypes(String keyword, final HttpCallback<CourseTypeList> callback) {
         OkHttpUtils.post().url(BASE_URL + "getCourseTypesOk")
@@ -192,7 +192,6 @@ public class HttpClient {
     public static void getCourseFilesByCourseIdV1(int courseId, final HttpCallback<CourseFileList> callback) {
         Map<String, String> params = new HashMap<>();
         params.put("course_id", String.valueOf(courseId));
-//        params.put("user_code", Constant.appData.UserCode);
         OkHttpUtils.post().url(BASE_URL + "findCourseFileByCourseIdOkhttpV1")
                 .params(params)
                 .build()
@@ -215,7 +214,7 @@ public class HttpClient {
     }
 
 
-    public static void okHttpDownloadFile(String url, String localStorePath ){
+    public static void okHttpDownloadFile(String url,  final HttpCallback<Response> callback ){
         final long startTime = System.currentTimeMillis();
         Log.i(Constant.TAG," 下载开始时间， startTime="+startTime);
 
@@ -228,29 +227,12 @@ public class HttpClient {
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Sink sink = null;
-                BufferedSink bufferedSink = null;
-                try {
-                    File dest = new File(localStorePath);
-                    sink = Okio.sink(dest);
-                    bufferedSink = Okio.buffer(sink);
-                    bufferedSink.writeAll(response.body().source());
-
-                    bufferedSink.close();
-                    Log.i(Constant.TAG,"下载成功");
-                    Log.i(Constant.TAG,"下载用时="+ (System.currentTimeMillis() - startTime));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.i(Constant.TAG,"下载失败");
-                } finally {
-                    if(bufferedSink != null){
-                        bufferedSink.close();
-                    }
-
-                }
+                Log.i(Constant.TAG," 网络获取文件用时="+ (System.currentTimeMillis() - startTime));
+                callback.onSuccess(response);
             }
         });
     }
+
     public static void getUserListenedFilesByCodeAndCourseIdV1(int courseId, final HttpCallback<UserListenedCourse> callback) {
         Map<String, String> params = new HashMap<>();
         params.put("course_id", String.valueOf(courseId));

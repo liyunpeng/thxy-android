@@ -41,7 +41,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "1122334455667788991010.db", null, 1);
+        helper = new DBOpenHelper(context, "112233445566778899101011.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -105,8 +105,16 @@ public class DBUtils {
             contentValues.put("number", courseFile.getNumber());
             contentValues.put("mp3_file_name", courseFile.getMp3FileName());
             contentValues.put("duration", courseFile.getDuration());
+            contentValues.put("has_download", 0);
             db.insert(DBOpenHelper.COURSE_FILE, null, contentValues);
         }
+    }
+
+    public void updateCourseFileDownload( int id) {
+        ContentValues cv = new ContentValues();
+        cv.put("has_download", 1);
+        String args[] = {String.valueOf(id) };
+        db.update(DBOpenHelper.COURSE_FILE, cv, " id = ?", args);
     }
 
     @SuppressLint("Range")
@@ -199,7 +207,7 @@ public class DBUtils {
 
 
     @SuppressLint("Range")
-    public List<CourseFileList.CourseFile> getSqlite3CourseFileList(int courseId) {
+    public List<CourseFileList.CourseFile> getSqliteCourseFileList(int courseId) {
         String sql = "SELECT * FROM " + DBOpenHelper.COURSE_FILE + " WHERE course_id =?";
         String args[] = {String.valueOf(courseId)};
         List<CourseFileList.CourseFile> lc = new ArrayList<>();
@@ -213,7 +221,7 @@ public class DBUtils {
             courseFile.mp3_file_name = cursor.getString(cursor.getColumnIndex("mp3_file_name"));
             courseFile.number = cursor.getInt(cursor.getColumnIndex("number"));
             courseFile.duration = cursor.getString(cursor.getColumnIndex("duration"));
-//            Log.d(Constant.TAG, " sqlite mp3: " + courseFile.mp3_file_name + ", id= " + courseFile.id);
+            courseFile.hasDownload = cursor.getInt(cursor.getColumnIndex("has_download"));
             lc.add(courseFile);
         }
 

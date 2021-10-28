@@ -1,6 +1,8 @@
 package cn.tihuxueyuan.http;
 
 
+import java.io.IOException;
+
 public abstract class HttpCallback<T> {
     public abstract void onSuccess(T t);
 
