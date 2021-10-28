@@ -36,7 +36,6 @@ import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.http.CustomResponse;
-import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
@@ -131,10 +130,9 @@ public class HomeFragment extends Fragment {
 
                             intent.putExtra("music_url", musicUrl);
                             intent.putExtra("current_position", position);
-                            intent.putExtra("mode", "list");
+                            intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LIST_MODE_VALUE);
 
                             appData.playingCourseFileId = mList.get(position).getId();
-//                            appData.playingCourseFileListPostion = position;
                             appData.playingCourseId = mList.get(position).getCourseId();
 
                             appData.currentCourseImageFileName = course.getData().getImgFileName();
@@ -203,7 +201,6 @@ public class HomeFragment extends Fragment {
                 String duration = courseFile.getDuration();
                 holder.set(R.id.duration, "时长: " + duration, Color.parseColor("#000000"));
                 holder.getView(R.id.percent).setVisibility(View.GONE);
-                holder.getView(R.id.duration).setVisibility(View.VISIBLE);
             }
         });
 

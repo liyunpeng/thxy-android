@@ -357,12 +357,12 @@ public class MusicService extends Service {
                         return;
                     int duration = mPlayer.getDuration();
                     int currentPosition = mPlayer.getCurrentPosition();
-                    Message msg = MusicActivity.handler.obtainMessage();
+                    Message msg = MusicActivity.mMusicActivityHandler.obtainMessage();
                     Bundle bundle = new Bundle();
                     bundle.putInt("duration", duration);
                     bundle.putInt("currentPosition", currentPosition);
                     msg.setData(bundle);
-                    MusicActivity.handler.sendMessage(msg);
+                    MusicActivity.mMusicActivityHandler.sendMessage(msg);
                 }
             };
             // 每5秒开始，每500毫秒执行
@@ -539,14 +539,14 @@ public class MusicService extends Service {
 
             int duration = mPlayer.getDuration();//获取歌曲总时长
             int currentPosition = mPlayer.getCurrentPosition();//获取播放进度
-            Message msg = MusicActivity.handler.obtainMessage();//创建消息对象
+            Message msg = MusicActivity.mMusicActivityHandler.obtainMessage();//创建消息对象
             //将音乐的总时长和播放进度封装至消息对象中
             Bundle bundle = new Bundle();
             bundle.putInt("duration", duration);
             bundle.putInt("currentPosition", currentPosition);
             msg.setData(bundle);
             //将消息发送到主线程的消息队列
-            MusicActivity.handler.sendMessage(msg);
+            MusicActivity.mMusicActivityHandler.sendMessage(msg);
         }
 
         public void initPlayer(String url) {

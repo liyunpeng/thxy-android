@@ -4,10 +4,8 @@ import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.CONTINURE_PLAY;
 import static cn.tihuxueyuan.utils.Constant.TAG;
-import static cn.tihuxueyuan.utils.Constant.floatingControl;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -19,7 +17,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -33,30 +30,27 @@ import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.ListenedFile;
-import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
 
 public class MusicActivity extends BaseActivity implements View.OnClickListener {
+    private String mMode;
+    private String mMusicTitle;
+    private String mMusicUrl;
+    private AppData appData;
+    private boolean isUnbind = false; //记录服务是否被解绑
+
+    private LiveDataBus.BusMutableLiveData<String> mMusicActivityLiveData;
+    private MusicActivity.MusiceServiceConnection mMusicServiceConnection;
+
+    private ImageView mPlayPauseView;
+    private static String mTotalDurationText;
+    private static String mProgressText;
     private static SeekBar seekBar;
     private static TextView mProgressTextView;
     private static TextView mTotalTextView;
     private static TextView mTitleTextView;
-    private ImageView mPlayPauseView;
-    private ObjectAnimator animator;
-
-    private boolean isUnbind = false; //记录服务是否被解绑
-    private String mMusicTitle;
-    private String mMusicUrl;
-    private String mMode;
-
-    private static String mTotalDurationText;
-    private static String mProgressText;
-    private Intent intent3;
-    private AppData appData;
-    private MusiceServiceConnection mServiceConnection;
-    private LiveDataBus.BusMutableLiveData<String> mMusicActivityLiveData;
     private static LiveDataBus.BusMutableLiveData<ListenedFile> mCourseListActivityLiveData;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -64,8 +58,26 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCourseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, ListenedFile.class);
-//        if (isBluetoothA2dpOn()) {
+        setContentView(R.layout.activity_music);
+        mMusicUrl = getIntent().getStringExtra("music_url");
+        mMode = getIntent().getStringExtra(Constant.MUSIC_ACTIVITY_MODE_NAME);
+        appData = Constant.appData;
+        Log.d(TAG, "Music Activity onCreate  musicUrl= " + mMusicUrl);
+
+        mProgressTextView = findViewById(R.id.tv_progress);
+        mTotalTextView = findViewById(R.id.tv_total);
+        seekBar = findViewById(R.id.seek_bar);
+        mTitleTextView = findViewById(R.id.song_name);
+        mPlayPauseView = findViewById(R.id.play_pause);
+
+        musicActivityObserver();
+        registerListener();
+        setViewByMode();
+    }
+
+
+    void f1() {
+        //        if (isBluetoothA2dpOn()) {
 //
 //// Adjust output for Bluetooth.
 //
@@ -95,63 +107,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
 ////注销方法
 //        mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
 //
-        appData = Constant.appData;
-
-        setContentView(R.layout.activity_music);
-        mMusicUrl = getIntent().getStringExtra("music_url");
-        Log.d(TAG, "Music Activity oncreate  musicUrl= " + mMusicUrl);
-        mMode = getIntent().getStringExtra("mode");
-
-//        appData.currentMusicCourseId = appData.playingCourseFileList.get(0).getCourseId();
-        musicActivityObserver();
-
-        initView();
-
-        if ( mMode != null && (mMode.contains("list") || mMode.contains("last")) ) {
-            appData.playingCourseFileListPostion = getIntent().getIntExtra("current_position", 0);
-            mMusicTitle = getIntent().getStringExtra("title");
-            appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
-            Log.d(TAG, "设置 app.currentCourseFileId= " + appData.playingCourseFileId);
-            bindMusicService();
-        } else {
-            if (getIntent().getStringExtra(Constant.FromIntent).contains(Constant.FloatWindow)) {
-                Log.d(TAG, " intent 的发送者为" + getIntent().getStringExtra(Constant.FromIntent) + ", 需要设置时间进度文本");
-                setTimeText();
-                mMusicTitle = getIntent().getStringExtra("float_text");
-            } else {
-                mMusicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getFileName());
-            }
-
-            musicControl.setText();
-            if (musicControl.isPlaying()) {
-                mPlayPauseView.setImageResource(R.drawable.pause_dark);
-            } else {
-                mPlayPauseView.setImageResource(R.drawable.play_dark);
-            }
-        }
-
-//        setLockedScreen();
-        mTitleTextView.setText(mMusicTitle);
-    }
-
-    // 设置锁屏显示
-    private void setLockedScreen() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD //解锁
-                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON //保持屏幕不息屏
-                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);//点亮屏幕
-
-        if (Build.VERSION.SDK_INT > 27) {
-            setShowWhenLocked(true);
-        } else {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        }
-
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-
-//低调模式, 会隐藏不重要的状态栏图标，https://blog.csdn.net/QQsongQQ/article/details/89312763
-        params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
-
-        getWindow().setAttributes(params);
     }
 
     @Override
@@ -165,15 +120,41 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
         SPUtils.sendListenedPerscent();
     }
 
+    private void setViewByMode() {
+        if (mMode != null && (mMode.contains(Constant.LIST_MODE_VALUE) || mMode.contains(Constant.LAST_PlAY_MODE_VALUE))) {
+            appData.playingCourseFileListPostion = getIntent().getIntExtra("current_position", 0);
+            mMusicTitle = getIntent().getStringExtra("title");
+            appData.playingCourseFileId = appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getId();
+            Log.d(TAG, "设置 app.currentCourseFileId= " + appData.playingCourseFileId);
+            bindMusicService();
+        } else {
+            if (getIntent().getStringExtra(Constant.FromIntent).contains(Constant.FloatWindow)) {
+                Log.d(TAG, " intent 的发送者为" + getIntent().getStringExtra(Constant.FromIntent) + ", 需要设置时间进度文本");
+                updateProgressTimeText();
+                mMusicTitle = getIntent().getStringExtra("float_text");
+            } else {
+                mMusicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getFileName());
+            }
+
+            musicControl.setText();
+            if (musicControl.isPlaying()) {
+                mPlayPauseView.setImageResource(R.drawable.pause_dark);
+            } else {
+                mPlayPauseView.setImageResource(R.drawable.play_dark);
+            }
+        }
+        mTitleTextView.setText(mMusicTitle);
+    }
+
     private void bindMusicService() {
         if (musicControl == null) {
-            Constant.intent2 = new Intent(this, MusicService.class);//创建意图对象
-            Constant.conn1 = new MusiceServiceConnection();
-            bindService(Constant.intent2, Constant.conn1, BIND_AUTO_CREATE); //绑定服务
+            Intent musicServiceIntent = new Intent(this, MusicService.class);
+            mMusicServiceConnection = new MusiceServiceConnection();
+            bindService(musicServiceIntent, mMusicServiceConnection, BIND_AUTO_CREATE); //绑定服务
         } else {
             musicControl.initPlayer(mMusicUrl);
-            if (mMode.contains("last")) {
-                musicControl.playListened( NEWPLAY);
+            if (mMode.contains(Constant.LAST_PlAY_MODE_VALUE)) {
+                musicControl.playListened(NEWPLAY);
             } else {
                 musicControl.playListened(CONTINURE_PLAY);
             }
@@ -196,16 +177,13 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
         super.onRestart();
     }
 
-    private void initView() {
-        mProgressTextView = (TextView) findViewById(R.id.tv_progress);
-        mTotalTextView = (TextView) findViewById(R.id.tv_total);
-        seekBar = (SeekBar) findViewById(R.id.seek_bar);
-        mTitleTextView = (TextView) findViewById(R.id.song_name);
-        mPlayPauseView = findViewById(R.id.play_pause);
-        mPlayPauseView.setOnClickListener(this);
+
+    private void registerListener() {
+
         findViewById(R.id.play_previous).setOnClickListener(this);
         findViewById(R.id.play_next).setOnClickListener(this);
 
+        mPlayPauseView.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
@@ -227,30 +205,15 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {//滑动条停止滑动时调用
                 //根据拖动的进度改变音乐播放进度
-                int progress = seekBar.getProgress();//获取seekBar的进度
+                int progress = seekBar.getProgress();
                 Log.d(TAG, " 改变播放进度 progress=" + progress);
 
-                musicControl.seekTo(progress);//改变播放进度
+                musicControl.seekTo(progress);
                 if (musicControl.isPlaying() != true) {
                     musicControl.playOrPause();
-//                    mPlayPauseView.setImageResource(R.drawable.stop);
                 }
             }
         });
-
-//        ImageView iv_music = (ImageView) findViewById(R.id.iv_music);
-////        String position= intent1.getStringExtra("position");
-//        String position = "1";
-//        int i = parseInt(position);
-//        iv_music.setImageResource(ListFragment.icons[i]);
-
-        /*
-        animator = ObjectAnimator.ofFloat(iv_music, "rotation", 0f, 360.0f);
-        animator.setDuration(10000);//动画旋转一周的时间为10秒
-        animator.setInterpolator(new LinearInterpolator());//匀速
-        animator.setRepeatCount(-1);//-1表示设置动画无限循环
-
-         */
     }
 
     @Override
@@ -259,7 +222,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
         ActivityManager.setCurrentActivity(MusicActivity.this);
     }
 
-    public static Handler handler = new Handler() {
+    public static Handler mMusicActivityHandler = new Handler() {
         public int lastPercent;
 
         @Override
@@ -338,12 +301,13 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
     };
 
 
-    private void setTimeText() {
+    private void updateProgressTimeText() {
         mTotalTextView.setText(mTotalDurationText);
         mProgressTextView.setText(mProgressText);
     }
 
     private void musicActivityObserver() {
+        mCourseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, ListenedFile.class);
         mMusicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
         mMusicActivityLiveData.observe(MusicActivity.this, true, new Observer<String>() {
             @Override
@@ -352,11 +316,11 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
                 switch (state) {
                     case PAUSE:
                         mPlayPauseView.setImageResource(R.drawable.play_dark);
-                        setTimeText();
+                        updateProgressTimeText();
                         break;
                     case CONTINURE_PLAY:
                         mPlayPauseView.setImageResource(R.drawable.pause_dark);
-                        setTimeText();
+                        updateProgressTimeText();
                         break;
                     case NEWPLAY:
                         mMusicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getFileName());
@@ -411,13 +375,14 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             if (shortClassName.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
                 musicControl.initPlayer(mMusicUrl);
-                if (mMode.contains("last")) {
+                if (mMode.contains(Constant.LAST_PlAY_MODE_VALUE)) {
                     musicControl.playListened(NEWPLAY);
                 } else {
                     musicControl.playListened(CONTINURE_PLAY);
                 }
                 Log.d(Constant.TAG, "musicControl 初始化完成 ");
             }
+
 //            else if (shortClassName.contains("FloatingImageDisplayService")) {
 ////                Constant.floatingControl = (FloatingImageDisplayService.FloatingControl) service;
 ////                Constant.floatingControl.initFloatingWindow();
@@ -435,7 +400,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
 
     private void unbind(boolean isUnbind) {
         if (!isUnbind) {//判断服务是否被解绑
-            unbindService(Constant.conn1);//解绑服务
+            unbindService(mMusicServiceConnection);//解绑服务
         }
     }
 

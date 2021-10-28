@@ -50,10 +50,8 @@ public class DashboardFragment extends Fragment {
     private FragmentDashboardBinding binding;
     private List<CourseType> mCourseTypeList = new ArrayList<>();
     private List<Course> mCourseList = new ArrayList<>();
-    private TextView tvName;
     private VerticalTabLayout mVerticalTabView;
     private RecyclerView mRecyclerView;
-    private List<TestData> recyclelist;
     private GridRecycleAdapter mRecycleAdapter;
     private int mTypeId;
 
@@ -65,7 +63,6 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        tvName = root.findViewById(R.id.tv_name);
         mVerticalTabView = root.findViewById(R.id.tab_layout);
         mRecyclerView = root.findViewById(R.id.recycler_view);
 
@@ -76,9 +73,7 @@ public class DashboardFragment extends Fragment {
             httpGetCourseType();
         } else {
             Log.d(TAG, " 课程类型列表从数据库获取成功 ");
-
             refreshView();
-
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences(TYPE_SELECTED, Context.MODE_PRIVATE);
             int lastTypeId = sharedPreferences.getInt(LAST_TYPE_ID, -1);
             int lastTabSelectedPosition = sharedPreferences.getInt(LAST_TAB_SELECTED_POSITION, -1);
@@ -89,11 +84,9 @@ public class DashboardFragment extends Fragment {
             }
             refreshRecycleView(mTypeId);
             mVerticalTabView.setTabSelected(lastTabSelectedPosition);
-
         }
         return root;
     }
-
 
     private void refreshRecycleView(int typeId) {
         mCourseList = Constant.dbUtils.getCourseListByTypeId(typeId);
@@ -109,8 +102,6 @@ public class DashboardFragment extends Fragment {
             mRecycleAdapter.setList(mCourseList);
             mRecycleAdapter.notifyDataSetChanged();
         }
-
-
     }
 
     @Override
@@ -127,8 +118,6 @@ public class DashboardFragment extends Fragment {
     }
 
     private void initRecycleView() {
-        recyclelist = new ArrayList<>();
-
         GridLayoutManager glm = new GridLayoutManager(this.getActivity().getBaseContext(), 2);
         mRecyclerView.setLayoutManager(glm);
         mRecycleAdapter = new GridRecycleAdapter(this.getActivity().getBaseContext(), mCourseList);
