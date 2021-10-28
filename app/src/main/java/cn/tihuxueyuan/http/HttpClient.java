@@ -10,6 +10,7 @@ import com.zhy.http.okhttp.callback.BitmapCallback;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -20,13 +21,19 @@ import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.Constant;
 import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 
 import cn.tihuxueyuan.model.SearchMusic;
 import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.model.CourseList;
+import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Sink;
 
 public class HttpClient {
 //    private static final String BASE_URL = "http://10.0.2.2:8082/api/";
@@ -207,6 +214,43 @@ public class HttpClient {
                 });
     }
 
+
+    public static void okHttpDownloadFile(String url, String localStorePath ){
+        final long startTime = System.currentTimeMillis();
+        Log.i(Constant.TAG," 下载开始时间， startTime="+startTime);
+
+        Request request = new Request.Builder().url(url).build();
+        new OkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Log.d(Constant.TAG,"下载失败 onFailure ");
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Sink sink = null;
+                BufferedSink bufferedSink = null;
+                try {
+                    File dest = new File(localStorePath);
+                    sink = Okio.sink(dest);
+                    bufferedSink = Okio.buffer(sink);
+                    bufferedSink.writeAll(response.body().source());
+
+                    bufferedSink.close();
+                    Log.i(Constant.TAG,"下载成功");
+                    Log.i(Constant.TAG,"下载用时="+ (System.currentTimeMillis() - startTime));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.i(Constant.TAG,"下载失败");
+                } finally {
+                    if(bufferedSink != null){
+                        bufferedSink.close();
+                    }
+
+                }
+            }
+        });
+    }
     public static void getUserListenedFilesByCodeAndCourseIdV1(int courseId, final HttpCallback<UserListenedCourse> callback) {
         Map<String, String> params = new HashMap<>();
         params.put("course_id", String.valueOf(courseId));

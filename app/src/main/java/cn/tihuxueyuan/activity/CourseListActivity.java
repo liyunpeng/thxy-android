@@ -430,6 +430,17 @@ public class CourseListActivity extends BaseActivity {
                     holder.set(R.id.percent, "", color);
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
+
+                holder.getView(R.id.download).setOnClickListener( new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String mp3Url = SPUtils.getImgOrMp3Url( courseFile.getCourseId(),  courseFile.getFileName());
+                        Context c = getApplicationContext();
+                        String storePath = c.getFilesDir().getAbsolutePath() +
+                                File.separator + courseFile.getCourseId() + "_" + courseFile.getFileName();
+                        HttpClient.okHttpDownloadFile( mp3Url,  storePath);
+                    }
+                } );
             }
         };
 

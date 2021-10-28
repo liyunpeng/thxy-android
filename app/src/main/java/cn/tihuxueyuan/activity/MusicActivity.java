@@ -40,7 +40,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
     private String mMusicUrl;
     private AppData appData;
     private boolean isUnbind = false; //记录服务是否被解绑
-
     private LiveDataBus.BusMutableLiveData<String> mMusicActivityLiveData;
     private MusicActivity.MusiceServiceConnection mMusicServiceConnection;
 

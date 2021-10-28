@@ -245,10 +245,10 @@ public class SPUtils {
         }
     }
 
-    public static int findPositionByFileId(int fileId, List<CourseFileList.CourseFile> cf) {
+    public static int findPositionByFileId(int fileId, List<CourseFileList.CourseFile> courseFileList) {
         int position = 0;
-        for (CourseFileList.CourseFile c : cf) {
-            if (c.getId() == fileId) {
+        for (CourseFileList.CourseFile courseFile : courseFileList) {
+            if (courseFile.getId() == fileId) {
                 return position;
             }
             position++;
