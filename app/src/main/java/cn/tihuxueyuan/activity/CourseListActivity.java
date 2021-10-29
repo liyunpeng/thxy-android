@@ -75,7 +75,7 @@ public class CourseListActivity extends BaseActivity {
     private TextView mReverseTextView;
     private ListView mCourseListView;
 
-    private  CommonAdapter<CourseFile> mAdapter;
+    private CommonAdapter<CourseFile> mAdapter;
     private List<CourseFileList.CourseFile> mList = new ArrayList<>();
     private Map<Integer, ListenedFile> currentListenedFileMap = null;
     private LiveDataBus.BusMutableLiveData<ListenedFile> mCourseListActivityLiveData;
@@ -188,18 +188,25 @@ public class CourseListActivity extends BaseActivity {
         mCourseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
+                int hasDownload = mList.get(position).hasDownload;
                 Intent intent = new Intent(getApplicationContext(), MusicActivity.class);
+
+                String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
-                intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LIST_MODE_VALUE);
                 intent.putExtra("title", SPUtils.getTitleFromName(mList.get(position).getFileName()));
 
                 appData.playingCourseId = mCouseId;
                 appData.playingCourseFileId = mList.get(position).getId();
                 appData.playingCourseFileList = mList;
-                SPUtils.listToMap();
+                SPUtils.playingListToPlayingMap();
 
+                intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LIST_MODE_VALUE);
+//                if (hasDownload != 1) {
+//                    intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LIST_MODE_NET_REQUEST_VALUE);
+//                } else {
+//                    intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LIST_MODE_LOCAL_VALUE);
+//                }
                 // debug log
 //                for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileMap.values()) {
 //                    Log.d(TAG, "mp3_file_name=" + c.mp3_file_name + ", listenedPercent=" + c.listenedPercent
@@ -397,7 +404,7 @@ public class CourseListActivity extends BaseActivity {
                     appData.playingCourseFileList = mList;
                     appData.playingCourseFileId = courseFile.getId();
                     appData.playingCourseId = mCouseId;
-                    SPUtils.listToMap();
+                    SPUtils.playingListToPlayingMap();
                     startActivity(intent);
                 }
             }
@@ -451,24 +458,24 @@ public class CourseListActivity extends BaseActivity {
                             downloadView.setVisibility(View.INVISIBLE);
 
                             String mp3Url = SPUtils.getImgOrMp3Url(courseFile.getCourseId(), courseFile.getFileName());
-                            Context c = getApplicationContext();
-                            String storePath = c.getFilesDir().getAbsolutePath() +
-                                    File.separator + courseFile.getCourseId() + "_" + courseFile.getFileName();
+
                             HttpClient.okHttpDownloadFile(mp3Url, new HttpCallback<Response>() {
                                 @Override
                                 public void onSuccess(Response response) {
-
+                                    Context c = getApplicationContext();
+                                    String localStorePath = c.getFilesDir().getAbsolutePath() +
+                                            File.separator + courseFile.getCourseId() + "_" + courseFile.getFileName();
                                     Sink sink = null;
                                     BufferedSink bufferedSink = null;
                                     try {
-                                        File dest = new File(storePath);
+                                        File dest = new File(localStorePath);
                                         sink = Okio.sink(dest);
                                         bufferedSink = Okio.buffer(sink);
                                         bufferedSink.writeAll(response.body().source());
 
                                         bufferedSink.close();
-                                        Constant.dbUtils.updateCourseFileDownload(courseFile.getId());
-                                        Log.i(Constant.TAG, "下载成功");
+                                        Constant.dbUtils.updateCourseFileDownload(courseFile.getId(), localStorePath);
+                                        Log.i(Constant.TAG, "下载成功, 文件路径保存到数据库，保存路径=" + localStorePath);
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -484,12 +491,12 @@ public class CourseListActivity extends BaseActivity {
 
                                         Message msg = mListActivityHandler.obtainMessage();
                                         Bundle bundle = new Bundle();
-
                                         msg.setData(bundle);
-
-                                        for (CourseFile c : mList){
-                                            if( c.getId() == courseFile.getId() ) {
-                                                c.hasDownload = 1;
+                                        // 更新列表
+                                        for (CourseFile courseFileItem : mList) {
+                                            if (courseFileItem.getId() == courseFile.getId()) {
+                                                courseFileItem.hasDownload = 1;
+                                                courseFileItem.localStorePath = localStorePath;
                                                 break;
                                             }
                                         }
@@ -517,7 +524,7 @@ public class CourseListActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
-    public  Handler mListActivityHandler = new Handler() {
+    public Handler mListActivityHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
@@ -565,7 +572,7 @@ public class CourseListActivity extends BaseActivity {
                     return;
                 }
                 mList = response.getCourseFileList();
-                SPUtils.listToMap();
+                SPUtils.playingListToPlayingMap();
 
                 int count = Constant.dbUtils.getFileCountByCourseId(mCouseId);
                 if (count <= 0) {

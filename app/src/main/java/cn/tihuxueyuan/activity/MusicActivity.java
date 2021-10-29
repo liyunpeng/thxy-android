@@ -151,12 +151,19 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             mMusicServiceConnection = new MusiceServiceConnection();
             bindService(musicServiceIntent, mMusicServiceConnection, BIND_AUTO_CREATE); //绑定服务
         } else {
-            musicControl.initPlayer(mMusicUrl);
-            if (mMode.contains(Constant.LAST_PlAY_MODE_VALUE)) {
-                musicControl.playListened(NEWPLAY);
-            } else {
+//            musicControl.initPlayer(mMusicUrl);
+            if (appData.lastCourseFileId == appData.playingCourseFileId) {
                 musicControl.playListened(CONTINURE_PLAY);
+            }else{
+                musicControl.playListened(NEWPLAY);
             }
+
+
+//            if (mMode.contains(Constant.LAST_PlAY_MODE_VALUE)) {
+//                musicControl.playListened(NEWPLAY);
+//            } else {
+//                musicControl.playListened(CONTINURE_PLAY);
+//            }
         }
 
 //        if (floatingControl == null) {
@@ -373,12 +380,19 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
             String shortClassName = name.getShortClassName();
             if (shortClassName.contains("MusicService")) {
                 musicControl = (MusicService.MusicControl) service;
-                musicControl.initPlayer(mMusicUrl);
-                if (mMode.contains(Constant.LAST_PlAY_MODE_VALUE)) {
-                    musicControl.playListened(NEWPLAY);
-                } else {
+//                musicControl.initPlayer(mMusicUrl);
+                if (appData.lastCourseFileId == appData.playingCourseFileId) {
                     musicControl.playListened(CONTINURE_PLAY);
+                }else{
+                    musicControl.playListened(NEWPLAY);
                 }
+
+
+//            if (mMode.contains(Constant.LAST_PlAY_MODE_VALUE)) {
+//                    musicControl.playListened(NEWPLAY);
+//                } else {
+//                    musicControl.playListened(CONTINURE_PLAY);
+//                }
                 Log.d(Constant.TAG, "musicControl 初始化完成 ");
             }
 

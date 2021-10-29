@@ -44,6 +44,9 @@ public class CourseFileList {
         @SerializedName("duration")
         public String duration;
 
+        @SerializedName("local_store_path")
+        public String localStorePath;
+
         @SerializedName("listened_position")
         public int listenedPosition;
 
@@ -60,6 +63,10 @@ public class CourseFileList {
         }
         public String getDuration() {
             return duration;
+        }
+
+        public String getLocalStorePath() {
+            return localStorePath;
         }
 
         public int getNumber(){

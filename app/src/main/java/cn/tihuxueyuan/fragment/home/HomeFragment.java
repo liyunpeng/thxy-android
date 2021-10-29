@@ -146,7 +146,7 @@ public class HomeFragment extends Fragment {
 
                             appData.playingCourseFileList = mList;
                             appData.playingCourseFileId = mList.get(position).getId();
-                            SPUtils.listToMap();
+                            SPUtils.playingListToPlayingMap();
                             startActivity(intent);
                             Log.d(Constant.TAG, "onResponse: " + result);
 

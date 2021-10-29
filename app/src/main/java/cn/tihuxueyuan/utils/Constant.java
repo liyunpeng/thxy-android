@@ -43,7 +43,8 @@ public class Constant {
 
     public static String MUSIC_ACTIVITY_MODE_NAME = "music_activity_mode_name";       // 启动模式
     public static String LAST_PlAY_MODE_VALUE = "last_mode_value";  // 点上次播放进入音乐播放
-    public static String LIST_MODE_VALUE = "list_mode_value";       //  从列表点击列表项进入音乐播放
+    public static String LIST_MODE_VALUE = "list_mode_net_request_value";       //  从列表点击列表项进入音乐播放
+    public static String LIST_MODE_LOCAL_VALUE = "list_mode_local_value";       //  从列表点击列表项进入音乐播放
 
 
     public static final String CONTINURE_PLAY = "play";

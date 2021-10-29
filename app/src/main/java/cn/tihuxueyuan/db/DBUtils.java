@@ -41,7 +41,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "112233445566778899101011.db", null, 1);
+        helper = new DBOpenHelper(context, "112233445566778899101011ab.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -110,9 +110,10 @@ public class DBUtils {
         }
     }
 
-    public void updateCourseFileDownload( int id) {
+    public void updateCourseFileDownload( int id, String storeLocalPath) {
         ContentValues cv = new ContentValues();
         cv.put("has_download", 1);
+        cv.put("local_store_path", storeLocalPath);
         String args[] = {String.valueOf(id) };
         db.update(DBOpenHelper.COURSE_FILE, cv, " id = ?", args);
     }
@@ -222,6 +223,7 @@ public class DBUtils {
             courseFile.number = cursor.getInt(cursor.getColumnIndex("number"));
             courseFile.duration = cursor.getString(cursor.getColumnIndex("duration"));
             courseFile.hasDownload = cursor.getInt(cursor.getColumnIndex("has_download"));
+            courseFile.localStorePath = cursor.getString(cursor.getColumnIndex("local_store_path"));
             lc.add(courseFile);
         }
 

@@ -77,9 +77,11 @@ public class DashboardFragment extends Fragment {
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences(TYPE_SELECTED, Context.MODE_PRIVATE);
             int lastTypeId = sharedPreferences.getInt(LAST_TYPE_ID, -1);
             int lastTabSelectedPosition = sharedPreferences.getInt(LAST_TAB_SELECTED_POSITION, -1);
-            if (lastTypeId != -1) {
+            if (lastTypeId > 0) {
+                Log.d(TAG, "从sharedPreferences获取上次typeId.  lastTypeId=" + lastTypeId);
                 mTypeId = lastTypeId;
             } else {
+                Log.d(TAG, "第一次用，从mCourseTypeList获取垂直导航菜单栏第一个菜单项的typeId, typeId=" + mCourseTypeList.get(0).getId());
                 mTypeId = mCourseTypeList.get(0).getId();
             }
             refreshRecycleView(mTypeId);

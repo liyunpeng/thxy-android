@@ -234,7 +234,7 @@ public class SPUtils {
     }
 
     // list 转 map
-    public static void listToMap() {
+    public static void playingListToPlayingMap() {
         if (Constant.appData.playingCourseFileMap != null) {
             Constant.appData.playingCourseFileMap.clear();
         }

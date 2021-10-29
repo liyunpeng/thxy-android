@@ -41,6 +41,7 @@ import androidx.core.app.NotificationCompat;
 import cn.tihuxueyuan.activity.MusicActivity;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.livedata.LiveDataBus;
+import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.ListenedFile;
 import cn.tihuxueyuan.receiver.NotificationClickReceiver;
 import cn.tihuxueyuan.R;
@@ -148,7 +149,7 @@ public class MusicService extends Service {
         registerPlayerListener();
     }
 
-    private void setObserverData(){
+    private void setObserverData() {
         mMusicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
         mBaseActivityFloatLiveData = LiveDataBus.getInstance().with(Constant.BaseActivityFloatTextViewDataObserverTag, String.class);
     }
@@ -205,7 +206,7 @@ public class MusicService extends Service {
                     public void onCompletion(MediaPlayer mp) {
                         Log.d(TAG, "音乐回调函数 onCompletion 调用");
 
-                        if ( Constant.HAS_USER ){
+                        if (Constant.HAS_USER) {
                             SPUtils.sendListenedPerscent();
                         }
 
@@ -384,15 +385,25 @@ public class MusicService extends Service {
         public void playListened(String action) {
             boolean isPlaying = mPlayer.isPlaying();
             Log.d(TAG, "播放器是否在播放 isPlaying = " + isPlaying);
-            if ((action == CONTINURE_PLAY || action == PAUSE) && isPlaying && appData.lastCourseFileId == appData.playingCourseFileId) {
+            if ((action == CONTINURE_PLAY || action == PAUSE) && isPlaying ) {
                 Log.d(TAG, "不初始化播放器, 也不播放 ");
 //                player.pause();
-
             } else {
                 if (action == NEWPLAY) {
-                    String mp3url = SPUtils.getImgOrMp3Url(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getCourseId(), appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getMp3FileName());
+                    String mp3url = null;
+
+                    CourseFileList.CourseFile cf = appData.playingCourseFileList.get(appData.playingCourseFileListPostion);
+                    int hasDownload = cf.getHasDownload();
+                    if (hasDownload == 1) {
+                        mp3url = cf.getLocalStorePath();
+                        Log.d(TAG, "播放本地文件，uri=" +  mp3url);
+                    } else {
+                        mp3url = SPUtils.getImgOrMp3Url(cf.getCourseId(), cf.getMp3FileName());
+                        Log.d(TAG, "播放网络文件，uri=" +  mp3url);
+                    }
                     Log.d(TAG, "初始化播放器 ");
                     initPlayer(mp3url);
+                    mPlayer.start();
 //                    musicActivityLiveData.postValue(action);
                 } else if (action == CONTINURE_PLAY && !isPlaying) {
                     Log.d(TAG, "不初始化播放器， 直接播放");
