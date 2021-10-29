@@ -40,7 +40,6 @@ import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.adapter.GridRecycleAdapter;
 import cn.tihuxueyuan.model.CourseTypeList.CourseType;
 import cn.tihuxueyuan.utils.Constant;
-import cn.tihuxueyuan.verticaltabrecycler.TestData;
 import q.rorbin.verticaltablayout.VerticalTabLayout;
 import q.rorbin.verticaltablayout.widget.TabView;
 
@@ -171,7 +170,6 @@ public class DashboardFragment extends Fragment {
         });
 
 //        mVerticalTabView.setTabSelected(3);
-
 
     }
 

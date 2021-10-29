@@ -11,7 +11,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.floatview.utils.ScreenUtils;
 

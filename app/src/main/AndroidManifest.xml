@@ -66,8 +66,7 @@
         <activity android:name="cn.tihuxueyuan.verticaltabrecycler.SimpleActivity" />
         <activity android:name="cn.tihuxueyuan.activity.MusicActivity" />
         <activity android:name="cn.tihuxueyuan.activity.CourseListActivity" />
-        <activity android:name="cn.tihuxueyuan.activity.MusicMainActivity" />
-        <activity android:name="cn.tihuxueyuan.activity.OkhttpClientActivity" />
+
         <receiver android:name=".receiver.NotificationClickReceiver" />
 
         <service
