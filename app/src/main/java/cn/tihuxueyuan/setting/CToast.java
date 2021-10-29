@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import cn.tihuxueyuan.R;
-import cn.tihuxueyuan.activity.ToastMain;
 
 /**
  * 自定义时长的Toast
