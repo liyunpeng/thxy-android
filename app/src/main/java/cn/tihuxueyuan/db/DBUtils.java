@@ -5,11 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
-import android.util.Log;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +13,6 @@ import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseList;
 import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.model.UserListenedCourse;
-import cn.tihuxueyuan.utils.Constant;
 
 public class DBUtils {
     private DBOpenHelper helper;
@@ -41,7 +36,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "112233445566778899101011ab.db", null, 1);
+        helper = new DBOpenHelper(context, "112233445566778899101011abc.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -105,15 +100,16 @@ public class DBUtils {
             contentValues.put("number", courseFile.getNumber());
             contentValues.put("mp3_file_name", courseFile.getMp3FileName());
             contentValues.put("duration", courseFile.getDuration());
-            contentValues.put("has_download", 0);
+            contentValues.put("download_mode", 0);
             db.insert(DBOpenHelper.COURSE_FILE, null, contentValues);
         }
     }
 
-    public void updateCourseFileDownload( int id, String storeLocalPath) {
+    public void updateCourseFileDownload( int id, int downloadMode,  String storeLocalPath) {
         ContentValues cv = new ContentValues();
-        cv.put("has_download", 1);
+//        cv.put("download_mode", 1);
         cv.put("local_store_path", storeLocalPath);
+        cv.put("download_mode", downloadMode);
         String args[] = {String.valueOf(id) };
         db.update(DBOpenHelper.COURSE_FILE, cv, " id = ?", args);
     }
@@ -222,7 +218,7 @@ public class DBUtils {
             courseFile.mp3_file_name = cursor.getString(cursor.getColumnIndex("mp3_file_name"));
             courseFile.number = cursor.getInt(cursor.getColumnIndex("number"));
             courseFile.duration = cursor.getString(cursor.getColumnIndex("duration"));
-            courseFile.hasDownload = cursor.getInt(cursor.getColumnIndex("has_download"));
+            courseFile.downloadMode = cursor.getInt(cursor.getColumnIndex("download_mode"));
             courseFile.localStorePath = cursor.getString(cursor.getColumnIndex("local_store_path"));
             lc.add(courseFile);
         }

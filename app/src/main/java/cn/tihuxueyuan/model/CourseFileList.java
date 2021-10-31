@@ -35,8 +35,8 @@ public class CourseFileList {
         @SerializedName("course_id")
         public int courseId;
 
-        @SerializedName("has_download")
-        public int hasDownload;
+        @SerializedName("download_mode")
+        public int downloadMode;
 
         @SerializedName("listened_percent")
         public int listenedPercent;
@@ -50,7 +50,7 @@ public class CourseFileList {
         @SerializedName("listened_position")
         public int listenedPosition;
 
-        public int getHasDownload() { return  hasDownload;}
+        public int getDownloadMode() { return downloadMode;}
         public int getCourseId() { return  courseId;}
         public String getFileName() {
             return mp3_file_name;

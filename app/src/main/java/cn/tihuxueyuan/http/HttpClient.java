@@ -36,8 +36,8 @@ import okio.Okio;
 import okio.Sink;
 
 public class HttpClient {
-//    private static final String BASE_URL = "http://10.0.2.2:8082/api/";
-    private static final String BASE_URL = "http://47.102.146.8:8082/api/";
+//    public static final String BASE_URL = "http://10.0.2.2:8082/api/";
+    public static final String BASE_URL = "http://47.102.146.8:8082/api/";
 
     static {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -135,7 +135,7 @@ public class HttpClient {
                 });
     }
 
-    public static void updateUserListenedFiles(String code,  String  courseId, String courseFileId, String listenedPercent,  final HttpCallback<Config> callback) {
+    public static void updateUserListenedFiles(String code, String courseId, String courseFileId, String listenedPercent, final HttpCallback<Config> callback) {
         Map<String, String> params = new HashMap<>();
         params.put("code", code);
         params.put("course_id", courseId);
@@ -214,20 +214,21 @@ public class HttpClient {
     }
 
 
-    public static void okHttpDownloadFile(String url,  final HttpCallback<Response> callback ){
+    public static void okHttpDownloadFile(String url, final HttpCallback<Response> callback) {
         final long startTime = System.currentTimeMillis();
-        Log.i(Constant.TAG," 下载开始时间， startTime="+startTime);
+        Log.i(Constant.TAG, " 下载开始时间， startTime=" + startTime);
 
         Request request = new Request.Builder().url(url).build();
         new OkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                Log.d(Constant.TAG,"下载失败 onFailure ");
+                Log.d(Constant.TAG, "下载失败 onFailure ");
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.i(Constant.TAG," 网络获取文件用时="+ (System.currentTimeMillis() - startTime));
+                Log.i(Constant.TAG, " 网络获取文件用时=" + (System.currentTimeMillis() - startTime));
                 callback.onSuccess(response);
             }
         });

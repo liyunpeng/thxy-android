@@ -116,7 +116,9 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
         Intent intent = new Intent();
         setResult(Activity.RESULT_OK, intent);
 
-        SPUtils.sendListenedPerscent();
+        if ( Constant.HAS_USER ) {
+            SPUtils.sendListenedPerscent();
+        }
     }
 
     private void setViewByMode() {

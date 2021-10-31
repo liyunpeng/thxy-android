@@ -25,6 +25,7 @@ import java.util.Map;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.globaldata.AppData;
+import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.ListenedFile;
@@ -224,7 +225,7 @@ public class SPUtils {
         } else {
             fileType = "mp3";
         }
-        String imgOrMp3Url = appData.baseUrl + appData.mp3SourceRouter +
+        String imgOrMp3Url = HttpClient.BASE_URL + "fileDownload" +
                 "?course_id=" + courseId +
                 "&file_type=" + fileType +
                 "&file_name=" + fileName;

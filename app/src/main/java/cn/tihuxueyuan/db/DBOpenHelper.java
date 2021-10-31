@@ -56,7 +56,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 + "id INT, "
                 + "number INT, "
                 + "course_id INT, "
-                + "has_download INT, "
+                + "download_mode INT, "  // 0 ： 未下载， 1：已下载， 2： 下载过程中
                 + "local_store_path VARCHAR, "
                 + "mp3_file_name VARCHAR, "
                 + "duration VARCHAR "

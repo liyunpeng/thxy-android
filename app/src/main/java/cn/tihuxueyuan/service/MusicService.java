@@ -393,7 +393,7 @@ public class MusicService extends Service {
                     String mp3url = null;
 
                     CourseFileList.CourseFile cf = appData.playingCourseFileList.get(appData.playingCourseFileListPostion);
-                    int hasDownload = cf.getHasDownload();
+                    int hasDownload = cf.getDownloadMode();
                     if (hasDownload == 1) {
                         mp3url = cf.getLocalStorePath();
                         Log.d(TAG, "播放本地文件，uri=" +  mp3url);

@@ -120,33 +120,11 @@ public class MainActivity extends BaseActivity {
             if (action.equals(Intent.ACTION_HEADSET_PLUG)) {
                 if (intent.getIntExtra("state", 0) == 1) {
                     Log.d(TAG, "耳机检测：插入");
-//                    Toast.makeText(context, "耳机检测：插入 ", Toast.LENGTH_SHORT).show();
-
-//                    if(  mAudioManager == null ) {
-//                        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-//                        //构造一个ComponentName，指向MediaoButtonReceiver类
-//                        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
-//                    }
-//
-//                    mAudioManager.registerMediaButtonEventReceiver(mComponent);
-
-//                            mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-//                    registerMusicButton();
-
                     if (Constant.musicControl != null) {
                         Constant.musicControl.pause();
                     }
                 } else {
                     Log.d(TAG, "耳机检测：没有插入");
-//                    Toast.makeText(context, "耳机检测：没有插入", Toast.LENGTH_SHORT).show();
-//                    if(  mAudioManager == null ) {
-//                        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-//                        //构造一个ComponentName，指向MediaoButtonReceiver类
-//                        mComponent = new ComponentName(getPackageName(), MediaButtonReceiver.class.getName());
-//                    }
-//                    mAudioManager.unregisterMediaButtonEventReceiver(mComponent);
-//                    unregisterButtonReceiver();
-
                     if (Constant.musicControl != null) {
                         Constant.musicControl.pause();
                     }
@@ -190,21 +168,6 @@ public class MainActivity extends BaseActivity {
         }
         initAppStatusListener();
 
-//        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-//        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 222);
-
-//        getOverlayPermission();
-//        try {
-//            Method forName = Class.class.getDeclaredMethod("forName", String.class);
-//            Method getDeclaredMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
-//            Class<?> vmRuntimeClass = (Class<?>) forName.invoke(null, "dalvik.system.VMRuntime");
-//            Method getRuntime = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "getRuntime", null);
-//            Method setHiddenApiExemptions = (Method) getDeclaredMethod.invoke(vmRuntimeClass, "setHiddenApiExemptions", new Class[]{String[].class});
-//            Object sVmRuntime = getRuntime.invoke(null);
-//            setHiddenApiExemptions.invoke(sVmRuntime, new Object[]{new String[]{"L"}});
-//        } catch (Throwable e) {
-//            Log.e("[error]", "reflect bootstrap failed:", e);
-//        }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         getSupportActionBar().hide();
@@ -302,10 +265,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 注册动态广播
-     * 动态广播不能放在服务里， 服务在ondestory后，服务就在存在了， 这是musicReceiver new 的服务 就会报错
-     */
     private void registerMusicReceiver() {
         Log.d(TAG, "调用 registerMusicReceiver");
         if (appData.musicReceiver == null) {
@@ -320,18 +279,13 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
     //退出栈顶Activity
     public void popActivity(Activity activity) {
         if (activity != null) {
             activity.finish();
-
             activityStack.remove(activity);
-
             activity = null;
-
         }
-
     }
 
 //获得当前栈顶Activity
@@ -357,22 +311,19 @@ public class MainActivity extends BaseActivity {
         activityStack.add(activity);
     }
 
-    //上次按下返回键的系统时间
     private long lastBackTime = 0;
-    //当前按下返回键的系统时间
     private long currentBackTime = 0;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //捕获返回键按下的事件
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            //获取当前系统时间的毫秒数
             currentBackTime = System.currentTimeMillis();
             //比较上次按下返回键和当前按下返回键的时间差，如果大于2秒，则提示再按一次退出
             if (currentBackTime - lastBackTime > 2 * 1000) {
                 Toast.makeText(this, "再按一次返回键退出", Toast.LENGTH_SHORT).show();
                 lastBackTime = currentBackTime;
-            } else {  //如果两次按下的时间差小于2秒，则退出程序
+            } else {   //如果两次按下的时间差小于2秒，则退出程序
                 unregisterHomeKeyReceiver(this);
                 unregisterHeadsetButtonReceiver();
 
@@ -385,12 +336,9 @@ public class MainActivity extends BaseActivity {
                     unregisterReceiver(appData.musicReceiver);
                 }
 
-                Intent intent = new Intent(this, FloatingImageDisplayService.class);//创建意图对象
-                intent.setPackage(getPackageName());
-                //Log.i("当前包", getPackageName());
-                stopService(intent);
 
-                intent = new Intent(this, MusicService.class);//创建意图对象
+
+                Intent intent = new Intent(this, MusicService.class);//创建意图对象
                 intent.setPackage(getPackageName());
                 Log.i("当前包", getPackageName());
                 stopService(intent);

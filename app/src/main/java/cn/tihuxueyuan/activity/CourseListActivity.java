@@ -76,10 +76,10 @@ public class CourseListActivity extends BaseActivity {
     private ListView mCourseListView;
 
     private CommonAdapter<CourseFile> mAdapter;
-    private List<CourseFileList.CourseFile> mList = new ArrayList<>();
+    private List<CourseFileList.CourseFile> mCourseFileList = new ArrayList<>();
+    public static Map<Integer, CourseFileList.CourseFile> mCourseFileMap = new HashMap<>();
     private Map<Integer, ListenedFile> currentListenedFileMap = null;
     private LiveDataBus.BusMutableLiveData<ListenedFile> mCourseListActivityLiveData;
-    public static Map<Integer, CourseFileList.CourseFile> currentCourseFileMap = new HashMap<>();
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -116,7 +116,7 @@ public class CourseListActivity extends BaseActivity {
         } else {
             Constant.order = false;
         }
-        Collections.sort(mList, new ComparatorValues());
+        Collections.sort(mCourseFileList, new ComparatorValues());
     }
 
     private void TestReadFileWriteFile() {
@@ -158,7 +158,7 @@ public class CourseListActivity extends BaseActivity {
             opts.inSampleSize = 2;  // 非常重要，没有这个设置， BitmapFactory.decodeFile 会返回空
             Bitmap bitmap = BitmapFactory.decodeFile(bitmapFilePath, opts);
 
-            if (bitmap != null) {
+            if (false) { //bitmap != null) {
                 mImageView.setImageBitmap(bitmap);
                 Log.d(TAG, "用本地文件设置图片");
             } else {
@@ -181,24 +181,23 @@ public class CourseListActivity extends BaseActivity {
                 httpGetCourseFilesV1();
             }
         }
-        listToMap();
+        currentCourseFileListToCurrentCourseFileMap();
     }
 
     private void registerListener() {
         mCourseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int hasDownload = mList.get(position).hasDownload;
                 Intent intent = new Intent(getApplicationContext(), MusicActivity.class);
 
-                String musicUrl = SPUtils.getImgOrMp3Url(mList.get(position).getCourseId(), mList.get(position).getMp3FileName());
+                String musicUrl = SPUtils.getImgOrMp3Url(mCourseFileList.get(position).getCourseId(), mCourseFileList.get(position).getMp3FileName());
                 intent.putExtra("music_url", musicUrl);
                 intent.putExtra("current_position", position);
-                intent.putExtra("title", SPUtils.getTitleFromName(mList.get(position).getFileName()));
+                intent.putExtra("title", SPUtils.getTitleFromName(mCourseFileList.get(position).getFileName()));
 
                 appData.playingCourseId = mCouseId;
-                appData.playingCourseFileId = mList.get(position).getId();
-                appData.playingCourseFileList = mList;
+                appData.playingCourseFileId = mCourseFileList.get(position).getId();
+                appData.playingCourseFileList = mCourseFileList;
                 SPUtils.playingListToPlayingMap();
 
                 intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LIST_MODE_VALUE);
@@ -222,12 +221,12 @@ public class CourseListActivity extends BaseActivity {
                 if (mCourseListOrder == true) {
                     mCourseListOrder = false;
                     Constant.order = false;
-                    Collections.sort(mList, new ComparatorValues());
+                    Collections.sort(mCourseFileList, new ComparatorValues());
                     mReverseTextView.setText(" 倒序");
                 } else {
                     mCourseListOrder = true;
                     Constant.order = true;
-                    Collections.sort(mList, new ComparatorValues());
+                    Collections.sort(mCourseFileList, new ComparatorValues());
                     mReverseTextView.setText(" 正序");
                 }
 
@@ -236,14 +235,14 @@ public class CourseListActivity extends BaseActivity {
         });
     }
 
-    private void listToMap() {
-        if (currentCourseFileMap != null) {
-            currentCourseFileMap.clear();
+    private void currentCourseFileListToCurrentCourseFileMap() {
+        if (mCourseFileMap != null) {
+            mCourseFileMap.clear();
         }
-        currentCourseFileMap = new HashMap<>();
-        for (CourseFileList.CourseFile c : mList) {
+        mCourseFileMap = new HashMap<>();
+        for (CourseFileList.CourseFile c : mCourseFileList) {
             int i = c.getId();
-            currentCourseFileMap.put(i, c);
+            mCourseFileMap.put(i, c);
         }
     }
 
@@ -311,9 +310,9 @@ public class CourseListActivity extends BaseActivity {
             if (musicControl != null) {
                 if (mCouseId != musicControl.getCurrentCourseId()) {
                     Log.d(TAG, " freshLastPlay 当前课程列表的courseId  和 当前正在播放的courseId 不同， 设置为可见");
-                    if (currentCourseFileMap != null && currentCourseFileMap.get(mLastListenedCourseFileId) != null) {
+                    if (mCourseFileMap != null && mCourseFileMap.get(mLastListenedCourseFileId) != null) {
                         Log.d(TAG, " currentCourseFileMap.get(lastListenedCourseFileId) != null， 设置为可见");
-                        String lastTitle = SPUtils.getTitleFromName(currentCourseFileMap.get(mLastListenedCourseFileId).getFileName());
+                        String lastTitle = SPUtils.getTitleFromName(mCourseFileMap.get(mLastListenedCourseFileId).getFileName());
                         mLastPlayTextView.setText("上次播放: " + lastTitle);
                         mLastPlayTextView.setVisibility(View.VISIBLE);
                     }
@@ -322,9 +321,9 @@ public class CourseListActivity extends BaseActivity {
                     mLastPlayTextView.setVisibility(View.INVISIBLE);
                 }
             } else {
-                if (currentCourseFileMap != null && currentCourseFileMap.get(mLastListenedCourseFileId) != null) {
+                if (mCourseFileMap != null && mCourseFileMap.get(mLastListenedCourseFileId) != null) {
                     Log.d(TAG, " appData.courseFileMap 有数据， 设置为可见");
-                    String lastTitle = SPUtils.getTitleFromName(currentCourseFileMap.get(mLastListenedCourseFileId).getFileName());
+                    String lastTitle = SPUtils.getTitleFromName(mCourseFileMap.get(mLastListenedCourseFileId).getFileName());
                     mLastPlayTextView.setText("上次播放: " + lastTitle);
                     mLastPlayTextView.setVisibility(View.VISIBLE);
                 }
@@ -341,7 +340,7 @@ public class CourseListActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (mList != null && mList.size() > appData.playingCourseFileListPostion) {
+        if (mCourseFileList != null && mCourseFileList.size() > appData.playingCourseFileListPostion) {
             // 从悬浮窗进入音乐界面， 再回到列表界面时，如果是其他课程列表，不刷新
             Log.d(TAG, " 课程列表 onResume 刷新");
             if (Constant.musicControl != null && mCouseId == Constant.appData.playingCourseId) {
@@ -375,10 +374,10 @@ public class CourseListActivity extends BaseActivity {
             @Override
             public void onChanged(ListenedFile value) {
                 Log.d(TAG, " CourseListActivity 观察者监控到消息 = " + value);
-                if (mList != null && mList.size() >= Constant.appData.playingCourseFileListPostion
+                if (mCourseFileList != null && mCourseFileList.size() >= Constant.appData.playingCourseFileListPostion
                         && mCouseId == Constant.appData.playingCourseId) {
-                    mList.get(Constant.appData.playingCourseFileListPostion).listenedPercent = value.listenedPercent;
-                    mList.get(Constant.appData.playingCourseFileListPostion).listenedPosition = value.position;
+                    mCourseFileList.get(Constant.appData.playingCourseFileListPostion).listenedPercent = value.listenedPercent;
+                    mCourseFileList.get(Constant.appData.playingCourseFileListPostion).listenedPosition = value.position;
                     mAdapter.notifyDataSetChanged();
                 }
             }
@@ -391,9 +390,9 @@ public class CourseListActivity extends BaseActivity {
         mLastPlayTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CourseFile courseFile = currentCourseFileMap.get(mLastListenedCourseFileId);
+                CourseFile courseFile = mCourseFileMap.get(mLastListenedCourseFileId);
                 // android手机里播放音乐 按在listView中的位置找到音乐，而不是按fileId去找音乐，以便与播放上一首， 下一首一致, 以及自动播放下一首处理一致
-                appData.playingCourseFileListPostion = SPUtils.findPositionByFileId(mLastListenedCourseFileId, mList);
+                appData.playingCourseFileListPostion = SPUtils.findPositionByFileId(mLastListenedCourseFileId, mCourseFileList);
                 if (courseFile != null) {
                     Intent intent = new Intent(getApplicationContext(), MusicActivity.class);
                     String musicUrl = SPUtils.getImgOrMp3Url(courseFile.getId(), courseFile.getFileName());
@@ -401,7 +400,7 @@ public class CourseListActivity extends BaseActivity {
                     intent.putExtra("current_position", appData.playingCourseFileListPostion);
                     intent.putExtra("title", SPUtils.getTitleFromName(courseFile.getFileName()));
                     intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LAST_PlAY_MODE_VALUE);
-                    appData.playingCourseFileList = mList;
+                    appData.playingCourseFileList = mCourseFileList;
                     appData.playingCourseFileId = courseFile.getId();
                     appData.playingCourseId = mCouseId;
                     SPUtils.playingListToPlayingMap();
@@ -410,7 +409,7 @@ public class CourseListActivity extends BaseActivity {
             }
         });
 
-        mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mList, R.layout.dashboard_item_layout) {
+        mAdapter = new CommonAdapter<CourseFile>(getApplicationContext(), mCourseFileList, R.layout.dashboard_item_layout) {
             @Override
             public void convertView(ViewHolder holder, CourseFile courseFile) {
                 int percent = courseFile.getListenedPercent();
@@ -445,78 +444,40 @@ public class CourseListActivity extends BaseActivity {
                     holder.getView(R.id.percent).setVisibility(View.INVISIBLE);
                 }
 
-                int hasDownlaod = courseFile.getHasDownload();
+                int downloadMode = courseFile.getDownloadMode();
                 TextView downloadView = holder.getView(R.id.download);
                 View downloadProgressBar = holder.getView(R.id.download_progress_bar);
 
-                if (hasDownlaod != 1) {
+                if (downloadMode == 0) {
+                    downloadView.setVisibility(View.VISIBLE);
+                    downloadProgressBar.setVisibility(View.INVISIBLE);
                     downloadView.setText("下载");
+
                     downloadView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             downloadProgressBar.setVisibility(View.VISIBLE);
                             downloadView.setVisibility(View.INVISIBLE);
 
-                            String mp3Url = SPUtils.getImgOrMp3Url(courseFile.getCourseId(), courseFile.getFileName());
 
-                            HttpClient.okHttpDownloadFile(mp3Url, new HttpCallback<Response>() {
-                                @Override
-                                public void onSuccess(Response response) {
-                                    Context c = getApplicationContext();
-                                    String localStorePath = c.getFilesDir().getAbsolutePath() +
-                                            File.separator + courseFile.getCourseId() + "_" + courseFile.getFileName();
-                                    Sink sink = null;
-                                    BufferedSink bufferedSink = null;
-                                    try {
-                                        File dest = new File(localStorePath);
-                                        sink = Okio.sink(dest);
-                                        bufferedSink = Okio.buffer(sink);
-                                        bufferedSink.writeAll(response.body().source());
-
-                                        bufferedSink.close();
-                                        Constant.dbUtils.updateCourseFileDownload(courseFile.getId(), localStorePath);
-                                        Log.i(Constant.TAG, "下载成功, 文件路径保存到数据库，保存路径=" + localStorePath);
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        Log.i(Constant.TAG, "下载失败");
-                                    } finally {
-                                        if (bufferedSink != null) {
-                                            try {
-                                                bufferedSink.close();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-
-                                        Message msg = mListActivityHandler.obtainMessage();
-                                        Bundle bundle = new Bundle();
-                                        msg.setData(bundle);
-                                        // 更新列表
-                                        for (CourseFile courseFileItem : mList) {
-                                            if (courseFileItem.getId() == courseFile.getId()) {
-                                                courseFileItem.hasDownload = 1;
-                                                courseFileItem.localStorePath = localStorePath;
-                                                break;
-                                            }
-                                        }
-                                        mListActivityHandler.sendMessage(msg);
-                                    }
-                                }
-
-                                @Override
-                                public void onFail(Exception e) {
-
-                                }
-                            });
+                            Log.d(TAG, "发送开始下载的消息");
+                            Message msg = mListActivityHandler.obtainMessage();
+                            msg.what = 1;
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("course_file_id", courseFile.id);
+                            msg.setData(bundle);
+                            mListActivityHandler.sendMessage(msg);
                         }
                     });
-                } else {
-                    downloadView.setText("已下载");
-                }
 
-                downloadView.setVisibility(View.VISIBLE);
-                downloadProgressBar.setVisibility(View.INVISIBLE);
+                } else if (downloadMode == 1) {
+                    downloadView.setText("已下载");
+                    downloadView.setVisibility(View.VISIBLE);
+                    downloadProgressBar.setVisibility(View.INVISIBLE);
+                } else if (downloadMode == 2) {
+                    downloadView.setVisibility(View.INVISIBLE);
+                    downloadProgressBar.setVisibility(View.VISIBLE);
+                }
             }
         };
 
@@ -524,24 +485,106 @@ public class CourseListActivity extends BaseActivity {
         mAdapter.notifyDataSetChanged();
     }
 
+    private void downloadFileImpl(int courseFileId) {
+        CourseFile courseFile = mCourseFileMap.get(courseFileId);
+        Context c = getApplicationContext();
+        Constant.dbUtils.updateCourseFileDownload(courseFile.getId(), 2, "");
+        // 更新列表
+        for (CourseFile courseFileItem : mCourseFileList) {
+            if (courseFileItem.getId() == courseFile.getId()) {
+                courseFileItem.downloadMode = 2;
+                break;
+            }
+        }
+//        mAdapter.notifyDataSetChanged();
+
+
+        String mp3Url = SPUtils.getImgOrMp3Url(courseFile.getCourseId(), courseFile.getFileName());
+        Log.d(TAG, "开始下载 courseFile id=" + courseFileId + ", 文件名=" + courseFile.getFileName());
+        HttpClient.okHttpDownloadFile(mp3Url, new HttpCallback<Response>() {
+            @Override
+            public void onSuccess(Response response) {
+                String localStorePath = c.getFilesDir().getAbsolutePath() +
+                        File.separator + courseFile.getCourseId() + "_" + courseFile.getFileName();
+
+                Sink sink = null;
+                BufferedSink bufferedSink = null;
+                try {
+                    File dest = new File(localStorePath);
+                    sink = Okio.sink(dest);
+                    bufferedSink = Okio.buffer(sink);
+                    bufferedSink.writeAll(response.body().source());
+
+                    bufferedSink.close();
+                    Constant.dbUtils.updateCourseFileDownload(courseFile.getId(), 1, localStorePath);
+                    Log.i(Constant.TAG, "下载成功, 文件路径保存到数据库，保存路径=" + localStorePath);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.i(Constant.TAG, "下载失败");
+                } finally {
+                    if (bufferedSink != null) {
+                        try {
+                            bufferedSink.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    // 更新列表
+                    for (CourseFile courseFileItem : mCourseFileList) {
+                        if (courseFileItem.getId() == courseFile.getId()) {
+                            courseFileItem.downloadMode = 1;
+                            courseFileItem.localStorePath = localStorePath;
+                            break;
+                        }
+                    }
+                    Log.d(TAG, "下载完成，发送下载完成的消息");
+
+                    Message msg = mListActivityHandler.obtainMessage();
+                    msg.what = 2;
+                    Bundle bundle = new Bundle();
+                    msg.setData(bundle);
+                    mListActivityHandler.sendMessage(msg);
+                }
+            }
+
+            @Override
+            public void onFail(Exception e) {
+
+            }
+        });
+    }
+
     public Handler mListActivityHandler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
-            mAdapter.notifyDataSetChanged();
+            switch (msg.what) {
+                case 1:
+                    int courseFileId = msg.getData().getInt("course_file_id");
+                    Log.d(TAG, " 接受到下载 消息， courseFileId =" + courseFileId);
+                    downloadFileImpl(courseFileId);
+                    break;
+                case 2:
+                    mAdapter.notifyDataSetChanged();
+                    break;
+
+            }
+
         }
     };
 
     private boolean getCourseListFromSqlite3() {
-        mList = Constant.dbUtils.getSqliteCourseFileList(mCouseId);
+        mCourseFileList = Constant.dbUtils.getSqliteCourseFileList(mCouseId);
 
-        if (mList != null && mList.size() > 0) {
+        if (mCourseFileList != null && mCourseFileList.size() > 0) {
             Log.d(TAG, "mList 不为空，不走网络， 从本地sqlite3数据库读取 已听数据， 已听位置， 刷新列表");
             SqliteUserCourse sqlite3UserCourse = SPUtils.getUserListened(appData.UserCode, mCouseId);
             if (sqlite3UserCourse != null) {
                 Map<Integer, ListenedFile> listendFileMap = sqlite3UserCourse.listenedFileMap;
                 if (listendFileMap != null) {
-                    for (CourseFile courseFile : mList) {
+                    for (CourseFile courseFile : mCourseFileList) {
                         courseFile.id = courseFile.getId();
                         ListenedFile listenedFile = listendFileMap.get(courseFile.id);
                         if (listenedFile != null) {
@@ -571,20 +614,20 @@ public class CourseListActivity extends BaseActivity {
                     onFail(null);
                     return;
                 }
-                mList = response.getCourseFileList();
+                mCourseFileList = response.getCourseFileList();
                 SPUtils.playingListToPlayingMap();
 
                 int count = Constant.dbUtils.getFileCountByCourseId(mCouseId);
                 if (count <= 0) {
                     Log.d(TAG, "保存到本地数据库");
-                    Constant.dbUtils.saveCourseFiles(mList);
+                    Constant.dbUtils.saveCourseFiles(mCourseFileList);
                 }
 
                 if (Constant.HAS_USER) {
                     mLastListenedCourseFileId = response.getLastListenedCourseFileId();
                     Log.d(Constant.TAG, " 上次播放 lastListenedCourseFileId :" + mLastListenedCourseFileId);
                     if (currentListenedFileMap != null) {
-                        for (CourseFile courseFile : mList) {
+                        for (CourseFile courseFile : mCourseFileList) {
                             ListenedFile listenedFile = currentListenedFileMap.get(courseFile.id);
                             if (listenedFile != null) {
                                 courseFile.listenedPercent = listenedFile.listenedPercent;
@@ -597,10 +640,10 @@ public class CourseListActivity extends BaseActivity {
 //                courseListOrder = true;
                 if (mCourseListOrder == true) {
                     Constant.order = true;
-                    Collections.sort(mList, new ComparatorValues());
+                    Collections.sort(mCourseFileList, new ComparatorValues());
                 } else {
                     Constant.order = false;
-                    Collections.sort(mList, new ComparatorValues());
+                    Collections.sort(mCourseFileList, new ComparatorValues());
                 }
 
                 refreshView();
