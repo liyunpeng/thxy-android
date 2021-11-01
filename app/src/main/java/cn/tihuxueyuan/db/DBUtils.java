@@ -36,7 +36,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "112233445566778899101011abc.db", null, 1);
+        helper = new DBOpenHelper(context, "112233445566778899101011abcd.db", null, 1);
         db = helper.getWritableDatabase();
     }
 

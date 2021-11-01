@@ -172,6 +172,7 @@ public class CourseListActivity extends BaseActivity {
         }
     }
 
+
     private void getListViewData() {
         if (!getCourseListFromSqlite3()) {
             // 本地没获取到，再走网络获取
@@ -243,6 +244,17 @@ public class CourseListActivity extends BaseActivity {
         for (CourseFileList.CourseFile c : mCourseFileList) {
             int i = c.getId();
             mCourseFileMap.put(i, c);
+
+            Constant.appData.playingCourseFileMap.put(i, c);
+
+            if ( c.getDownloadMode() == 2) {
+
+                if ( Constant.downloadingMap.get(c.getId()) == null || Constant.downloadingMap.get(c.getId())  != 1 ){
+                    // 未在下载列表里
+                    Constant.dbUtils.updateCourseFileDownload(c.getId(), 0, "");
+                    c.downloadMode = 0;
+                }
+            }
         }
     }
 
@@ -496,9 +508,8 @@ public class CourseListActivity extends BaseActivity {
                 break;
             }
         }
-//        mAdapter.notifyDataSetChanged();
 
-
+        Constant.downloadingMap.put(courseFileId, 1);
         String mp3Url = SPUtils.getImgOrMp3Url(courseFile.getCourseId(), courseFile.getFileName());
         Log.d(TAG, "开始下载 courseFile id=" + courseFileId + ", 文件名=" + courseFile.getFileName());
         HttpClient.okHttpDownloadFile(mp3Url, new HttpCallback<Response>() {
@@ -521,6 +532,8 @@ public class CourseListActivity extends BaseActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Constant.downloadingMap.remove(courseFile.getId());
+                    Constant.dbUtils.updateCourseFileDownload(courseFile.getId(), 0, "");
                     Log.i(Constant.TAG, "下载失败");
                 } finally {
                     if (bufferedSink != null) {
@@ -530,6 +543,8 @@ public class CourseListActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                     }
+
+                    Constant.downloadingMap.remove(courseFile.getId());
 
                     // 更新列表
                     for (CourseFile courseFileItem : mCourseFileList) {
@@ -569,7 +584,6 @@ public class CourseListActivity extends BaseActivity {
                 case 2:
                     mAdapter.notifyDataSetChanged();
                     break;
-
             }
 
         }
@@ -645,6 +659,9 @@ public class CourseListActivity extends BaseActivity {
                     Constant.order = false;
                     Collections.sort(mCourseFileList, new ComparatorValues());
                 }
+
+
+                currentCourseFileListToCurrentCourseFileMap();
 
                 refreshView();
             }

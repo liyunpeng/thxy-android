@@ -8,10 +8,13 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.tihuxueyuan.activity.MusicActivity;
 import cn.tihuxueyuan.db.DBUtils;
 import cn.tihuxueyuan.globaldata.AppData;
+import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 
@@ -47,6 +50,7 @@ public class Constant {
     public static String LIST_MODE_LOCAL_VALUE = "list_mode_local_value";       //  从列表点击列表项进入音乐播放
 
 
+    public static Map<Integer, Integer> downloadingMap = new HashMap<>();
     public static final String CONTINURE_PLAY = "play";
     public static final String NEWPLAY = "new_play";
 

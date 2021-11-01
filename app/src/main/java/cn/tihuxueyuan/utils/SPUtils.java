@@ -243,6 +243,16 @@ public class SPUtils {
         for (CourseFileList.CourseFile c : Constant.appData.playingCourseFileList) {
             int i = c.getId();
             Constant.appData.playingCourseFileMap.put(i, c);
+
+            if ( c.getDownloadMode() == 2) {
+
+                if ( Constant.downloadingMap.get(c.getId()) == null && Constant.downloadingMap.get(c.getId())  != 1 ){
+                    // 未在下载列表里
+                    Constant.dbUtils.updateCourseFileDownload(c.getId(), 0, "");
+                    c.downloadMode = 0;
+                }
+            }
+
         }
     }
 
