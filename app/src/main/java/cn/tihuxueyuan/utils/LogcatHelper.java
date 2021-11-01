@@ -18,19 +18,22 @@ import java.util.Date;
 public class LogcatHelper {
 
     private static LogcatHelper INSTANCE = null;
-    private static String PATH_LOGCAT;
+    public static String PATH_LOGCAT;
+    public static String fileName;
     private LogDumper mLogDumper = null;
     private int mPId;
 
     public void init(Context context) {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) { // 优先保存到SD卡中
-            Log.d(TAG, "优先保存到SD卡中");
-            PATH_LOGCAT = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "documents/";
-        } else {// 如果SD卡不存在，就保存到本应用的目录下
-            Log.d(TAG, "如果SD卡不存在，就保存到本应用的目录下");
-            PATH_LOGCAT = context.getFilesDir().getAbsolutePath() + File.separator + "documents/";
-        }
+//        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) { // 优先保存到SD卡中
+//            Log.d(TAG, "优先保存到SD卡中");
+//            PATH_LOGCAT = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "documents/";
+//        } else {// 如果SD卡不存在，就保存到本应用的目录下
+//            Log.d(TAG, "如果SD卡不存在，就保存到本应用的目录下");
+//            PATH_LOGCAT = context.getFilesDir().getAbsolutePath() + File.separator + "documents/";
+//        }
 
+        PATH_LOGCAT = context.getFilesDir().getAbsolutePath() + File.separator;
+// PATH_LOGCAT =        /data/user/0/cn.tihuxueyuan/files/log-2021-11-01-03:17:25.log
 //        PATH_LOGCAT = Environment.getDataDirectory() + File.separator + "Thxy/";
 //        PATH_LOGCAT = Environment.getRootDirectory() + File.separator + "Thxy/";
         Log.d(TAG, " log 初始化 PATH_LOGCAT  =" + PATH_LOGCAT);
@@ -77,10 +80,13 @@ public class LogcatHelper {
         String cmds = null;
         private String mPID;
         private FileOutputStream out = null;
+
         public LogDumper(String pid, String dir) {
             mPID = pid;
             try {
-                out = new FileOutputStream(new File(dir, "log-" + getFileName() + ".log"));
+                // 有些人自己做的很好， 而对他从 生了排斥心， 瞧不起心，  最容易帮我们出离傲慢， 盯着别人的优点看， 不要看缺点
+                fileName = "log-" + getFileName() + ".log";
+                out = new FileOutputStream(new File(dir, fileName));
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -151,7 +157,7 @@ public class LogcatHelper {
     }
 
     public String getFileName() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
         String date = format.format(new Date(System.currentTimeMillis()));
         return date;// 2012年10月03日 23:41:31
     }

@@ -12,7 +12,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.databinding.FragmentNotificationsBinding;
+import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.LogcatHelper;
 import cn.tihuxueyuan.utils.SettingItemBar;
 
 public class NotificationsFragment extends Fragment {
@@ -49,9 +51,15 @@ public class NotificationsFragment extends Fragment {
             }
         });
 
-
         SettingItemBar n = root.findViewById(R.id.about);
         n.setAboutText("版本号:" + Constant.version);
+
+        root.findViewById(R.id.upload_log).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HttpClient.uploadFile(LogcatHelper.PATH_LOGCAT + LogcatHelper.fileName);
+            }
+        });
 
         return root;
     }

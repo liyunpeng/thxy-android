@@ -1,5 +1,7 @@
 package cn.tihuxueyuan.http;
 
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
 import android.graphics.Bitmap;
 //import android.support.annotation.NonNull;
 //import android.support.annotation.Nullable;
@@ -23,6 +25,7 @@ import cn.tihuxueyuan.utils.Constant;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 
 import cn.tihuxueyuan.model.SearchMusic;
@@ -36,8 +39,8 @@ import okio.Okio;
 import okio.Sink;
 
 public class HttpClient {
-//    public static final String BASE_URL = "http://10.0.2.2:8082/api/";
-    public static final String BASE_URL = "http://47.102.146.8:8082/api/";
+        public static final String BASE_URL = "http://10.0.2.2:8082/api/";
+//    public static final String BASE_URL = "http://47.102.146.8:8082/api/";
 
     static {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -71,6 +74,37 @@ public class HttpClient {
 //                    }
 //                });
 //    }
+
+
+    public static void uploadFile(String path)  {
+        Log.d(TAG, "上传文件路径=" + path);
+        File file = new File(path);
+        MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");
+        OkHttpClient client = new OkHttpClient();
+        MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);//文件和json参数共同上传
+        if (file != null) {
+            RequestBody body = RequestBody.create(MEDIA_TYPE_MARKDOWN, file);
+            // 参数分别为， 请求key ，文件名称 ， RequestBody
+            requestBody.addFormDataPart("file", file.getName(), body);
+        }
+        //添加taskid 字段到form-data
+        requestBody.addFormDataPart("taskid", "7e44afffa884a7476acf77aa6bc083bb1b2aeaff");
+
+        String uri =  BASE_URL + "fileUpload";
+        final Request request = new Request.Builder().url(uri).post(requestBody.build()).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i(TAG, "文件上传onFailure: " + e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.i(TAG, "文件上传 成功： onResponse: " + response.body().string());
+            }
+        });
+    }
 
     public static void getCourseTypes(String keyword, final HttpCallback<CourseTypeList> callback) {
         OkHttpUtils.post().url(BASE_URL + "getCourseTypesOk")

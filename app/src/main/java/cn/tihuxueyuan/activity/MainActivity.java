@@ -76,8 +76,8 @@ public class MainActivity extends BaseActivity {
         Constant.dbUtils = DBUtils.getInstance(getApplicationContext());
         this.context = this.getApplicationContext();
 
-//        logcatHelper = LogcatHelper.getInstance(getApplicationContext());
-//        logcatHelper.start();
+        logcatHelper = LogcatHelper.getInstance(getApplicationContext());
+        logcatHelper.start();
         appData = (AppData) getApplication();
         verifyStoragePermissions(this);
 

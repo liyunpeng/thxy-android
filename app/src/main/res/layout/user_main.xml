@@ -118,5 +118,15 @@
             >
         </cn.tihuxueyuan.utils.SettingItemBar>
 
+        <cn.tihuxueyuan.utils.SettingItemBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/upload_log"
+            my:icon="@drawable/little_monk"
+            my:hint="上传日志"
+            android:background="@drawable/selector"
+            >
+        </cn.tihuxueyuan.utils.SettingItemBar>
+
     </LinearLayout>
 </LinearLayout>
