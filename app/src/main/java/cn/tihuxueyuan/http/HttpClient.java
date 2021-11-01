@@ -22,6 +22,7 @@ import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.Constant;
+import cn.tihuxueyuan.utils.SysUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -88,8 +89,12 @@ public class HttpClient {
             requestBody.addFormDataPart("file", file.getName(), body);
         }
         //添加taskid 字段到form-data
-        requestBody.addFormDataPart("taskid", "7e44afffa884a7476acf77aa6bc083bb1b2aeaff");
+//        requestBody.addFormDataPart("taskid", "7e44afffa884a7476acf77aa6bc083bb1b2aeaff");
+        requestBody.addFormDataPart("model", SysUtil.getSystemModel());
+        requestBody.addFormDataPart("system_version", SysUtil.getSystemVersion());
+        requestBody.addFormDataPart("brand", SysUtil.getDeviceBrand());
 
+        
         String uri =  BASE_URL + "fileUpload";
         final Request request = new Request.Builder().url(uri).post(requestBody.build()).build();
         Call call = client.newCall(request);
