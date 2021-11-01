@@ -71,14 +71,12 @@ public class LogcatHelper {
     }
 
     private class LogDumper extends Thread {
-
         private Process logcatProc;
         private BufferedReader mReader = null;
         private boolean mRunning = true;
         String cmds = null;
         private String mPID;
         private FileOutputStream out = null;
-
         public LogDumper(String pid, String dir) {
             mPID = pid;
             try {
@@ -87,7 +85,6 @@ public class LogcatHelper {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
             /**`
              *
              * 日志等级：*:v , *:d , *:w , *:e , *:f , *:s
@@ -100,7 +97,6 @@ public class LogcatHelper {
             // cmds = "logcat  | grep \"(" + mPID + ")\"";//打印所有日志信息
             // cmds = "logcat -s way";//打印标签过滤信息
             cmds = "logcat *:e *:i | grep \"(" + mPID + ")\"";
-
         }
 
         public void stopLogs() {

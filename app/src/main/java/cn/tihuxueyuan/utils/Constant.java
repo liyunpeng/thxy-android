@@ -2,7 +2,6 @@ package cn.tihuxueyuan.utils;
 
 import static android.os.Build.VERSION.SDK_INT;
 
-import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.view.WindowManager;
@@ -11,11 +10,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.tihuxueyuan.activity.MusicActivity;
 import cn.tihuxueyuan.db.DBUtils;
 import cn.tihuxueyuan.globaldata.AppData;
-import cn.tihuxueyuan.model.CourseFileList;
-import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 
 public class Constant {
@@ -34,7 +30,6 @@ public class Constant {
     public static String FloatWindow = "float_window";
     public static String currentMusicName = "456";
     public static AppData appData;
-    public static FloatingImageDisplayService.FloatingControl floatingControl;
 
     public static MusicService.MusicControl musicControl;
     public static WindowManager mWM;

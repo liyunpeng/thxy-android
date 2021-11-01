@@ -54,7 +54,6 @@ import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.receiver.HomeReceiver;
 import cn.tihuxueyuan.receiver.MediaButtonReceiver;
-import cn.tihuxueyuan.service.FloatingImageDisplayService;
 import cn.tihuxueyuan.service.MusicService;
 import cn.tihuxueyuan.setting.AppConfig;
 import cn.tihuxueyuan.utils.Constant;
@@ -69,6 +68,51 @@ public class MainActivity extends BaseActivity {
     Context mContext;
     AudioManager mAudioManager;
     ComponentName mRemoteControlReceiverComponent;
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Constant.dbUtils = DBUtils.getInstance(getApplicationContext());
+        this.context = this.getApplicationContext();
+
+//        logcatHelper = LogcatHelper.getInstance(getApplicationContext());
+//        logcatHelper.start();
+        appData = (AppData) getApplication();
+        verifyStoragePermissions(this);
+
+        getConfig();
+        registerReceiver(headSetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+
+        String curProcess = getProcessName(this, Process.myPid());
+        if (!TextUtils.equals(curProcess, "cn.tihuxueyuan")) {
+            return;
+        }
+        initAppStatusListener();
+
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        getSupportActionBar().hide();
+        setContentView(binding.getRoot());
+
+        mContext = this.getApplicationContext();
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration
+//                .Builder(R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                .Builder( R.id.navigation_dashboard, R.id.navigation_notifications)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
+
+        String appId = "android_" + AppConfig.getVersionName(MainActivity.this) + "_" + AppConfig.getAppMetaData(MainActivity.this, "UMENG_CHANNEL");
+
+        Log.d(TAG, "onCreate: id:" + appId);
+
+        registerMusicReceiver();
+        registerHomeKeyReceiver();
+        registerHeadsetButtonReceiver();
+    }
 
     private void initAppStatusListener() {
         ForegroundCallbacks.init(getApplication()).addListener(new ForegroundCallbacks.Listener() {
@@ -147,50 +191,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Constant.dbUtils = DBUtils.getInstance(getApplicationContext());
-        this.context = this.getApplicationContext();
 
-//        logcatHelper = LogcatHelper.getInstance(getApplicationContext());
-//        logcatHelper.start();
-        appData = (AppData) getApplication();
-        verifyStoragePermissions(this);
-
-        getConfig();
-        registerReceiver(headSetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
-
-        String curProcess = getProcessName(this, Process.myPid());
-        if (!TextUtils.equals(curProcess, "cn.tihuxueyuan")) {
-            return;
-        }
-        initAppStatusListener();
-
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        getSupportActionBar().hide();
-        setContentView(binding.getRoot());
-
-        mContext = this.getApplicationContext();
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration
-//                .Builder(R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-                .Builder( R.id.navigation_dashboard, R.id.navigation_notifications)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.navView, navController);
-
-        String appId = "android_" + AppConfig.getVersionName(MainActivity.this) + "_" + AppConfig.getAppMetaData(MainActivity.this, "UMENG_CHANNEL");
-
-        Log.d(TAG, "onCreate: id:" + appId);
-
-        registerMusicReceiver();
-        registerHomeKeyReceiver();
-        registerHeadsetButtonReceiver();
-    }
 
     private void getConfig() {
         HttpClient.getConfig("", new HttpCallback<Config>() {
