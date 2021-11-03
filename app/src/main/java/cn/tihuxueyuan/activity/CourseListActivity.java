@@ -158,7 +158,7 @@ public class CourseListActivity extends BaseActivity {
             opts.inSampleSize = 2;  // 非常重要，没有这个设置， BitmapFactory.decodeFile 会返回空
             Bitmap bitmap = BitmapFactory.decodeFile(bitmapFilePath, opts);
 
-            if (false) { //bitmap != null) {
+            if (bitmap != null) {
                 mImageView.setImageBitmap(bitmap);
                 Log.d(TAG, "用本地文件设置图片");
             } else {
@@ -317,7 +317,7 @@ public class CourseListActivity extends BaseActivity {
     private void refreshLastPlay() {
 //        if ( appData.lastCourseId == -1  && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
 //        if (lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
-        if (mLastListenedCourseFileId >= 0 && appData.lastCourseId != mCouseId) {
+        if (mLastListenedCourseFileId >= 0 && appData.playingCourseId != mCouseId  ) {
             Log.d(TAG, " freshLastPlay 准备设置为 可见 ");
             if (musicControl != null) {
                 if (mCouseId != musicControl.getCurrentCourseId()) {

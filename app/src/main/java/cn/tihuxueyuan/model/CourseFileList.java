@@ -10,11 +10,15 @@ public class CourseFileList {
 
     @SerializedName("last_listened_course_file_id")
     private int LastListenedCourseFileId;
-    public int getLastListenedCourseFileId() { return  LastListenedCourseFileId;}
+
+    public int getLastListenedCourseFileId() {
+        return  LastListenedCourseFileId;
+    }
 
     public List<CourseFile> getCourseFileList() {
         return courseFileList;
     }
+
     public void setCourseList(List<CourseFile> courseList) {
         this.courseFileList = courseList;
     }

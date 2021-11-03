@@ -196,6 +196,8 @@ public class MusicService extends Service {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 Log.d(TAG, " 切换 下一首 时发生错误 ， 错误被拦截， 不会回调到onCompletion ");
+
+
                 return true;
             }
         });
@@ -375,6 +377,7 @@ public class MusicService extends Service {
                 mPlayer.stop();
             mPlayer.release();
             mPlayer = null;
+//            mPlayer.setOnDrmPreparedListener();
             mNotificationManager.cancel(NOTIFICATION_ID);
         }
 

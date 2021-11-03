@@ -185,7 +185,6 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
         super.onRestart();
     }
 
-
     private void registerListener() {
 
         findViewById(R.id.play_previous).setOnClickListener(this);

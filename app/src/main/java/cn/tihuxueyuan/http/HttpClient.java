@@ -40,8 +40,8 @@ import okio.Okio;
 import okio.Sink;
 
 public class HttpClient {
-        public static final String BASE_URL = "http://10.0.2.2:8082/api/";
-//    public static final String BASE_URL = "http://47.102.146.8:8082/api/";
+//        public static final String BASE_URL = "http://10.0.2.2:8082/api/";
+    public static final String BASE_URL = "http://47.102.146.8:8082/api/";
 
     static {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -93,8 +93,9 @@ public class HttpClient {
         requestBody.addFormDataPart("model", SysUtil.getSystemModel());
         requestBody.addFormDataPart("system_version", SysUtil.getSystemVersion());
         requestBody.addFormDataPart("brand", SysUtil.getDeviceBrand());
+        requestBody.addFormDataPart("app_version", Constant.version);
 
-        
+
         String uri =  BASE_URL + "fileUpload";
         final Request request = new Request.Builder().url(uri).post(requestBody.build()).build();
         Call call = client.newCall(request);
