@@ -1,8 +1,10 @@
 package cn.tihuxueyuan.activity;
 
 import static cn.tihuxueyuan.utils.Constant.TAG;
+import static cn.tihuxueyuan.utils.Constant.dbUtils;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,8 +32,10 @@ import cn.tihuxueyuan.basic.BaseActivity;
 import cn.tihuxueyuan.commonlistview.CommonAdapter;
 import cn.tihuxueyuan.commonlistview.ViewHolder;
 import cn.tihuxueyuan.globaldata.AppData;
+import cn.tihuxueyuan.http.CustomResponse;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
+import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseFileList.CourseFile;
@@ -42,16 +46,21 @@ import cn.tihuxueyuan.model.UserListenedCourse;
 import cn.tihuxueyuan.utils.ComparatorValues;
 import cn.tihuxueyuan.utils.Constant;
 import cn.tihuxueyuan.utils.SPUtils;
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Sink;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,6 +73,7 @@ public class CourseListActivity extends BaseActivity {
     private AppData appData;
     private boolean mCourseListOrder = true;
     private int mCouseId;
+    private int mUpdateVersion;
     private int mLastListenedCourseFileId = -1;
     private String mTitle;
     private String mIntroduction;
@@ -88,6 +98,7 @@ public class CourseListActivity extends BaseActivity {
         setContentView(R.layout.course_list_activity);
 
         mCouseId = getIntent().getIntExtra("course_id", 0);
+        mUpdateVersion = getIntent().getIntExtra("update_version", 0);
         mTitle = getIntent().getStringExtra("title");
         mIntroduction = getIntent().getStringExtra("introduction");
         appData = (AppData) getApplication();
@@ -181,6 +192,20 @@ public class CourseListActivity extends BaseActivity {
             } else {
                 httpGetCourseFilesV1();
             }
+        } else {
+            Message msg = mListActivityHandler.obtainMessage();
+            msg.what = 3;
+            Bundle bundle = new Bundle();
+            bundle.putInt("course_id", mCouseId);
+            bundle.putInt("update_version", mCourseFileList.size());
+
+
+
+            bundle.putInt("max_course_file_id", mCourseFileList.size());
+
+//            MaxCourseFileId int    `json:"max_course_file_id"`
+            msg.setData(bundle);
+            mListActivityHandler.sendMessage(msg);
         }
         currentCourseFileListToCurrentCourseFileMap();
     }
@@ -247,9 +272,9 @@ public class CourseListActivity extends BaseActivity {
 
             Constant.appData.playingCourseFileMap.put(i, c);
 
-            if ( c.getDownloadMode() == 2) {
+            if (c.getDownloadMode() == 2) {
 
-                if ( Constant.downloadingMap.get(c.getId()) == null || Constant.downloadingMap.get(c.getId())  != 1 ){
+                if (Constant.downloadingMap.get(c.getId()) == null || Constant.downloadingMap.get(c.getId()) != 1) {
                     // 未在下载列表里
                     Constant.dbUtils.updateCourseFileDownload(c.getId(), 0, "");
                     c.downloadMode = 0;
@@ -317,7 +342,7 @@ public class CourseListActivity extends BaseActivity {
     private void refreshLastPlay() {
 //        if ( appData.lastCourseId == -1  && lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
 //        if (lastListenedCourseFileId >= 0 && appData.lastCourseId != Integer.parseInt(currentCouseId)) {
-        if (mLastListenedCourseFileId >= 0 && appData.playingCourseId != mCouseId  ) {
+        if (mLastListenedCourseFileId >= 0 && appData.playingCourseId != mCouseId) {
             Log.d(TAG, " freshLastPlay 准备设置为 可见 ");
             if (musicControl != null) {
                 if (mCouseId != musicControl.getCurrentCourseId()) {
@@ -584,6 +609,23 @@ public class CourseListActivity extends BaseActivity {
                 case 2:
                     mAdapter.notifyDataSetChanged();
                     break;
+                case 3:
+                    Map map = new HashMap<>();
+                    int courseId = msg.getData().getInt("course_id");
+                    int updateVersion = msg.getData().getInt("update_version");
+                    map.put("id", courseId);
+                    map.put("update_version", updateVersion);
+//                    map.put("course_file_id", fileCount);
+
+
+//                    type CommonRequest struct {
+//                    Id           int    `json:"id"` // id 为course id 或为 type id
+//                    CourseFileId int    `json:"course_file_id"`
+//                    Name         string `json:"name"`
+//                    FileCount    int    `json:"file_count"`
+//                }
+                    getFileListDelayed(map);
+                    break;
             }
 
         }
@@ -620,6 +662,127 @@ public class CourseListActivity extends BaseActivity {
         }
     }
 
+    private void getFileListDelayed(Map map) {
+        Gson gson = new Gson();
+        String param = gson.toJson(map);
+        JsonPost.postHttpRequest("findCourseFileByCourseIdAndUpdateVersion", param, new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(Constant.TAG, "findCourseFileByCourseIdAndUpdateVersion onFailure: 失败" + e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response == null) {
+                        Log.d(TAG, "findCourseFileByCourseIdAndCount 接口返回为空， 课程列表不需要更新");
+                        return;
+                    }
+
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
+                    StringBuffer stringBuffer = new StringBuffer("");
+                    // 获取本系统的行分割线
+//                    String NL = System.getProperty("line.separator");
+//                    // 把http响应的输入流数据按行读取到StringBuffer中
+//                    String line = "";
+//                    while ((line = bufferedReader.readLine()) != null) {
+//                        stringBuffer.append(line + NL);
+//                    }
+
+                    // 把http响应的输入流数据按行读取到StringBuffer中
+                    String line = "";
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuffer.append(line);
+                    }
+                    String result = stringBuffer.toString();
+                    Log.d(ContentValues.TAG, "result = " + result);
+
+                    if (result.length() < 5 ) {
+                        return;
+                    }
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<CourseFile>>() {}.getType();
+                    List<CourseFile> courseFileList = gson.fromJson(result, listType);
+
+                    List<CourseFile> courseFileListDiff = new ArrayList<>();
+
+                    int saveFlag = 0;
+                    int updateFlag = 0;
+                    for (CourseFile c : courseFileList) {
+                        if (mCourseFileMap.get(c.getId()) == null) {
+                            mCourseFileMap.put(c.getId(), c);
+                            mCourseFileList.add(c);
+                            saveFlag = 1;
+                            dbUtils.saveCourseFile(c);
+                            Log.d(TAG, " 新增courseFile文件更新到当前表");
+                        } else if ( !mCourseFileMap.get(c.getId()).getFileName().equalsIgnoreCase( c.getFileName())) {
+                            updateFlag = 1;
+                            dbUtils.updateCourseFileFilename(c.id, c.getFileName());
+                        }
+                    }
+
+
+                    if (  updateFlag == 1){
+                        Log.d(TAG, " 有新增courseFile文件， 当前课程列表重新读取数据库更新");
+                        getCourseListFromSqlite3();
+
+//                        mAdapter.notifyDataSetChanged();
+                        Message msg = mListActivityHandler.obtainMessage();
+                        msg.what = 2;
+                        Bundle bundle = new Bundle();
+                        msg.setData(bundle);
+                        mListActivityHandler.sendMessage(msg);
+                    }else if (saveFlag == 1) {
+//                        mAdapter.notifyDataSetChanged();
+
+                        Message msg = mListActivityHandler.obtainMessage();
+                        msg.what = 2;
+                        Bundle bundle = new Bundle();
+                        msg.setData(bundle);
+                        mListActivityHandler.sendMessage(msg);
+                    }
+
+
+
+//                    mCourseFileList =
+//                    CourseFile course = gson.fromJson(result, CourseFile.class);
+
+
+//                    intent.putExtra("music_url", musicUrl);
+//                    intent.putExtra("current_position", position);
+//                    intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LIST_MODE_VALUE);
+//
+//                    appData.playingCourseFileId = mList.get(position).getId();
+//                    appData.playingCourseId = mList.get(position).getCourseId();
+//
+//                    appData.currentCourseImageFileName = course.getData().getImgFileName();
+//
+//                    String titleArr[] = mList.get(position).getFileName().split("\\.");
+//                    intent.putExtra("title", titleArr[0]);
+//
+//
+//                    Constant.order = true;
+//                    Collections.sort(mList, new ComparatorValues());
+//
+//                    appData.playingCourseFileList = mList;
+//                    appData.playingCourseFileId = mList.get(position).getId();
+//                    SPUtils.playingListToPlayingMap();
+//                    startActivity(intent);
+//                    Log.d(Constant.TAG, "onResponse: " + result);
+
+                } catch (IllegalStateException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
+
     private void httpGetCourseFilesV1() {
         HttpClient.getCourseFilesByCourseIdV1(mCouseId, new HttpCallback<CourseFileList>() {
             @Override
@@ -633,7 +796,7 @@ public class CourseListActivity extends BaseActivity {
 
                 int count = Constant.dbUtils.getFileCountByCourseId(mCouseId);
                 if (count <= 0) {
-                    Log.d(TAG, "保存到本地数据库");
+                    Log.d(TAG, "网络获取的CourseFile 保存到本地数据库");
                     Constant.dbUtils.saveCourseFiles(mCourseFileList);
                 }
 

@@ -40,8 +40,9 @@ import okio.Okio;
 import okio.Sink;
 
 public class HttpClient {
-//        public static final String BASE_URL = "http://10.0.2.2:8082/api/";
-    public static final String BASE_URL = "http://47.102.146.8:8082/api/";
+    public static final String BASE_URL = "http://10.0.2.2:8082/api/";
+//    public static final String BASE_URL = "http://47.102.146.8:8082/api/";
+//    public static final String BASE_URL = "http://119.3.151.253:8082/api/";
 
     static {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -77,7 +78,7 @@ public class HttpClient {
 //    }
 
 
-    public static void uploadFile(String path)  {
+    public static void uploadFile(String path) {
         Log.d(TAG, "上传文件路径=" + path);
         File file = new File(path);
         MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");
@@ -96,7 +97,7 @@ public class HttpClient {
         requestBody.addFormDataPart("app_version", Constant.version);
 
 
-        String uri =  BASE_URL + "fileUpload";
+        String uri = BASE_URL + "fileUpload";
         final Request request = new Request.Builder().url(uri).post(requestBody.build()).build();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {

@@ -46,6 +46,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 + "id_auto  INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "id INT, "
                 + "type_id INT, "
+                + "update_version INT, "
                 + "title VARCHAR, "
                 + "introduction VARCHAR, "
                 + "img_file_name VARCHAR "
@@ -56,7 +57,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 + "id INT, "
                 + "number INT, "
                 + "course_id INT, "
-                + "download_mode INT, "  // 0 ： 未下载， 1：已下载， 2： 下载过程中
+                + "download_mode INT, "   // 0 ： 未下载， 1：已下载， 2： 下载过程中
                 + "local_store_path VARCHAR, "
                 + "mp3_file_name VARCHAR, "
                 + "duration VARCHAR "
@@ -81,6 +82,9 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 + "signature VARCHAR, "
                 + "qq VARCHAR "
                 + ")");
+
+        db.execSQL("CREATE UNIQUE INDEX index_course_id on course (id)");
+        db.execSQL("CREATE UNIQUE INDEX index_course_file_id on course_file (id)");
 
         Log.d( TAG, " 成功创建sqlite3 数据库表 ");
     }

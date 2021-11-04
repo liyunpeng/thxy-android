@@ -189,6 +189,8 @@ public class MusicService extends Service {
                 updateNotificationShow(Constant.currentMusicName);
                 mBaseActivityFloatLiveData.postValue(Constant.currentMusicName);
                 mMusicActivityLiveData.postValue(NEWPLAY);
+
+
             }
         });
 
@@ -196,6 +198,7 @@ public class MusicService extends Service {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
                 Log.d(TAG, " 切换 下一首 时发生错误 ， 错误被拦截， 不会回调到onCompletion ");
+
 
 
                 return true;
@@ -387,6 +390,7 @@ public class MusicService extends Service {
 
         public void playListened(String action) {
             boolean isPlaying = mPlayer.isPlaying();
+
             Log.d(TAG, "播放器是否在播放 isPlaying = " + isPlaying);
             if ((action == CONTINURE_PLAY || action == PAUSE) && isPlaying ) {
                 Log.d(TAG, "不初始化播放器, 也不播放 ");
@@ -567,8 +571,10 @@ public class MusicService extends Service {
 
             Log.d(TAG, "musicControl init 调用， 执行player.reset()");
             mPlayer.reset();
+
             try {
                 mPlayer.setDataSource(url);
+                mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mPlayer.prepareAsync();
             } catch (IOException e) {
                 e.printStackTrace();

@@ -36,7 +36,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "112233445566778899101011abcd.db", null, 1);
+        helper = new DBOpenHelper(context, "112233445566778899101011abcde.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -70,6 +70,7 @@ public class DBUtils {
             contentValues.put("type_id", course.getTypeId());
             contentValues.put("introduction", course.getIntroduction());
             contentValues.put("id", course.getId());
+            contentValues.put("update_version", course.getUpdateVersion());
             db.insert(DBOpenHelper.COURSE, null, contentValues);
         }
     }
@@ -92,6 +93,17 @@ public class DBUtils {
         return courseList;
     }
 
+
+    public void saveCourseFile(CourseFileList.CourseFile courseFile ){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", courseFile.getId());
+        contentValues.put("course_id", courseFile.getCourseId());
+        contentValues.put("number", courseFile.getNumber());
+        contentValues.put("mp3_file_name", courseFile.getMp3FileName());
+        contentValues.put("duration", courseFile.getDuration());
+        contentValues.put("download_mode", 0);
+        db.insert(DBOpenHelper.COURSE_FILE, null, contentValues);
+    }
     public void saveCourseFiles(List<CourseFileList.CourseFile> courseFileList) {
         for (CourseFileList.CourseFile courseFile : courseFileList) {
             ContentValues contentValues = new ContentValues();
@@ -103,6 +115,13 @@ public class DBUtils {
             contentValues.put("download_mode", 0);
             db.insert(DBOpenHelper.COURSE_FILE, null, contentValues);
         }
+    }
+
+    public void updateCourseFileFilename( int id,  String fileName) {
+        ContentValues cv = new ContentValues();
+        cv.put("mp3_file_name", fileName);
+        String args[] = {String.valueOf(id) };
+        db.update(DBOpenHelper.COURSE_FILE, cv, " id = ?", args);
     }
 
     public void updateCourseFileDownload( int id, int downloadMode,  String storeLocalPath) {

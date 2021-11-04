@@ -23,6 +23,9 @@ public class CourseList {
         @SerializedName("type_id")
         private int typeId;
 
+        @SerializedName("update_version")
+        private int updateVersion;
+
         @SerializedName("title")
         private String title;
 
@@ -67,6 +70,10 @@ public class CourseList {
 
         public int getId() {
             return id;
+        }
+
+        public int getUpdateVersion() {
+            return updateVersion;
         }
 
         public void setId(int id) {

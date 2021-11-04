@@ -48,6 +48,8 @@ public class Constant {
     public static Map<Integer, Integer> downloadingMap = new HashMap<>();
     public static final String CONTINURE_PLAY = "play";
     public static final String NEWPLAY = "new_play";
+    public static final String WAITING = "waiting";
+//    public static final String NEWPLAY = "new_play";
 
     public static final String PAUSE = "pause";
     /**

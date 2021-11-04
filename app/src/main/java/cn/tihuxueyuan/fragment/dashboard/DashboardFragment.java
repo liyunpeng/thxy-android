@@ -127,7 +127,7 @@ public class DashboardFragment extends Fragment {
                 new RecyclerViewClickListener2.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseListActivity.class);//创建意图对象
+                        Intent intent = new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseListActivity.class);
                         intent.putExtra("course_id", mCourseList.get(position).getId());
                         intent.putExtra("title", mCourseList.get(position).getTitle());
                         intent.putExtra("introduction", mCourseList.get(position).getIntroduction());
@@ -189,8 +189,10 @@ public class DashboardFragment extends Fragment {
                 mRecycleAdapter.setList(mCourseList);
                 mRecycleAdapter.notifyDataSetChanged();
 
+                // 安隐，
+
                 int count = Constant.dbUtils.getCourseListCountByTypeId(typeId);
-                if (count <= 0) {
+                if (count <= mCourseList.size()) {
                     Log.d(TAG, "类型保存到本地数据库");
                     Constant.dbUtils.saveCourseList(mCourseList);
                 }

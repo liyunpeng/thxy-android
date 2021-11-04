@@ -54,6 +54,7 @@ public class CourseFileList {
         @SerializedName("listened_position")
         public int listenedPosition;
 
+
         public int getDownloadMode() { return downloadMode;}
         public int getCourseId() { return  courseId;}
         public String getFileName() {

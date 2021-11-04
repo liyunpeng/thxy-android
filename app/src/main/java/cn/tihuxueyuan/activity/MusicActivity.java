@@ -4,6 +4,7 @@ import static cn.tihuxueyuan.utils.Constant.NEWPLAY;
 import static cn.tihuxueyuan.utils.Constant.PAUSE;
 import static cn.tihuxueyuan.utils.Constant.CONTINURE_PLAY;
 import static cn.tihuxueyuan.utils.Constant.TAG;
+import static cn.tihuxueyuan.utils.Constant.WAITING;
 import static cn.tihuxueyuan.utils.Constant.musicControl;
 
 import android.app.Activity;
@@ -50,6 +51,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
     private static TextView mProgressTextView;
     private static TextView mTotalTextView;
     private static TextView mTitleTextView;
+    private ImageView mWaitPrepareView;
     public static LiveDataBus.BusMutableLiveData<ListenedFile> mCourseListActivityLiveData;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -68,6 +70,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
         seekBar = findViewById(R.id.seek_bar);
         mTitleTextView = findViewById(R.id.song_name);
         mPlayPauseView = findViewById(R.id.play_pause);
+        mWaitPrepareView = findViewById(R.id.wait_prepare);
 
         musicActivityObserver();
         registerListener();
@@ -315,6 +318,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
 
     private void musicActivityObserver() {
         mCourseListActivityLiveData = LiveDataBus.getInstance().with(Constant.CourseListLiveDataObserverTag, ListenedFile.class);
+
         mMusicActivityLiveData = LiveDataBus.getInstance().with(Constant.MusicLiveDataObserverTag, String.class);
         mMusicActivityLiveData.observe(MusicActivity.this, true, new Observer<String>() {
             @Override
@@ -332,6 +336,11 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener 
                     case NEWPLAY:
                         mMusicTitle = SPUtils.getTitleFromName(appData.playingCourseFileList.get(appData.playingCourseFileListPostion).getFileName());
                         mTitleTextView.setText(mMusicTitle);
+                        break;
+
+                    case WAITING:
+                        mWaitPrepareView.setVisibility(View.VISIBLE);
+
                         break;
 //                    case CLOSE:
 //                        btnPlay.setIcon(getDrawable(R.mipmap.icon_play));
