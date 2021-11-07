@@ -303,8 +303,12 @@ public class HttpClient {
     public static void getCourseByTypeId(int typeId, final HttpCallback<CourseList> callback) {
         Map<String, String> params = new HashMap<>();
         params.put("id", String.valueOf(typeId));
-
-        //  RequestBody r = RequestBody.create(MediaType.parse("application/json"), "aa");
+        /*
+         请求格式非postJson， 服务端需要这种方式获取：  
+         	okhttpRequest := new(types.CourseFileRequestOkhttp)
+	        c.Bind(okhttpRequest)
+	        reauestId := c.Request.PostForm["id"] 获取 ，
+         */
         OkHttpUtils.post().url(BASE_URL + "findCourseByTypeIdOk")
                 .params(params)
                 .build()

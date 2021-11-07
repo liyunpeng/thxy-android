@@ -4,16 +4,19 @@ import static cn.tihuxueyuan.utils.Constant.LAST_TYPE_ID;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.TYPE_SELECTED;
 import static cn.tihuxueyuan.utils.Constant.LAST_TAB_SELECTED_POSITION;
+import static cn.tihuxueyuan.utils.Constant.dbUtils;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,17 +25,25 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+
 import cn.tihuxueyuan.R;
 import cn.tihuxueyuan.activity.CourseListActivity;
 import cn.tihuxueyuan.adapter.TabAdapterA;
 import cn.tihuxueyuan.basic.ActivityManager;
 import cn.tihuxueyuan.databinding.FragmentDashboardBinding;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.http.HttpCallback;
+import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.listenner.RecyclerViewClickListener2;
 import cn.tihuxueyuan.model.CourseList;
 import cn.tihuxueyuan.model.CourseList.Course;
@@ -40,6 +51,9 @@ import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.adapter.GridRecycleAdapter;
 import cn.tihuxueyuan.model.CourseTypeList.CourseType;
 import cn.tihuxueyuan.utils.Constant;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import q.rorbin.verticaltablayout.VerticalTabLayout;
 import q.rorbin.verticaltablayout.widget.TabView;
 
@@ -48,12 +62,42 @@ public class DashboardFragment extends Fragment {
     private DashboardViewModel dashboardViewModel;
     private FragmentDashboardBinding binding;
     private List<CourseType> mCourseTypeList = new ArrayList<>();
+    private Map<Integer,  CourseType> mCourseTypeMap = new HashMap<>();
+//    <Integer, CourseFileList.CourseFile>
     private List<Course> mCourseList = new ArrayList<>();
+    private Map<Integer,  Course> mCourseMap = new HashMap<>();
     private VerticalTabLayout mVerticalTabView;
     private RecyclerView mRecyclerView;
     private GridRecycleAdapter mRecycleAdapter;
     private int mTypeId;
+    private int mCourseUpdateVersion;
 
+
+    // list 转 map
+    public  void listToMap() {
+        if (mCourseTypeMap != null) {
+            mCourseTypeMap.clear();
+        }
+        mCourseTypeMap = new HashMap<>();
+        for (CourseType c : mCourseTypeList) {
+            int i = c.getId();
+            mCourseTypeMap.put(i, c);
+        }
+
+
+    }
+
+
+    public void courseListToCourseMap() {
+        if (mCourseMap != null) {
+            mCourseMap.clear();
+        }
+        mCourseMap = new HashMap<>();
+        for (Course c : mCourseList) {
+            int i = c.getId();
+            mCourseMap.put(i, c);
+        }
+    }
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
@@ -83,9 +127,13 @@ public class DashboardFragment extends Fragment {
                 Log.d(TAG, "第一次用，从mCourseTypeList获取垂直导航菜单栏第一个菜单项的typeId, typeId=" + mCourseTypeList.get(0).getId());
                 mTypeId = mCourseTypeList.get(0).getId();
             }
+            listToMap();
+            mCourseUpdateVersion = mCourseTypeMap.get(mTypeId).getCourseUpdateVersion();
             refreshRecycleView(mTypeId);
             mVerticalTabView.setTabSelected(lastTabSelectedPosition);
+
         }
+
         return root;
     }
 
@@ -100,9 +148,128 @@ public class DashboardFragment extends Fragment {
             if (mRecyclerView.getAdapter() == null) {
                 mRecyclerView.setAdapter(mRecycleAdapter);
             }
+            courseListToCourseMap();
             mRecycleAdapter.setList(mCourseList);
+
             mRecycleAdapter.notifyDataSetChanged();
+
+            Message msg = mDashHandler.obtainMessage();
+            msg.what = 3;
+            Bundle bundle = new Bundle();
+            bundle.putInt("type_id", mTypeId);
+            bundle.putInt("course_update_version", mCourseUpdateVersion);
+            msg.setData(bundle);
+            mDashHandler.sendMessage(msg);
         }
+    }
+
+    public Handler mDashHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+
+                    break;
+                case 2:
+                    mRecycleAdapter.notifyDataSetChanged();
+                    break;
+                case 3:
+                    Map map = new HashMap<>();
+                    int typeId = msg.getData().getInt("type_id");
+                    int courseUpdateVersion = msg.getData().getInt("course_update_version");
+                    map.put("id", typeId);
+                    map.put("course_update_version", courseUpdateVersion);
+                    getCourseListDelayed(map);
+                    break;
+            }
+        }
+    };
+
+    private void getCourseListDelayed(Map map) {
+        Gson gson = new Gson();
+        String param = gson.toJson(map);
+        JsonPost.postHttpRequest("findCourseByTypeIdAndUpdateVersion", param, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(Constant.TAG, "findCourseByTypeIdAndUpdateVersion onFailure: 失败" + e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response == null) {
+                        Log.d(TAG, "findCourseByTypeIdAndUpdateVersion 接口返回为空， 课程列表不需要更新");
+                        return;
+                    }
+
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
+                    StringBuffer stringBuffer = new StringBuffer("");
+                    String line = "";
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuffer.append(line);
+                    }
+                    String result = stringBuffer.toString();
+                    Log.d(ContentValues.TAG, "result = " + result);
+
+                    if (result.length() < 5) {
+                        return;
+                    }
+                    Gson gson = new Gson();
+//                    Type listType = new TypeToken<List<CourseFile>>() {
+//                    }.getType();
+//                    List<CourseFile> courseFileList = gson.fromJson(result, listType);
+
+                    CourseList c1 = gson.fromJson(result, CourseList.class);
+
+                    List<CourseList.Course> courseList = c1.getCourseList();
+                    int updateVersion = c1.getCourseUpdateVersion();
+                    int saveFlag = 0;   // 新增课程
+                    int updateFlag = 0;  // 课程名更新
+                    for (CourseList.Course c : courseList) {
+                        if (mCourseMap.get(c.getId()) == null) {
+                            mCourseMap.put(c.getId(), c);
+                            mCourseList.add(c);
+                            saveFlag = 1;
+                            dbUtils.saveCourse(c);
+                            Log.d(TAG, " 新增courseFile文件更新到当前表");
+                        } else if (!mCourseMap.get(c.getId()).getTitle().equalsIgnoreCase(c.getTitle())) {
+                            updateFlag = 1;
+                            dbUtils.updateCourse(c.getId(), c.getTitle());
+                        }
+                    }
+
+                    if (updateFlag == 1) {
+                        Log.d(TAG, " 有新增courseFile文件， 当前课程列表重新读取数据库更新");
+//                        getCourseListFromSqlite3();
+                        mCourseList = Constant.dbUtils.getCourseListByTypeId(mTypeId);
+                        sendRecyleAdapterNotify();
+                        //  本地update_version与服务器一致
+                        dbUtils.updateCourseTypeUpdateVersion(mTypeId, updateVersion);
+                    } else if (saveFlag == 1) {
+                        sendRecyleAdapterNotify();
+
+                        // 本地update_version 与服务器一致
+                        dbUtils.updateCourseTypeUpdateVersion(mTypeId, updateVersion);
+                    }
+
+                } catch (IllegalStateException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void sendRecyleAdapterNotify() {
+        Message msg = mDashHandler.obtainMessage();
+        msg.what = 2;
+        Bundle bundle = new Bundle();
+        msg.setData(bundle);
+        mDashHandler.sendMessage(msg);
     }
 
     @Override
@@ -129,6 +296,7 @@ public class DashboardFragment extends Fragment {
                     public void onItemClick(View view, int position) {
                         Intent intent = new Intent(DashboardFragment.this.getActivity().getBaseContext(), CourseListActivity.class);
                         intent.putExtra("course_id", mCourseList.get(position).getId());
+                        intent.putExtra("update_version", mCourseList.get(position).getUpdateVersion());
                         intent.putExtra("title", mCourseList.get(position).getTitle());
                         intent.putExtra("introduction", mCourseList.get(position).getIntroduction());
                         Constant.appData.currentCourseImageFileName = mCourseList.get(position).getImgFileName();
@@ -153,9 +321,9 @@ public class DashboardFragment extends Fragment {
             public void onTabSelected(TabView tab, int position) {
                 Log.d(Constant.TAG, "onTabSelected:  id :" + mCourseTypeList.get(position).getId());
                 mTypeId = mCourseTypeList.get(position).getId();
-                refreshRecycleView(mTypeId);
-//                recycleAdapter.setList(recyclelist.get(position).getItemName());
+                mCourseUpdateVersion = mCourseTypeList.get(position).getCourseUpdateVersion();
 
+                refreshRecycleView(mTypeId);
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences(TYPE_SELECTED, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt(LAST_TYPE_ID, mTypeId);
@@ -168,8 +336,6 @@ public class DashboardFragment extends Fragment {
 
             }
         });
-
-//        mVerticalTabView.setTabSelected(3);
 
     }
 
@@ -189,8 +355,7 @@ public class DashboardFragment extends Fragment {
                 mRecycleAdapter.setList(mCourseList);
                 mRecycleAdapter.notifyDataSetChanged();
 
-                // 安隐，
-
+                // 安隐
                 int count = Constant.dbUtils.getCourseListCountByTypeId(typeId);
                 if (count <= mCourseList.size()) {
                     Log.d(TAG, "类型保存到本地数据库");
@@ -209,7 +374,7 @@ public class DashboardFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        Log.d(TAG, " onstop 垂直导航记录本次位置,  position=" +  mVerticalTabView.getSelectedTabPosition());
+        Log.d(TAG, " onstop 垂直导航记录本次位置,  position=" + mVerticalTabView.getSelectedTabPosition());
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(TYPE_SELECTED, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(LAST_TYPE_ID, mTypeId);
@@ -226,6 +391,7 @@ public class DashboardFragment extends Fragment {
                     return;
                 }
                 mCourseTypeList = response.getCourseType();
+                listToMap();
                 refreshView();
 
                 int count = Constant.dbUtils.getCourseTypeCount();

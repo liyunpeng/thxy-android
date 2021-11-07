@@ -5,8 +5,16 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class CourseList {
-    @SerializedName("courseList")
+    @SerializedName("course_list")
     private List<Course> courseList;
+
+    @SerializedName("course_update_version")
+    private int courseUpdateVersion;
+
+
+    public int getCourseUpdateVersion() {
+        return courseUpdateVersion;
+    }
 
     public List<Course> getCourseList() {
         return courseList;

@@ -197,13 +197,7 @@ public class CourseListActivity extends BaseActivity {
             msg.what = 3;
             Bundle bundle = new Bundle();
             bundle.putInt("course_id", mCouseId);
-            bundle.putInt("update_version", mCourseFileList.size());
-
-
-
-            bundle.putInt("max_course_file_id", mCourseFileList.size());
-
-//            MaxCourseFileId int    `json:"max_course_file_id"`
+            bundle.putInt("update_version", mUpdateVersion);
             msg.setData(bundle);
             mListActivityHandler.sendMessage(msg);
         }
@@ -581,11 +575,7 @@ public class CourseListActivity extends BaseActivity {
                     }
                     Log.d(TAG, "下载完成，发送下载完成的消息");
 
-                    Message msg = mListActivityHandler.obtainMessage();
-                    msg.what = 2;
-                    Bundle bundle = new Bundle();
-                    msg.setData(bundle);
-                    mListActivityHandler.sendMessage(msg);
+                    sendMessageAdapterNotify();
                 }
             }
 
@@ -615,19 +605,9 @@ public class CourseListActivity extends BaseActivity {
                     int updateVersion = msg.getData().getInt("update_version");
                     map.put("id", courseId);
                     map.put("update_version", updateVersion);
-//                    map.put("course_file_id", fileCount);
-
-
-//                    type CommonRequest struct {
-//                    Id           int    `json:"id"` // id 为course id 或为 type id
-//                    CourseFileId int    `json:"course_file_id"`
-//                    Name         string `json:"name"`
-//                    FileCount    int    `json:"file_count"`
-//                }
                     getFileListDelayed(map);
                     break;
             }
-
         }
     };
 
@@ -666,7 +646,6 @@ public class CourseListActivity extends BaseActivity {
         Gson gson = new Gson();
         String param = gson.toJson(map);
         JsonPost.postHttpRequest("findCourseFileByCourseIdAndUpdateVersion", param, new Callback() {
-
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(Constant.TAG, "findCourseFileByCourseIdAndUpdateVersion onFailure: 失败" + e);
@@ -682,15 +661,6 @@ public class CourseListActivity extends BaseActivity {
 
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
                     StringBuffer stringBuffer = new StringBuffer("");
-                    // 获取本系统的行分割线
-//                    String NL = System.getProperty("line.separator");
-//                    // 把http响应的输入流数据按行读取到StringBuffer中
-//                    String line = "";
-//                    while ((line = bufferedReader.readLine()) != null) {
-//                        stringBuffer.append(line + NL);
-//                    }
-
-                    // 把http响应的输入流数据按行读取到StringBuffer中
                     String line = "";
                     while ((line = bufferedReader.readLine()) != null) {
                         stringBuffer.append(line);
@@ -698,17 +668,20 @@ public class CourseListActivity extends BaseActivity {
                     String result = stringBuffer.toString();
                     Log.d(ContentValues.TAG, "result = " + result);
 
-                    if (result.length() < 5 ) {
+                    if (result.length() < 5) {
                         return;
                     }
                     Gson gson = new Gson();
-                    Type listType = new TypeToken<List<CourseFile>>() {}.getType();
-                    List<CourseFile> courseFileList = gson.fromJson(result, listType);
+//                    Type listType = new TypeToken<List<CourseFile>>() {
+//                    }.getType();
+//                    List<CourseFile> courseFileList = gson.fromJson(result, listType);
 
-                    List<CourseFile> courseFileListDiff = new ArrayList<>();
+                    CourseFileList c1 = gson.fromJson(result, CourseFileList.class);
 
-                    int saveFlag = 0;
-                    int updateFlag = 0;
+                    List<CourseFile> courseFileList = c1.getCourseFileList();
+                    int updateVersion = c1.getUpdateVersion();
+                    int saveFlag = 0;   // 新增课程文件
+                    int updateFlag = 0;  // 课程文件名更新
                     for (CourseFile c : courseFileList) {
                         if (mCourseFileMap.get(c.getId()) == null) {
                             mCourseFileMap.put(c.getId(), c);
@@ -716,60 +689,24 @@ public class CourseListActivity extends BaseActivity {
                             saveFlag = 1;
                             dbUtils.saveCourseFile(c);
                             Log.d(TAG, " 新增courseFile文件更新到当前表");
-                        } else if ( !mCourseFileMap.get(c.getId()).getFileName().equalsIgnoreCase( c.getFileName())) {
+                        } else if (!mCourseFileMap.get(c.getId()).getFileName().equalsIgnoreCase(c.getFileName())) {
                             updateFlag = 1;
                             dbUtils.updateCourseFileFilename(c.id, c.getFileName());
                         }
                     }
 
-
-                    if (  updateFlag == 1){
+                    if (updateFlag == 1) {
                         Log.d(TAG, " 有新增courseFile文件， 当前课程列表重新读取数据库更新");
                         getCourseListFromSqlite3();
+                        sendMessageAdapterNotify();
+                        //  本地update_version与服务器一致
+                        dbUtils.updateCourseUpdateVersion(mCouseId, updateVersion);
+                    } else if (saveFlag == 1) {
+                        sendMessageAdapterNotify();
 
-//                        mAdapter.notifyDataSetChanged();
-                        Message msg = mListActivityHandler.obtainMessage();
-                        msg.what = 2;
-                        Bundle bundle = new Bundle();
-                        msg.setData(bundle);
-                        mListActivityHandler.sendMessage(msg);
-                    }else if (saveFlag == 1) {
-//                        mAdapter.notifyDataSetChanged();
-
-                        Message msg = mListActivityHandler.obtainMessage();
-                        msg.what = 2;
-                        Bundle bundle = new Bundle();
-                        msg.setData(bundle);
-                        mListActivityHandler.sendMessage(msg);
+                        // 本地update_version 与服务器一致
+                        dbUtils.updateCourseUpdateVersion(mCouseId, updateVersion);
                     }
-
-
-
-//                    mCourseFileList =
-//                    CourseFile course = gson.fromJson(result, CourseFile.class);
-
-
-//                    intent.putExtra("music_url", musicUrl);
-//                    intent.putExtra("current_position", position);
-//                    intent.putExtra(Constant.MUSIC_ACTIVITY_MODE_NAME, Constant.LIST_MODE_VALUE);
-//
-//                    appData.playingCourseFileId = mList.get(position).getId();
-//                    appData.playingCourseId = mList.get(position).getCourseId();
-//
-//                    appData.currentCourseImageFileName = course.getData().getImgFileName();
-//
-//                    String titleArr[] = mList.get(position).getFileName().split("\\.");
-//                    intent.putExtra("title", titleArr[0]);
-//
-//
-//                    Constant.order = true;
-//                    Collections.sort(mList, new ComparatorValues());
-//
-//                    appData.playingCourseFileList = mList;
-//                    appData.playingCourseFileId = mList.get(position).getId();
-//                    SPUtils.playingListToPlayingMap();
-//                    startActivity(intent);
-//                    Log.d(Constant.TAG, "onResponse: " + result);
 
                 } catch (IllegalStateException e) {
                     // TODO Auto-generated catch block
@@ -780,7 +717,14 @@ public class CourseListActivity extends BaseActivity {
                 }
             }
         });
+    }
 
+    private void sendMessageAdapterNotify() {
+        Message msg = mListActivityHandler.obtainMessage();
+        msg.what = 2;
+        Bundle bundle = new Bundle();
+        msg.setData(bundle);
+        mListActivityHandler.sendMessage(msg);
     }
 
     private void httpGetCourseFilesV1() {

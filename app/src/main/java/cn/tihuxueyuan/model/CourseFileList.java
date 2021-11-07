@@ -8,6 +8,9 @@ public class CourseFileList {
     @SerializedName("courseFileList")
     private List<CourseFile> courseFileList;
 
+    @SerializedName("update_version")
+    private int updateVersion;
+
     @SerializedName("last_listened_course_file_id")
     private int LastListenedCourseFileId;
 
@@ -17,6 +20,10 @@ public class CourseFileList {
 
     public List<CourseFile> getCourseFileList() {
         return courseFileList;
+    }
+
+    public int getUpdateVersion() {
+        return updateVersion;
     }
 
     public void setCourseList(List<CourseFile> courseList) {

@@ -44,14 +44,12 @@ public class JsonPost{
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-//                returnHttpResult.clickReturnHttpResult(e.getMessage());
                 Log.d(Constant.TAG, "onFailure: 失败");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body().string();
-//                returnHttpResult.clickReturnHttpResult(result);
                 Log.d(Constant.TAG, "onResponse: " + result);
             }
         });

@@ -22,6 +22,13 @@ public class CourseTypeList {
         @SerializedName("id")
         private int id;
 
+        @SerializedName("course_update_version")
+        private int courseUpdateVersion;
+
+        public int getCourseUpdateVersion() {
+            return courseUpdateVersion;
+        }
+
         public String getName() {
             return name;
         }
@@ -44,6 +51,10 @@ public class CourseTypeList {
 
         public void setId(int id) {
             this.id = id;
+        }
+
+        public void setCourseUpdateVersion(int updateVersion) {
+            this.courseUpdateVersion = updateVersion;
         }
     }
 }

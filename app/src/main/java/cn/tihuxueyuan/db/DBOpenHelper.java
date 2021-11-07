@@ -39,6 +39,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS  " + COURSE_TYPE + " ( "
                 + "id_auto  INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "id  INT, "
+                + "course_update_version INT, "
                 + "name VARCHAR "
                 + ")");
 

@@ -36,7 +36,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "112233445566778899101011abcde.db", null, 1);
+        helper = new DBOpenHelper(context, "112233445566778899101011abcdefgh.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -58,8 +58,31 @@ public class DBUtils {
             ContentValues contentValues = new ContentValues();
             contentValues.put("name", courseType.getName());
             contentValues.put("id", courseType.getId());
+            contentValues.put("course_update_version", courseType.getCourseUpdateVersion());
             db.insert(DBOpenHelper.COURSE_TYPE, null, contentValues);
         }
+    }
+
+    public void saveCourseType(CourseTypeList.CourseType courseType) {
+//        for (CourseTypeList.CourseType courseType : courseTypeList) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", courseType.getName());
+        contentValues.put("id", courseType.getId());
+        contentValues.put("course_update_version", courseType.getCourseUpdateVersion());
+        db.insert(DBOpenHelper.COURSE_TYPE, null, contentValues);
+//        }
+    }
+
+
+    public void saveCourse(CourseList.Course course) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("title", course.getTitle());
+        contentValues.put("img_file_name", course.getImgFileName());
+        contentValues.put("type_id", course.getTypeId());
+        contentValues.put("introduction", course.getIntroduction());
+        contentValues.put("id", course.getId());
+        contentValues.put("update_version", course.getUpdateVersion());
+        db.insert(DBOpenHelper.COURSE, null, contentValues);
     }
 
     public void saveCourseList(List<CourseList.Course> courseList) {
@@ -94,7 +117,7 @@ public class DBUtils {
     }
 
 
-    public void saveCourseFile(CourseFileList.CourseFile courseFile ){
+    public void saveCourseFile(CourseFileList.CourseFile courseFile) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("id", courseFile.getId());
         contentValues.put("course_id", courseFile.getCourseId());
@@ -104,6 +127,7 @@ public class DBUtils {
         contentValues.put("download_mode", 0);
         db.insert(DBOpenHelper.COURSE_FILE, null, contentValues);
     }
+
     public void saveCourseFiles(List<CourseFileList.CourseFile> courseFileList) {
         for (CourseFileList.CourseFile courseFile : courseFileList) {
             ContentValues contentValues = new ContentValues();
@@ -117,19 +141,40 @@ public class DBUtils {
         }
     }
 
-    public void updateCourseFileFilename( int id,  String fileName) {
+    public void updateCourseUpdateVersion(int id, int updateVersion) {
+        ContentValues cv = new ContentValues();
+        cv.put("update_version", updateVersion);
+        String args[] = {String.valueOf(id)};
+        db.update(DBOpenHelper.COURSE, cv, " id = ?", args);
+    }
+
+    public void updateCourseTypeUpdateVersion(int id, int updateVersion) {
+        ContentValues cv = new ContentValues();
+        cv.put("course_update_version", updateVersion);
+        String args[] = {String.valueOf(id)};
+        db.update(DBOpenHelper.COURSE_TYPE, cv, " id = ?", args);
+    }
+
+    public void updateCourseFileFilename(int id, String fileName) {
         ContentValues cv = new ContentValues();
         cv.put("mp3_file_name", fileName);
-        String args[] = {String.valueOf(id) };
+        String args[] = {String.valueOf(id)};
         db.update(DBOpenHelper.COURSE_FILE, cv, " id = ?", args);
     }
 
-    public void updateCourseFileDownload( int id, int downloadMode,  String storeLocalPath) {
+    public void updateCourse(int id, String title) {
+        ContentValues cv = new ContentValues();
+        cv.put("title", title);
+        String args[] = {String.valueOf(id)};
+        db.update(DBOpenHelper.COURSE, cv, " id = ?", args);
+    }
+
+    public void updateCourseFileDownload(int id, int downloadMode, String storeLocalPath) {
         ContentValues cv = new ContentValues();
 //        cv.put("download_mode", 1);
         cv.put("local_store_path", storeLocalPath);
         cv.put("download_mode", downloadMode);
-        String args[] = {String.valueOf(id) };
+        String args[] = {String.valueOf(id)};
         db.update(DBOpenHelper.COURSE_FILE, cv, " id = ?", args);
     }
 
@@ -139,10 +184,11 @@ public class DBUtils {
         List<CourseTypeList.CourseType> courseTypeList = new ArrayList<>();
         Cursor cursor = db.rawQuery(sql, null);
         while (cursor.moveToNext()) {
-            CourseTypeList.CourseType bean = new CourseTypeList.CourseType();
-            bean.setName(cursor.getString(cursor.getColumnIndex("name")));
-            bean.setId(cursor.getInt(cursor.getColumnIndex("id")));
-            courseTypeList.add(bean);
+            CourseTypeList.CourseType courseTypeBean = new CourseTypeList.CourseType();
+            courseTypeBean.setName(cursor.getString(cursor.getColumnIndex("name")));
+            courseTypeBean.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            courseTypeBean.setCourseUpdateVersion(cursor.getInt(cursor.getColumnIndex("course_update_version")));
+            courseTypeList.add(courseTypeBean);
         }
         cursor.close();
         return courseTypeList;
