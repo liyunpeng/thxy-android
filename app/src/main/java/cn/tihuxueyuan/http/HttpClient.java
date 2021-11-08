@@ -304,7 +304,7 @@ public class HttpClient {
         Map<String, String> params = new HashMap<>();
         params.put("id", String.valueOf(typeId));
         /*
-         请求格式非postJson， 服务端需要这种方式获取：  
+         请求格式非postJson， 服务端需要这种方式获取：
          	okhttpRequest := new(types.CourseFileRequestOkhttp)
 	        c.Bind(okhttpRequest)
 	        reauestId := c.Request.PostForm["id"] 获取 ，

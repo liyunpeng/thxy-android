@@ -63,7 +63,6 @@ public class DashboardFragment extends Fragment {
     private FragmentDashboardBinding binding;
     private List<CourseType> mCourseTypeList = new ArrayList<>();
     private Map<Integer,  CourseType> mCourseTypeMap = new HashMap<>();
-//    <Integer, CourseFileList.CourseFile>
     private List<Course> mCourseList = new ArrayList<>();
     private Map<Integer,  Course> mCourseMap = new HashMap<>();
     private VerticalTabLayout mVerticalTabView;
@@ -73,7 +72,6 @@ public class DashboardFragment extends Fragment {
     private int mCourseUpdateVersion;
 
 
-    // list 转 map
     public  void listToMap() {
         if (mCourseTypeMap != null) {
             mCourseTypeMap.clear();
@@ -83,10 +81,7 @@ public class DashboardFragment extends Fragment {
             int i = c.getId();
             mCourseTypeMap.put(i, c);
         }
-
-
     }
-
 
     public void courseListToCourseMap() {
         if (mCourseMap != null) {
@@ -172,6 +167,11 @@ public class DashboardFragment extends Fragment {
 
                     break;
                 case 2:
+                    if (mRecyclerView.getAdapter() == null) {
+                        mRecyclerView.setAdapter(mRecycleAdapter);
+                    }
+                    mRecycleAdapter.setList(mCourseList);
+                    courseListToCourseMap();
                     mRecycleAdapter.notifyDataSetChanged();
                     break;
                 case 3:
@@ -199,7 +199,7 @@ public class DashboardFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     if (response == null) {
-                        Log.d(TAG, "findCourseByTypeIdAndUpdateVersion 接口返回为空， 课程列表不需要更新");
+                        Log.d(TAG, "服务端返回null, 服务端出错");
                         return;
                     }
 
@@ -213,17 +213,14 @@ public class DashboardFragment extends Fragment {
                     Log.d(ContentValues.TAG, "result = " + result);
 
                     if (result.length() < 5) {
+                        Log.d(TAG, "手机端updateversion与服务端updateverson一致， 课程列表不需要更新");
                         return;
                     }
                     Gson gson = new Gson();
-//                    Type listType = new TypeToken<List<CourseFile>>() {
-//                    }.getType();
-//                    List<CourseFile> courseFileList = gson.fromJson(result, listType);
+                    CourseList httpCourseList = gson.fromJson(result, CourseList.class);
 
-                    CourseList c1 = gson.fromJson(result, CourseList.class);
-
-                    List<CourseList.Course> courseList = c1.getCourseList();
-                    int updateVersion = c1.getCourseUpdateVersion();
+                    List<CourseList.Course> courseList = httpCourseList.getCourseList();
+                    int updateVersion = httpCourseList.getCourseUpdateVersion();
                     int saveFlag = 0;   // 新增课程
                     int updateFlag = 0;  // 课程名更新
                     for (CourseList.Course c : courseList) {
@@ -232,27 +229,24 @@ public class DashboardFragment extends Fragment {
                             mCourseList.add(c);
                             saveFlag = 1;
                             dbUtils.saveCourse(c);
-                            Log.d(TAG, " 新增courseFile文件更新到当前表");
+                            Log.d(TAG, " 有新增课程" + c.getTitle() + ", 添加到到当前课程列表，并保存到本地数据库");
                         } else if (!mCourseMap.get(c.getId()).getTitle().equalsIgnoreCase(c.getTitle())) {
                             updateFlag = 1;
                             dbUtils.updateCourse(c.getId(), c.getTitle());
+                            Log.d(TAG, " 有课程" + c.getTitle() + "更新了名字, 同步更新到本地数据库");
                         }
                     }
 
                     if (updateFlag == 1) {
-                        Log.d(TAG, " 有新增courseFile文件， 当前课程列表重新读取数据库更新");
-//                        getCourseListFromSqlite3();
+                        Log.d(TAG, " 重新读取本地数据库到mCourseList变量。 发送课程列表页面刷新的消息。更新本地数据库update_version与服务器一致。  ");
                         mCourseList = Constant.dbUtils.getCourseListByTypeId(mTypeId);
                         sendRecyleAdapterNotify();
-                        //  本地update_version与服务器一致
                         dbUtils.updateCourseTypeUpdateVersion(mTypeId, updateVersion);
                     } else if (saveFlag == 1) {
+                        Log.d(TAG, " 发送课程列表页面刷新的消息。 更新本地数据库update_version与服务器一致。  ");
                         sendRecyleAdapterNotify();
-
-                        // 本地update_version 与服务器一致
                         dbUtils.updateCourseTypeUpdateVersion(mTypeId, updateVersion);
                     }
-
                 } catch (IllegalStateException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -275,7 +269,6 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        initCourseType();
         ActivityManager.setCurrentActivity(DashboardFragment.this.getActivity());
     }
 

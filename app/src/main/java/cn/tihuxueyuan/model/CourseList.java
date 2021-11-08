@@ -84,6 +84,10 @@ public class CourseList {
             return updateVersion;
         }
 
+        public void setUpdateVersion( int updateVersionParam) {
+            this.updateVersion = updateVersionParam;
+        }
+
         public void setId(int id) {
             this.id = id;
         }

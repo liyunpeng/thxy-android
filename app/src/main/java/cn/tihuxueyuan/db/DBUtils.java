@@ -110,6 +110,7 @@ public class DBUtils {
             course.setTypeId(cursor.getInt(cursor.getColumnIndex("type_id")));
             course.setId(cursor.getInt(cursor.getColumnIndex("id")));
             course.setImgFileName(cursor.getString(cursor.getColumnIndex("img_file_name")));
+            course.setUpdateVersion(cursor.getInt(cursor.getColumnIndex("update_version")));
             courseList.add(course);
         }
         cursor.close();
