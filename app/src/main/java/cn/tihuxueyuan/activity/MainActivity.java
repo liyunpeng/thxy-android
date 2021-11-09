@@ -7,6 +7,7 @@ import static cn.tihuxueyuan.utils.Constant.CONTINURE_PLAY;
 import static cn.tihuxueyuan.utils.Constant.PREV;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.appData;
+import static cn.tihuxueyuan.utils.Constant.dbUtils;
 import static cn.tihuxueyuan.utils.Constant.logcatHelper;
 
 import android.Manifest;
@@ -50,7 +51,6 @@ import cn.tihuxueyuan.db.DBUtils;
 import cn.tihuxueyuan.globaldata.AppData;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.HttpClient;
-import cn.tihuxueyuan.livedata.LiveDataBus;
 import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.receiver.HomeReceiver;
 import cn.tihuxueyuan.receiver.MediaButtonReceiver;
@@ -64,17 +64,15 @@ import cn.tihuxueyuan.utils.SPUtils;
 public class MainActivity extends BaseActivity {
 
     public ActivityMainBinding binding;
-    private LiveDataBus.BusMutableLiveData<String> floatLiveData;
-    Context mContext;
-    AudioManager mAudioManager;
-    ComponentName mRemoteControlReceiverComponent;
+    private Context mContext;
+    private AudioManager mAudioManager;
+    private ComponentName mRemoteControlReceiverComponent;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Constant.dbUtils = DBUtils.getInstance(getApplicationContext());
-        this.context = this.getApplicationContext();
 
         logcatHelper = LogcatHelper.getInstance(getApplicationContext());
         logcatHelper.start();
@@ -89,7 +87,6 @@ public class MainActivity extends BaseActivity {
             return;
         }
         initAppStatusListener();
-
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         getSupportActionBar().hide();
@@ -119,7 +116,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onBecameForeground() {
                 Log.d(TAG, "onBecameForeground 应用进入前台 ");
-//                Toast.makeText(mContext, "应用进入前台", Toast.LENGTH_SHORT).show();
 
 //                if (Constant.floatingControl != null) {
 //                    Constant.floatingControl.setVisibility(true);
@@ -129,7 +125,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onBecameBackground() {
                 Log.d(TAG, "onBecameForeground  应用退至后台 ");
-//                Toast.makeText(mContext, "应用宝退至后台", Toast.LENGTH_SHORT).show();
 
 //                if (Constant.floatingControl != null) {
 //                    Constant.floatingControl.setVisibility(false);
@@ -152,8 +147,6 @@ public class MainActivity extends BaseActivity {
         }
         return null;
     }
-
-    private Context context;
 
     private final BroadcastReceiver headSetReceiver = new BroadcastReceiver() {
         @Override
@@ -181,7 +174,6 @@ public class MainActivity extends BaseActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int REQUEST_EXTERNAL_STORAGE = 100;
 
-
     private void verifyStoragePermissions(Activity activity) {
         int permissionWrite = ActivityCompat.checkSelfPermission(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -191,19 +183,21 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
-
     private void getConfig() {
         HttpClient.getConfig("", new HttpCallback<Config>() {
             @Override
             public void onSuccess(Config response) {
-                if (response == null || response.getBaseUrl() == null) {
+                if (response == null) {
                     onFail(null);
                     return;
                 }
-                Constant.appData.baseUrl = response.getBaseUrl();
+//                Constant.appData.baseUrl = response.getBaseUrl();
                 Constant.appData.serviceCurrentVersion = response.getServiceCurrentVersion();
-                Constant.appData.mp3SourceRouter = response.getMp3SourceRouter();
+                Constant.appData.serviceCourseTypeUpdateVersion = response.getCourseTypeUpdateVersion();
+//                Constant.appData.mp3SourceRouter = response.getMp3SourceRouter();
+
+                Constant.appData.serverConfigId = response.getId();
+
             }
 
             @Override

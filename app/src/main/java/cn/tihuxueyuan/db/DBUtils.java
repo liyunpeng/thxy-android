@@ -5,14 +5,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseFileList;
 import cn.tihuxueyuan.model.CourseList;
 import cn.tihuxueyuan.model.CourseTypeList;
 import cn.tihuxueyuan.model.UserListenedCourse;
+import cn.tihuxueyuan.utils.Constant;
 
 public class DBUtils {
     private DBOpenHelper helper;
@@ -36,7 +39,7 @@ public class DBUtils {
 //        }
 //        db = SQLiteDatabase.openOrCreateDatabase(file,null);
 
-        helper = new DBOpenHelper(context, "112233445566778899101011abcdefgh.db", null, 1);
+        helper = new DBOpenHelper(context, "112233445566778899101011abcdefghij.db", null, 1);
         db = helper.getWritableDatabase();
     }
 
@@ -64,15 +67,12 @@ public class DBUtils {
     }
 
     public void saveCourseType(CourseTypeList.CourseType courseType) {
-//        for (CourseTypeList.CourseType courseType : courseTypeList) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", courseType.getName());
         contentValues.put("id", courseType.getId());
         contentValues.put("course_update_version", courseType.getCourseUpdateVersion());
         db.insert(DBOpenHelper.COURSE_TYPE, null, contentValues);
-//        }
     }
-
 
     public void saveCourse(CourseList.Course course) {
         ContentValues contentValues = new ContentValues();
@@ -87,6 +87,16 @@ public class DBUtils {
 
     public void saveCourseList(List<CourseList.Course> courseList) {
         for (CourseList.Course course : courseList) {
+
+            String sql = "SELECT * FROM " + DBOpenHelper.COURSE + " WHERE id =?";
+            String args[] = {String.valueOf(course.getId())};
+            Cursor cursor = db.rawQuery(sql, args);
+
+            if ( cursor.getCount() > 0 ) {
+                Log.d(Constant.TAG, " saveCourseList id 已存在，不能增加course, id=" + course.getId());
+                continue;
+            }
+
             ContentValues contentValues = new ContentValues();
             contentValues.put("title", course.getTitle());
             contentValues.put("img_file_name", course.getImgFileName());
@@ -131,6 +141,15 @@ public class DBUtils {
 
     public void saveCourseFiles(List<CourseFileList.CourseFile> courseFileList) {
         for (CourseFileList.CourseFile courseFile : courseFileList) {
+
+            String sql = "SELECT * FROM " + DBOpenHelper.COURSE_FILE + " WHERE id =?";
+            String args[] = {String.valueOf(courseFile.getId())};
+            Cursor cursor = db.rawQuery(sql, args);
+            if ( cursor.getCount() > 0 ) {
+                Log.d(Constant.TAG, " saveCourseFiles id 已存在，不能增加courseFile, id=" + courseFile.getId());
+                continue;
+            }
+
             ContentValues contentValues = new ContentValues();
             contentValues.put("id", courseFile.getId());
             contentValues.put("course_id", courseFile.getCourseId());
@@ -170,9 +189,41 @@ public class DBUtils {
         db.update(DBOpenHelper.COURSE, cv, " id = ?", args);
     }
 
+    public void saveConfig(Config courseType) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", courseType.getId());
+        contentValues.put("course_type_update_version", courseType.getCourseTypeUpdateVersion());
+//        contentValues.put("base_url", courseType.getBaseUrl());
+        db.insert(DBOpenHelper.CONFIG, null, contentValues);
+    }
+
+    public void updateConfig(int id, int courseTypeUpdateVersion) {
+        ContentValues cv = new ContentValues();
+        cv.put("course_type_update_version", courseTypeUpdateVersion);
+        String args[] = {String.valueOf(id)};
+        db.update(DBOpenHelper.CONFIG, cv, " id = ?", args);
+    }
+
+    @SuppressLint("Range")
+    public Config getConfig(int typeId) {
+        String sql = "SELECT * FROM " + DBOpenHelper.CONFIG + " WHERE id =?";
+        String args[] = {String.valueOf(typeId)};
+        Cursor cursor = db.rawQuery(sql, args);
+
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            Config config = new Config();
+            config.setId(cursor.getInt(cursor.getColumnIndex("id")));
+//            config.setBaseUrl(cursor.getString(cursor.getColumnIndex("base_url")));
+            config.setCourseTypeUpdateVersion(cursor.getInt(cursor.getColumnIndex("course_type_update_version")));
+            return config;
+        } else {
+            return null;
+        }
+    }
+
     public void updateCourseFileDownload(int id, int downloadMode, String storeLocalPath) {
         ContentValues cv = new ContentValues();
-//        cv.put("download_mode", 1);
         cv.put("local_store_path", storeLocalPath);
         cv.put("download_mode", downloadMode);
         String args[] = {String.valueOf(id)};

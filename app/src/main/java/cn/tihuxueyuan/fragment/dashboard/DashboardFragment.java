@@ -4,6 +4,7 @@ import static cn.tihuxueyuan.utils.Constant.LAST_TYPE_ID;
 import static cn.tihuxueyuan.utils.Constant.TAG;
 import static cn.tihuxueyuan.utils.Constant.TYPE_SELECTED;
 import static cn.tihuxueyuan.utils.Constant.LAST_TAB_SELECTED_POSITION;
+import static cn.tihuxueyuan.utils.Constant.appData;
 import static cn.tihuxueyuan.utils.Constant.dbUtils;
 
 import android.content.ContentValues;
@@ -45,6 +46,7 @@ import cn.tihuxueyuan.http.HttpClient;
 import cn.tihuxueyuan.http.HttpCallback;
 import cn.tihuxueyuan.http.JsonPost;
 import cn.tihuxueyuan.listenner.RecyclerViewClickListener2;
+import cn.tihuxueyuan.model.Config;
 import cn.tihuxueyuan.model.CourseList;
 import cn.tihuxueyuan.model.CourseList.Course;
 import cn.tihuxueyuan.model.CourseTypeList;
@@ -62,9 +64,9 @@ public class DashboardFragment extends Fragment {
     private DashboardViewModel dashboardViewModel;
     private FragmentDashboardBinding binding;
     private List<CourseType> mCourseTypeList = new ArrayList<>();
-    private Map<Integer,  CourseType> mCourseTypeMap = new HashMap<>();
+    private Map<Integer, CourseType> mCourseTypeMap = new HashMap<>();
     private List<Course> mCourseList = new ArrayList<>();
-    private Map<Integer,  Course> mCourseMap = new HashMap<>();
+    private Map<Integer, Course> mCourseMap = new HashMap<>();
     private VerticalTabLayout mVerticalTabView;
     private RecyclerView mRecyclerView;
     private GridRecycleAdapter mRecycleAdapter;
@@ -72,7 +74,7 @@ public class DashboardFragment extends Fragment {
     private int mCourseUpdateVersion;
 
 
-    public  void listToMap() {
+    public void listToMap() {
         if (mCourseTypeMap != null) {
             mCourseTypeMap.clear();
         }
@@ -93,6 +95,7 @@ public class DashboardFragment extends Fragment {
             mCourseMap.put(i, c);
         }
     }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
@@ -155,11 +158,27 @@ public class DashboardFragment extends Fragment {
             bundle.putInt("course_update_version", mCourseUpdateVersion);
             msg.setData(bundle);
             mDashHandler.sendMessage(msg);
+            sendTypeSyncMessage();
         }
     }
 
-    public Handler mDashHandler = new Handler() {
+    void sendTypeSyncMessage() {
+        Message msg = mDashHandler.obtainMessage();
+        msg.what = 4;
+        Bundle bundle = new Bundle();
+        Config c = dbUtils.getConfig(appData.serverConfigId);
 
+        if ( c == null ) {
+            bundle.putInt("course_type_update_version", -1);
+        }else {
+            bundle.putInt("course_type_update_version", c.getCourseTypeUpdateVersion());
+        }
+
+        msg.setData(bundle);
+        mDashHandler.sendMessage(msg);
+    }
+
+    public Handler mDashHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -174,13 +193,35 @@ public class DashboardFragment extends Fragment {
                     courseListToCourseMap();
                     mRecycleAdapter.notifyDataSetChanged();
                     break;
+
                 case 3:
                     Map map = new HashMap<>();
                     int typeId = msg.getData().getInt("type_id");
                     int courseUpdateVersion = msg.getData().getInt("course_update_version");
                     map.put("id", typeId);
                     map.put("course_update_version", courseUpdateVersion);
+                    Log.d(TAG, " 发送课程列表刷新 消息");
                     getCourseListDelayed(map);
+                    break;
+
+                case 4:
+                    int CourseTypeUpdateVersion = msg.getData().getInt("course_type_update_version");
+
+                    if (CourseTypeUpdateVersion != appData.serviceCourseTypeUpdateVersion) {
+                        httpGetCourseType();
+                        Config c;
+                        c = dbUtils.getConfig(appData.serverConfigId);
+                        if (c != null) {
+                            dbUtils.updateConfig(appData.serverConfigId, appData.serviceCourseTypeUpdateVersion);
+                        } else {
+                            c = new Config();
+                            c.setId(appData.serverConfigId);
+                            c.setCourseTypeUpdateVersion(appData.serviceCourseTypeUpdateVersion);
+//                            c.setBaseUrl(appData.bas);
+                            dbUtils.saveConfig(c);
+                        }
+
+                    }
                     break;
             }
         }
@@ -213,7 +254,7 @@ public class DashboardFragment extends Fragment {
                     Log.d(ContentValues.TAG, "result = " + result);
 
                     if (result.length() < 5) {
-                        Log.d(TAG, "手机端updateversion与服务端updateverson一致， 课程列表不需要更新");
+                        Log.d(TAG, "手机端 课程列表 updateversion与服务端课程列表 updateverson一致， 课程列表不需要更新");
                         return;
                     }
                     Gson gson = new Gson();
@@ -326,10 +367,8 @@ public class DashboardFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabView tab, int position) {
-
             }
         });
-
     }
 
     public void httpGetCourseByType(int typeId) {

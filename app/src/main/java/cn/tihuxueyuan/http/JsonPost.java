@@ -59,7 +59,7 @@ public class JsonPost{
         RequestBody requestBody = RequestBody.create(JSON, jsonStr);
         Request request = new Request.Builder()
                 .post(requestBody)
-                .url(Constant.appData.baseUrl+ url)
+                .url(HttpClient.BASE_URL + url)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {

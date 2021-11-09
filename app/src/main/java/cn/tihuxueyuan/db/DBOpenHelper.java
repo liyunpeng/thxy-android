@@ -19,6 +19,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     public static final String U_USER_INFO = "userInfo";
 
+    public static final String CONFIG = "config";
     public static final String COURSE_TYPE = "course_type";
     public static final String COURSE = "course";
     public static final String COURSE_FILE = "course_file";
@@ -35,6 +36,13 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         Log.d( TAG, " 开始创建sqlite3 数据库表 ");
         Toast.makeText(mContext,"Create succeeded",Toast.LENGTH_LONG).show();
         db.execSQL(CREATE_DOCUMENT);
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS  " + CONFIG + " ( "
+                + "id_auto  INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "id  INT, "
+                + "course_type_update_version INT, "
+                + "base_url VARCHAR "
+                + ")");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS  " + COURSE_TYPE + " ( "
                 + "id_auto  INTEGER PRIMARY KEY AUTOINCREMENT, "

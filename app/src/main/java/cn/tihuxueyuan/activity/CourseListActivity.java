@@ -672,14 +672,10 @@ public class CourseListActivity extends BaseActivity {
                         return;
                     }
                     Gson gson = new Gson();
-//                    Type listType = new TypeToken<List<CourseFile>>() {
-//                    }.getType();
-//                    List<CourseFile> courseFileList = gson.fromJson(result, listType);
+                    CourseFileList courseFileListWrap = gson.fromJson(result, CourseFileList.class);
 
-                    CourseFileList c1 = gson.fromJson(result, CourseFileList.class);
-
-                    List<CourseFile> courseFileList = c1.getCourseFileList();
-                    int updateVersion = c1.getUpdateVersion();
+                    List<CourseFile> courseFileList = courseFileListWrap.getCourseFileList();
+                    int updateVersion = courseFileListWrap.getUpdateVersion();
                     int saveFlag = 0;   // 新增课程文件
                     int updateFlag = 0;  // 课程文件名更新
                     for (CourseFile c : courseFileList) {
@@ -758,7 +754,6 @@ public class CourseListActivity extends BaseActivity {
                     }
                 }
 
-//                courseListOrder = true;
                 if (mCourseListOrder == true) {
                     Constant.order = true;
                     Collections.sort(mCourseFileList, new ComparatorValues());
@@ -766,10 +761,7 @@ public class CourseListActivity extends BaseActivity {
                     Constant.order = false;
                     Collections.sort(mCourseFileList, new ComparatorValues());
                 }
-
-
                 currentCourseFileListToCurrentCourseFileMap();
-
                 refreshView();
             }
 
